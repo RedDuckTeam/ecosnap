@@ -1,0 +1,46 @@
+{
+  "extends": [
+    "eslint:recommended",
+    "next",
+    "plugin:import/typescript",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "import",
+    "@typescript-eslint",
+    "eslint-plugin-no-inline-styles",
+    "prettier"
+  ],
+  "root": true,
+  "rules": {
+    "import/order": [
+      "error",
+      {
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true
+        },
+        "groups": [
+          "external",
+          "builtin",
+          "index",
+          "sibling",
+          "parent",
+          "internal",
+          "object"
+        ],
+        "newlines-between": "always"
+      }
+    ],
+
+    "@typescript-eslint/consistent-type-imports": "error",
+    "no-inline-styles/no-inline-styles": "error",
+    "prettier/prettier": [
+      "error",
+      {
+        "endOfLine": "auto"
+      }
+    ]
+  }
+}
