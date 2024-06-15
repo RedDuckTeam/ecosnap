@@ -13,9 +13,11 @@ export class CastVoteDTO {
   @ApiProperty({ type: String, nullable: false })
   @IsUUID()
   garbageCollectId: string;
+
   @ApiProperty({ type: String, nullable: false })
   @IsString()
   signature: string;
+
   @ApiProperty({ type: CastVoteDirection, nullable: false, enum: CastVoteDirection })
   @IsEnum(CastVoteDirection)
   voteDirection: CastVoteDirection;

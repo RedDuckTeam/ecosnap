@@ -1,0 +1,1 @@
+web: cd apps/backend/merkle-submitter && node dist/main
