@@ -1,6 +1,6 @@
-import Image from 'next/image';
-import { Inter } from 'next/font/google';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import { Inter } from 'next/font/google';
+import Image from 'next/image';
 
 const inter = Inter({ subsets: ['latin'] });
 
