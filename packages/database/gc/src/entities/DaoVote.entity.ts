@@ -13,11 +13,14 @@ export class DaoVote extends TimeKnownEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => User, (v) => v.daoVotes, { eager: true, onDelete: 'CASCADE' })
-  voter: User;
+  @Column({ type: 'varchar' })
+  voteSignature: string;
 
   @Column({ type: 'enum', enum: CastVoteDirection })
   voteDirection: CastVoteDirection;
+
+  @ManyToOne(() => User, (v) => v.daoVotes, { eager: true, onDelete: 'CASCADE' })
+  voter: User;
 
   @ManyToOne(() => GarbageCollect, (v) => v.daoVotes, { eager: true, onDelete: 'CASCADE' })
   garbageCollect: GarbageCollect;

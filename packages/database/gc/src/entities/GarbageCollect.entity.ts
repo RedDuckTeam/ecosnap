@@ -10,8 +10,13 @@ export class GarbageCollect extends TimeKnownEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => User, (v) => v.garbageCollects, { nullable: false, eager: true, onDelete: 'CASCADE' })
-  user: User;
+  @Column({ type: 'int', nullable: true })
+  pointsGiven?: number;
+
+  @Column({ type: 'varchar', nullable: true, length: 120 })
+  description?: string;
+
+  // TODO: should add user`s signature here
 
   @OneToMany(() => DaoVote, (v) => v.garbageCollect, { cascade: true })
   daoVotes: DaoVote[];
@@ -19,11 +24,8 @@ export class GarbageCollect extends TimeKnownEntity {
   @OneToMany(() => File, (v) => v.garbageCollect, { cascade: true })
   files: File[];
 
-  @Column({ type: 'int', nullable: true })
-  pointsGiven?: number;
-
-  @Column({ type: 'varchar', nullable: true, length: 120 })
-  description?: string;
+  @ManyToOne(() => User, (v) => v.garbageCollects, { nullable: false, eager: true, onDelete: 'CASCADE' })
+  user: User;
 
   @ManyToOne(() => MerkleSubmission, (v) => v.garbageCollects, {
     nullable: true,

@@ -5,6 +5,7 @@ import { GarbageCollect } from './GarbageCollect.entity';
 import { PublicKey } from '@solana/web3.js';
 import { File } from './File.entity';
 import { CleanupEvent } from './CleanupEvent.entity';
+import { Achievement } from './Achievement.entity';
 
 @Entity({ name: 'merkle_submission' })
 export class MerkleSubmission extends TimeKnownEntity {
@@ -26,6 +27,9 @@ export class MerkleSubmission extends TimeKnownEntity {
 
   @OneToMany(() => GarbageCollect, (v) => v.merkleSubmission, { cascade: true })
   garbageCollects: GarbageCollect[];
+
+  @OneToMany(() => Achievement, (v) => v.merkleSubmission, { cascade: true })
+  achievements: Achievement[];
 
   @OneToMany(() => CleanupEvent, (v) => v.merkleSubmission, { cascade: true })
   cleanupEvents: CleanupEvent[];

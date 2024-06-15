@@ -74,6 +74,7 @@ export class DaoService {
         voteRepo.create({
           voter,
           voteDirection: voteDirection,
+          voteSignature: signature,
           garbageCollect: gc,
         })
       );
