@@ -14,4 +14,8 @@ declare_id!("5Mew5NxqLr5NGG6VbHtkNNK6LNGa5ucKyuV6stWmfy16");
 #[program]
 pub mod GC {
     use super::*;
+
+    pub fn initialize_user(ctx: Context<InitializeProof>, proof_hash: String) -> Result<()>{
+        initialize_proof::handle(ctx, proof_hash)
+    }
 }
