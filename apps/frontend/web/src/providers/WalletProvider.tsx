@@ -8,7 +8,8 @@ import {
   SolflareWalletAdapter,
   TorusWalletAdapter,
 } from '@solana/wallet-adapter-wallets';
-import { FC, PropsWithChildren, useMemo } from 'react';
+import type { FC, PropsWithChildren } from 'react';
+import { useMemo } from 'react';
 import '@solana/wallet-adapter-react-ui/styles.css';
 
 const WalletProvider: FC<PropsWithChildren> = ({ children }) => {
