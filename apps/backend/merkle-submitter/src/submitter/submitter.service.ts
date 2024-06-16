@@ -80,11 +80,7 @@ export class SubmitterService {
           id: file.id,
           contentHash: contentHash,
           fileExtension: 'json',
-          remoteStorageId: await this.storageService.writeFile({
-            id: file.id,
-            content: Buffer.from(file.fileContent),
-            extension: 'json',
-          }),
+          remoteStorageId: await this.storageService.writeFile(Buffer.from(file.fileContent)),
         })
       );
 
@@ -223,8 +219,6 @@ export class SubmitterService {
     const merkleTree = getMerkleTree(encodedLeaves);
     const root = merkleTree.getRoot();
     const rootHex = root.toString('hex');
-
-    console.log({ rootLength: root.length, rootClaimLength: rootClaim.length });
 
     return {
       fullTree: {
