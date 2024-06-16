@@ -65,7 +65,7 @@ export class GcService {
         );
 
         // TODO: not a good idea to have it inside of a db transaction
-        await this.storageService.writeFile({ content: file.buffer, extension: dbFile.fileExtension, id: dbFile.id });
+        await this.storageService.writeFile(file.buffer);
       }
 
       return garbageCollect;

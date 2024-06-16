@@ -10,8 +10,8 @@ export class File extends TimeKnownEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'varchar' })
-  remoteStorageId: string;
+  @Column({ type: 'varchar', nullable: true })
+  remoteStorageId?: string;
 
   @Column({ type: 'varchar', unique: true })
   contentHash: string;
