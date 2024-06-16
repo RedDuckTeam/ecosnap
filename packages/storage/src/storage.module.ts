@@ -5,7 +5,13 @@ import { ConfigService } from '@nestjs/config';
 import { StorageService } from './storage.service';
 
 export const storageModuleDefaultFactory = (configService: ConfigService): StorageModuleConfig => {
-  return {};
+  const email = configService.getOrThrow<string>('AKORD_EMAIL');
+  const password = configService.getOrThrow<string>('AKORD_PASSWORD');
+
+  return {
+    email,
+    password,
+  };
 };
 
 @Module({})
