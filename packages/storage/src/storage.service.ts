@@ -27,7 +27,7 @@ export class StorageService {
       vaultId = vaults[0].id;
     }
 
-    const { stackId } = await akord.stack.create(vaultId, content, { public: true, name: `${id}'.${extension}` });
+    const { stackId } = await akord.stack.create(vaultId, content, { public: true, name: `${id}.${extension}` });
 
     return stackId;
   }
