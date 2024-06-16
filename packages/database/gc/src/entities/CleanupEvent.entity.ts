@@ -13,6 +13,10 @@ export class CleanupEvent extends TimeKnownEntity {
   @Column({ type: 'int' })
   rewards: number;
 
+  @Column({ type: 'varchar' })
+  city: string;
+
+  // TODO: check those dates in cleanup service
   @Column({ type: 'timestamptz' })
   eventStartsAt: Date;
 
