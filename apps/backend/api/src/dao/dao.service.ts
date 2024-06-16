@@ -57,6 +57,7 @@ export class DaoService {
       });
 
       if (!gc) throw new BadRequestException('Garbage collect is not found');
+      if (gc.pointsGiven !== undefined) throw new BadRequestException('Voting is already finished');
 
       const votesThreshold = this.votesThreshold();
 
@@ -81,13 +82,12 @@ export class DaoService {
 
       let votes = [...gc.daoVotes, newVote];
 
-      if (votes.length === votesThreshold) {
-        const votesFor = votes.filter((v) => v.voteDirection === CastVoteDirection.FOR).length;
+      const votesFor = votes.filter((v) => v.voteDirection === CastVoteDirection.FOR).length;
 
-        if (votesFor >= Math.floor(votesThreshold / 2) + 1) {
-          gc.pointsGiven = this.pointsPerSuccessFullGc;
-          await manager.save(gc);
-        }
+      // TODO: update achievements statuses
+      if (votesFor >= Math.floor(votesThreshold / 2) + 1) {
+        gc.pointsGiven = this.pointsPerSuccessFullGc;
+        await manager.save(gc);
       }
 
       return {
