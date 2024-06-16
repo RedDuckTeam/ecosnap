@@ -12,9 +12,9 @@ export const readEnv: EnvReaderFunc = (key: string) => {
 
 export const getDataSourceConnectParameters = (envReader: EnvReaderFunc) => {
   return {
-    ...(envReader('DB_CONNECTION_STRING')
+    ...(envReader('DATABASE')
       ? {
-          url: envReader('DB_CONNECTION_STRING'),
+          url: envReader('DATABASE'),
         }
       : {
           host: envReader('DB_HOST') ?? 'localhost',
