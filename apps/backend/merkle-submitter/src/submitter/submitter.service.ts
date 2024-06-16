@@ -80,7 +80,11 @@ export class SubmitterService {
           id: file.id,
           contentHash: contentHash,
           fileExtension: 'json',
-          remoteStorageId: await this.storageService.writeFile(Buffer.from(file.fileContent)),
+          remoteStorageId: await this.storageService.writeFile({
+            content: Buffer.from(file.fileContent),
+            id: file.id,
+            extension: 'json',
+          }),
         })
       );
 

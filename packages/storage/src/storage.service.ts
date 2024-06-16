@@ -14,7 +14,7 @@ export class StorageService {
     return new Akord(wallet);
   }
 
-  async writeFile(content: Buffer): Promise<string> {
+  async writeFile({ content, id, extension }: { content: Buffer; id: string; extension: string }): Promise<string> {
     const akord = await this.getClient();
 
     const vaults = await akord.vault.listAll();
@@ -27,7 +27,7 @@ export class StorageService {
       vaultId = vaults[0].id;
     }
 
-    const { stackId } = await akord.stack.create(vaultId, content, { public: true });
+    const { stackId } = await akord.stack.create(vaultId, content, { public: true, name: `${id}'.${extension}` });
 
     return stackId;
   }
