@@ -1,7 +1,8 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { TimeKnownEntity } from '@gc/database-common';
 import { User } from './User.entity';
 import { CleanupEvent } from './CleanupEvent.entity';
+import { CleanupEventPassCode } from './CleanupEventPassCode.entity';
 
 export enum ParticipationResultsStatus {
   ACCEPTED,
@@ -38,4 +39,8 @@ export class CleanupEventParticipation extends TimeKnownEntity {
 
   @ManyToOne(() => CleanupEvent, (v) => v.participants, { onDelete: 'CASCADE' })
   cleanupEvent: CleanupEvent;
+
+  @ManyToOne(() => CleanupEventPassCode)
+  @JoinColumn()
+  passCode: CleanupEventPassCode;
 }

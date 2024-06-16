@@ -3,6 +3,7 @@ import { TimeKnownEntity } from '@gc/database-common';
 import { User } from './User.entity';
 import { CleanupEventParticipation } from './CleanupEventParticipation.entity';
 import { MerkleSubmission } from './MerkleSubmission.entity';
+import { CleanupEventPassCode } from './CleanupEventPassCode.entity';
 
 @Entity({ name: 'cleanup_event' })
 export class CleanupEvent extends TimeKnownEntity {
@@ -18,8 +19,8 @@ export class CleanupEvent extends TimeKnownEntity {
   @Column({ type: 'timestamptz' })
   eventEndsAt: Date;
 
-  @Column({ type: 'varchar', unique: true })
-  entryCode: string;
+  @OneToMany(() => CleanupEventPassCode, (v) => v.cleanupEvent, { cascade: true })
+  passCodes: CleanupEventPassCode[];
 
   @OneToMany(() => CleanupEventParticipation, (v) => v.cleanupEvent, { cascade: true })
   participants: CleanupEventParticipation[];

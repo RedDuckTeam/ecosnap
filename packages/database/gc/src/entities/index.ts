@@ -7,4 +7,5 @@ export * from './CleanupEvent.entity';
 export * from './CleanupEventParticipation.entity';
 export * from './Coupon.entity';
 export * from './Achievement.entity';
+export * from './CleanupEventPassCode.entity';
 export * from './MerkleSubmission.entity';

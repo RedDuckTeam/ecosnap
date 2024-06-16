@@ -13,6 +13,7 @@ import {
   CleanupEventParticipation,
   Coupon,
   Achievement,
+  CleanupEventPassCode,
 } from './entities';
 
 export const defaultDataSource = getDataSourceOptions(readEnv, (readEnv) => ({
@@ -27,6 +28,7 @@ export const defaultDataSource = getDataSourceOptions(readEnv, (readEnv) => ({
     CleanupEventParticipation,
     Coupon,
     Achievement,
+    CleanupEventPassCode,
   ],
   migrations: readEnv('RUN_MIGRATION') ? ['**/migrations/*.{ts,js}'] : undefined,
   migrationsRun: false,

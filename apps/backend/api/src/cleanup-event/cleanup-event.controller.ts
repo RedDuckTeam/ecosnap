@@ -44,6 +44,12 @@ export class AcceptParticipationDTO {
   eventId: string;
 }
 
+export class GenerateParticipationPassCodeDTO {
+  @ApiProperty({ type: String })
+  @IsUUID()
+  eventId: string;
+}
+
 export class AcceptResultsDTO {
   @ApiProperty({ type: String })
   @IsString()
@@ -69,6 +75,17 @@ export class CleanupController {
     const event = await this.cleanUpEventService.participate({ signature, eventEntryCode, userPubKey: user.pubKey });
     return {
       participationId: event.id,
+    };
+  }
+
+  @Post('/admin/pass-code')
+  @UseUserAuthGuard()
+  async postGeneratePassCode(@Body() { eventId }: GenerateParticipationPassCodeDTO, @RequestUser() user: UserClaims) {
+    return {
+      code: await this.cleanUpEventService.generatePassCode({
+        eventId,
+        adminPubKey: user.pubKey,
+      }),
     };
   }
 

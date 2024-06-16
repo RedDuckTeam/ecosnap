@@ -4,6 +4,7 @@ import { DataSource } from 'typeorm';
 import {
   CleanupEvent,
   CleanupEventParticipation,
+  CleanupEventPassCode,
   ParticipationResultsStatus,
   ParticipationStatus,
   User,
@@ -14,6 +15,38 @@ import bs58 from 'bs58';
 @Injectable()
 export class CleanupEventService {
   constructor(private readonly dataSource: DataSource) {}
+
+  async generatePassCode({ eventId, adminPubKey }: { eventId: string; adminPubKey: PublicKey }) {
+    return await this.dataSource.manager.transaction(async (manager) => {
+      const eventRepo = manager.getRepository(CleanupEvent);
+      const userRepo = manager.getRepository(User);
+      const passCodeRepo = manager.getRepository(CleanupEventPassCode);
+
+      const admin = await userRepo.findOneBy({
+        pubKey: adminPubKey,
+        cleanUpEventsAdmin: {
+          id: eventId,
+        },
+      });
+
+      if (!admin) throw new BadRequestException('Admin User for provided event is not found');
+
+      const event = await eventRepo.findOneBy({
+        id: eventId,
+      });
+
+      if (!event) throw new BadRequestException('Event is not found');
+
+      const newPassCode = await passCodeRepo.save(
+        passCodeRepo.create({
+          cleanupEvent: event,
+          code: this._generateRandomPassKey(),
+        })
+      );
+
+      return newPassCode.code;
+    });
+  }
 
   async participate({
     signature,
@@ -27,10 +60,23 @@ export class CleanupEventService {
     return await this.dataSource.manager.transaction(async (manager) => {
       const eventRepo = manager.getRepository(CleanupEvent);
       const userRepo = manager.getRepository(User);
+      const passCodeRepo = manager.getRepository(CleanupEventPassCode);
       const eventParticipationRepo = manager.getRepository(CleanupEventParticipation);
 
+      const entryCode = await passCodeRepo.findOne({
+        where: {
+          code: eventEntryCode,
+        },
+        relations: {
+          cleanupEvent: true,
+        },
+      });
+
+      if (!entryCode) throw new BadRequestException('Entry code is not found');
+      if (entryCode.isUsed) throw new BadRequestException('Entry code was already used');
+
       const event = await eventRepo.findOneBy({
-        entryCode: eventEntryCode,
+        id: entryCode.cleanupEvent.id,
       });
 
       if (!event) throw new BadRequestException('Event is not found');
@@ -59,11 +105,16 @@ export class CleanupEventService {
 
       if (existingParticipation) throw new BadRequestException('Already participated to this event');
 
+      entryCode.isUsed = true;
+
+      await manager.save(entryCode);
+
       const participation = await eventParticipationRepo.save(
         eventParticipationRepo.create({
           participant: user,
           cleanupEvent: event,
           participationSignature: signature,
+          passCode: entryCode,
         })
       );
 
@@ -175,6 +226,10 @@ export class CleanupEventService {
 
       await manager.save(participation);
     });
+  }
+
+  private _generateRandomPassKey() {
+    return '';
   }
 
   getParticipateMessage(id: string) {
