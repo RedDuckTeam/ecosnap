@@ -8,5 +8,5 @@ pub struct GlobalState {
 impl GlobalState {
     pub const SEED: &'static [u8; 12] = b"global_state";
 
-    pub const MEM_LENGTH: usize = 32;
+    pub const MEM_LENGTH: usize = 8 + 32;
 }
