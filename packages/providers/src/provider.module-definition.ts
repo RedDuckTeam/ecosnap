@@ -2,7 +2,8 @@ import { ConfigurableModuleBuilder } from '@nestjs/common';
 
 export class ProvidersModuleConfig {
   sol: {
-    rpc?: string;
+    rpc: string;
+    pk?: string;
   };
 }
 

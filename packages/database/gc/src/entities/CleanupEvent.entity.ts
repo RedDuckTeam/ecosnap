@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { TimeKnownEntity } from '@gc/database-common';
 import { User } from './User.entity';
 import { CleanupEventParticipation } from './CleanupEventParticipation.entity';
@@ -27,10 +27,7 @@ export class CleanupEvent extends TimeKnownEntity {
   @ManyToMany(() => User, (v) => v.cleanUpEventsAdmin, { cascade: true })
   admins: User[];
 
-  @ManyToOne(() => MerkleSubmission, (v) => v.cleanupEvents, {
-    nullable: true,
-    eager: true,
-    onDelete: 'CASCADE',
-  })
-  merkleSubmission?: MerkleSubmission;
+  @ManyToMany(() => MerkleSubmission)
+  @JoinTable()
+  merkleSubmissions?: MerkleSubmission[];
 }

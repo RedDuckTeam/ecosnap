@@ -1,7 +1,5 @@
 import { Inject, Injectable, NotImplementedException } from '@nestjs/common';
 import { StorageModuleConfig } from './storage.module-definition';
-import { Connection } from '@solana/web3.js';
-
 @Injectable()
 export class StorageService {
   constructor(

@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { TimeKnownEntity } from '@gc/database-common';
 import { DaoVote } from './DaoVote.entity';
 import { User } from './User.entity';
@@ -9,6 +9,7 @@ import { MerkleSubmission } from './MerkleSubmission.entity';
 export class GarbageCollect extends TimeKnownEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+  // TODO: should add user`s signature here
 
   @Column({ type: 'int', nullable: true })
   pointsGiven?: number;
@@ -16,7 +17,8 @@ export class GarbageCollect extends TimeKnownEntity {
   @Column({ type: 'varchar', nullable: true, length: 120 })
   description?: string;
 
-  // TODO: should add user`s signature here
+  @Column({ type: 'boolean', default: false })
+  merkleSubmitted: boolean;
 
   @OneToMany(() => DaoVote, (v) => v.garbageCollect, { cascade: true })
   daoVotes: DaoVote[];
@@ -27,10 +29,7 @@ export class GarbageCollect extends TimeKnownEntity {
   @ManyToOne(() => User, (v) => v.garbageCollects, { nullable: false, eager: true, onDelete: 'CASCADE' })
   user: User;
 
-  @ManyToOne(() => MerkleSubmission, (v) => v.garbageCollects, {
-    nullable: true,
-    eager: true,
-    onDelete: 'CASCADE',
-  })
-  merkleSubmission?: MerkleSubmission;
+  @ManyToMany(() => MerkleSubmission, { cascade: true })
+  @JoinTable()
+  merkleSubmissions: MerkleSubmission[];
 }

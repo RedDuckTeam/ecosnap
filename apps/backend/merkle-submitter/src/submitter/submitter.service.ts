@@ -1,23 +1,146 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { PublicKey } from '@solana/web3.js';
-import { DataSource } from 'typeorm';
+import { DataSource, Equal, IsNull, Not, Or } from 'typeorm';
 import { StorageService } from '@gc/storage';
-import { GarbageCollect } from '@gc/database-gc';
+import { File, GarbageCollect, MerkleSubmission, MerkleTreeType } from '@gc/database-gc';
 import { getMerkleProof, getMerkleRoot, getMerkleTree } from '@metaplex-foundation/js';
 import * as borsh from 'borsh';
-import type { Schema } from 'borsh';
+import crypto from 'crypto';
+
+import { ProvidersService } from '@gc/providers';
 
 @Injectable()
 export class SubmitterService {
   constructor(
+    private readonly logger: Logger,
     private readonly dataSource: DataSource,
-    private readonly storageService: StorageService
+    private readonly storageService: StorageService,
+    private readonly providerService: ProvidersService
   ) {}
 
-  async process() {}
+  async process() {
+    const resGc = await this.handleGcSubmission();
+    const merkleRepo = this.dataSource.getRepository(MerkleSubmission);
+
+    const allResults = [resGc];
+
+    if (!allResults.map((v) => v.submissions).flat().length || !allResults.map((v) => v.toSave).flat().length) {
+      this.logger.debug('Nothing to submit, skipping iteration');
+      return;
+    }
+
+    const merkleRootsToSubmit = [...resGc.submissions].map((v) => ({
+      id: v.id,
+      rootHash: v.rootHash,
+    }));
+
+    const filesToUpload = [...resGc.submissions].map((v) => ({
+      id: v.id,
+      fileContent: v.fileContent,
+    }));
+
+    const files = await this.uploadTreeFiles(filesToUpload);
+    const sumbitTx = await this.submitMerkleProofsOnchain(merkleRootsToSubmit);
+
+    await this.dataSource.manager.transaction(async (manager) => {
+      for (let res of allResults) {
+        if (!res.submissions.length || !res.toSave.length) continue;
+
+        const submissions = await manager.save(
+          res.submissions.map((v) => {
+            return merkleRepo.create({
+              id: v.id,
+              merkleRootHash: v.rootHash,
+              submissionTxHash: sumbitTx,
+              treeType: v.treeType,
+              treeFile: files.find((f) => f.id === v.id),
+            });
+          })
+        );
+
+        res.toSave.forEach((v) => {
+          v.merkleSubmissions = submissions;
+          v.merkleSubmitted = true;
+        });
+
+        await manager.save(res.toSave);
+      }
+    });
+  }
+
+  async uploadTreeFiles(files: { id: string; fileContent: string }[]) {
+    const fileRepo = this.dataSource.getRepository(File);
+
+    const uploadedFiles: File[] = [];
+
+    for (let file of files) {
+      const contentHash = crypto.createHash('sha256').update(file.fileContent).digest('hex');
+      const entity = await fileRepo.save(
+        fileRepo.create({
+          id: file.id,
+          contentHash: contentHash,
+          fileExtension: 'json',
+          remoteStorageId: await this.storageService.writeFile({
+            id: file.id,
+            content: Buffer.from(file.fileContent),
+            extension: 'json',
+          }),
+        })
+      );
+
+      uploadedFiles.push(entity);
+    }
+
+    return uploadedFiles;
+  }
+
+  async submitMerkleProofsOnchain(proofs: { id: string; rootHash: string }[]) {
+    return '0x';
+  }
+
+  async handleGcSubmission() {
+    const gcRepo = this.dataSource.getRepository(GarbageCollect);
+    const merkleRepo = this.dataSource.getRepository(MerkleSubmission);
+
+    const garbageCollectToBatch = await gcRepo.find({
+      where: {
+        pointsGiven: Not(Or(IsNull(), Equal(0))),
+        merkleSubmitted: false,
+      },
+      relations: {
+        files: true,
+        daoVotes: true,
+      },
+    });
+
+    if (!garbageCollectToBatch.length) return { submissions: [], toSave: [] };
+
+    const treeData = await this.generateTreeDataForGc(garbageCollectToBatch);
+
+    const submissions = [
+      {
+        rootHash: treeData.fullTree.rootHash,
+        id: crypto.randomUUID(),
+        treeType: MerkleTreeType.FULL,
+        fileContent: JSON.stringify(treeData.fullTree),
+      },
+      {
+        rootHash: treeData.rewardsClaimTree.rootHash,
+        id: crypto.randomUUID(),
+        treeType: MerkleTreeType.ONLY_PROOFS,
+        fileContent: JSON.stringify(treeData.rewardsClaimTree),
+      },
+    ];
+
+    return {
+      submissions: submissions,
+      toSave: garbageCollectToBatch,
+    };
+  }
 
   async generateTreeDataForGc(gcs: GarbageCollect[]) {
     const prevRootHash = Buffer.from(''); // FIXME
+    const prevRootHex = prevRootHash.toString('hex');
 
     const leafs = gcs.map((gc) => ({
       files: gc.files.map((f) => ({ hash: f.contentHash, id: f.remoteStorageId })),
@@ -52,24 +175,29 @@ export class SubmitterService {
         borsh.serialize('u128', pointsGiven),
       ]);
     };
-    const encodedLeaves = claimLeafs.map(leafToEncoded);
+
+    const encodedClaimLeaves = claimLeafs.map(leafToEncoded);
+    const claimMerkleTree = getMerkleTree(encodedClaimLeaves);
+    const rootClaim = claimMerkleTree.getRoot();
+    const claimRootHex = rootClaim.toString('hex');
+
+    const leavesWithPrevRoot = [{ prevRootHash: prevRootHex, claimRootHash: claimRootHex }, ...leafs];
+    const encodedLeaves = leavesWithPrevRoot.map((l) => JSON.stringify(l));
     const merkleTree = getMerkleTree(encodedLeaves);
     const root = merkleTree.getRoot();
+    const rootHex = root.toString('hex');
 
-    console.log({ rootLength: root.length });
-
-    const rootHex = Buffer.from(root).toString('hex');
-    const prevRootHex = Buffer.from(prevRootHash).toString('hex');
+    console.log({ rootLength: root.length, rootClaimLength: rootClaim.length });
 
     return {
       fullTree: {
-        rootHash: { raw: root, hex: rootHex },
-        prevRootHash: { raw: prevRootHash, hex: prevRootHex },
-        leafs: [{ prevRootHash }, leafs],
+        rootHash: rootHex,
+        prevRootHash: prevRootHex,
+        leaves: leavesWithPrevRoot,
       },
       rewardsClaimTree: {
-        rootHash: { raw: root, hex: rootHex },
-        leafs: claimLeafs,
+        rootHash: claimRootHex,
+        leaves: claimLeafs,
         proofs: Object.fromEntries(claimLeafs.map((v) => [v.user, getMerkleProof(encodedLeaves, leafToEncoded(v))])),
       },
     };

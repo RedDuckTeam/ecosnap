@@ -6,6 +6,7 @@ import path from 'path';
 import { StorageModule } from '@gc/storage';
 import { defaultDataSource } from '@gc/database-gc';
 import { SubmitterModule } from './submitter/submitter.module';
+import { ProvidersModule } from '@gc/providers';
 
 class GlobalProviders {
   static forRoot(): DynamicModule {
@@ -30,7 +31,7 @@ class GlobalProviders {
         };
       },
     }),
-
+    ProvidersModule.forRootAsync({ global: true }),
     StorageModule.forRootAsync({
       global: true,
     }),
