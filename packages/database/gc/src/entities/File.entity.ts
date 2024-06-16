@@ -13,12 +13,12 @@ export class File extends TimeKnownEntity {
   @Column({ type: 'varchar', nullable: true })
   remoteStorageId?: string;
 
-  @Column({ type: 'varchar', unique: true })
+  @Column({ type: 'varchar', length: 64 })
   contentHash: string;
 
   @Column({ type: 'char', length: 5 })
   fileExtension: string;
 
   @ManyToOne(() => GarbageCollect, (v) => v.files, { nullable: true, onDelete: 'SET NULL' })
-  garbageCollect: GarbageCollect;
+  garbageCollect?: GarbageCollect;
 }

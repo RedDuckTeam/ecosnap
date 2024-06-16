@@ -1,8 +1,8 @@
-use crate::{state::ProofState};
+use crate::state::ProofState;
 use anchor_lang::prelude::*;
 
 #[derive(Accounts)]
-pub struct InitializeProof<'info> {
+pub struct NewProof<'info> {
     #[account(mut)]
     pub authority: Signer<'info>,
 
@@ -16,10 +16,7 @@ pub struct InitializeProof<'info> {
     pub system_program: Program<'info, System>,
 }
 
-pub fn handle(
-    ctx: Context<InitializeProof>,
-    proof_hash: String
-) -> Result<()> {
+pub fn handle(ctx: Context<NewProof>, proof_hash: String) -> Result<()> {
     let state = &mut ctx.accounts.proof_state;
     state.proof_hash = proof_hash;
 

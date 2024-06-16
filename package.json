@@ -10,7 +10,9 @@
     "dev:web": "yarn dev --filter=web --",
     "heroku-postbuild": "sh ./heroku-build.sh",
     "build:api": "yarn build:all --filter=@apps/api",
-    "run:api": "yarn build:api && yarn dev --filter=@apps/api"
+    "build:submitter": "yarn build:all --filter=@apps/merkle-submitter",
+    "run:api": "yarn build:api && yarn dev --filter=@apps/api",
+    "run:submitter": "yarn build:submitter && yarn dev --filter=@apps/merkle-submitter"
   },
   "devDependencies": {
     "prettier": "^3.2.5",

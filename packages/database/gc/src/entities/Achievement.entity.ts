@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { TimeKnownEntity } from '@gc/database-common';
 import { User } from './User.entity';
 import { CleanupEventParticipation } from './CleanupEventParticipation.entity';
@@ -12,10 +12,7 @@ export class Achievement extends TimeKnownEntity {
   @Column({ type: 'varchar' })
   description: string;
 
-  @ManyToOne(() => MerkleSubmission, (v) => v.garbageCollects, {
-    nullable: true,
-    eager: true,
-    onDelete: 'CASCADE',
-  })
-  merkleSubmission?: MerkleSubmission;
+  @ManyToMany(() => MerkleSubmission)
+  @JoinTable()
+  merkleSubmissions?: MerkleSubmission[];
 }
