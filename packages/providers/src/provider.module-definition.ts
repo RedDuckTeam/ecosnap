@@ -1,9 +1,13 @@
 import { ConfigurableModuleBuilder } from '@nestjs/common';
+import { PublicKey } from '@solana/web3.js';
 
 export class ProvidersModuleConfig {
   sol: {
     rpc: string;
     pk?: string;
+    programs: {
+      merkleSubmitter: PublicKey;
+    };
   };
 }
 
