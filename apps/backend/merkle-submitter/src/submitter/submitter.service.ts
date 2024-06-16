@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
-import { PublicKey } from '@solana/web3.js';
+import { ComputeBudgetProgram, PublicKey, sendAndConfirmTransaction, Transaction } from '@solana/web3.js';
 import { DataSource, Equal, IsNull, Not, Or } from 'typeorm';
 import { StorageService } from '@gc/storage';
 import { File, GarbageCollect, MerkleSubmission, MerkleTreeType } from '@gc/database-gc';
@@ -95,7 +95,44 @@ export class SubmitterService {
   }
 
   async submitMerkleProofsOnchain(proofs: { id: string; rootHash: string }[]) {
-    return '0x';
+    const { program, globalState } = this.providerService.getPrograms().merkleSubmitter;
+
+    const { keypair } = this.providerService.getSolSigner();
+
+    const tx = new Transaction();
+
+    for (let { id, rootHash } of proofs) {
+      const idBytes = this.toBinaryUUID(id);
+
+      const [rootPDA] = PublicKey.findProgramAddressSync(
+        [Buffer.from('root_state'), globalState.toBuffer(), idBytes],
+        program.programId
+      );
+
+      tx.add(
+        await program.methods
+          .newRoot(Array.from(idBytes), Array.from(Buffer.from(rootHash, 'hex')))
+          .accounts({
+            authority: keypair.publicKey,
+            globalState: globalState,
+            rootState: rootPDA,
+          })
+          .signers([keypair])
+          .instruction()
+      );
+    }
+
+    tx.add(
+      ComputeBudgetProgram.setComputeUnitPrice({
+        microLamports: await this.providerService.getPriorityRate(),
+      }),
+      ComputeBudgetProgram.setComputeUnitLimit({ units: 100_000 })
+    );
+
+    const txSignature = await sendAndConfirmTransaction(program.provider.connection, tx, [keypair], {});
+
+    console.log({ txSignature });
+    return txSignature;
   }
 
   async handleGcSubmission() {
@@ -201,5 +238,10 @@ export class SubmitterService {
         proofs: Object.fromEntries(claimLeafs.map((v) => [v.user, getMerkleProof(encodedLeaves, leafToEncoded(v))])),
       },
     };
+  }
+
+  toBinaryUUID(uuid: string): Buffer {
+    const buf = Buffer.from(uuid.replace(/-/g, ''), 'hex');
+    return Buffer.concat([buf.slice(6, 8), buf.slice(4, 6), buf.slice(0, 4), buf.slice(8, 16)]);
   }
 }

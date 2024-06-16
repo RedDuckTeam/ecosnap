@@ -5,15 +5,15 @@ export const MERKLE_SUBMITTER_IDL = {
   name: 'gc',
   instructions: [
     {
-      name: 'newProof',
+      name: 'initializeGlobalState',
       accounts: [
         {
-          name: 'authority',
+          name: 'signer',
           isMut: true,
           isSigner: true,
         },
         {
-          name: 'proofState',
+          name: 'globalState',
           isMut: true,
           isSigner: true,
         },
@@ -25,21 +25,74 @@ export const MERKLE_SUBMITTER_IDL = {
       ],
       args: [
         {
-          name: 'proofHash',
-          type: 'string',
+          name: 'authority',
+          type: 'publicKey',
+        },
+      ],
+    },
+    {
+      name: 'newRoot',
+      accounts: [
+        {
+          name: 'authority',
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: 'rootState',
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: 'globalState',
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: 'systemProgram',
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [
+        {
+          name: 'externalId',
+          type: {
+            array: ['u8', 16],
+          },
+        },
+        {
+          name: 'root',
+          type: {
+            array: ['u8', 32],
+          },
         },
       ],
     },
   ],
   accounts: [
     {
-      name: 'ProofState',
+      name: 'GlobalState',
       type: {
         kind: 'struct',
         fields: [
           {
-            name: 'proofHash',
-            type: 'string',
+            name: 'authority',
+            type: 'publicKey',
+          },
+        ],
+      },
+    },
+    {
+      name: 'RootState',
+      type: {
+        kind: 'struct',
+        fields: [
+          {
+            name: 'root',
+            type: {
+              array: ['u8', 32],
+            },
           },
         ],
       },
@@ -59,15 +112,15 @@ export type MERKLE_SUBMITTER_IDL_TYPE = {
   name: 'gc';
   instructions: [
     {
-      name: 'newProof';
+      name: 'initializeGlobalState';
       accounts: [
         {
-          name: 'authority';
+          name: 'signer';
           isMut: true;
           isSigner: true;
         },
         {
-          name: 'proofState';
+          name: 'globalState';
           isMut: true;
           isSigner: true;
         },
@@ -79,21 +132,74 @@ export type MERKLE_SUBMITTER_IDL_TYPE = {
       ];
       args: [
         {
-          name: 'proofHash';
-          type: 'string';
+          name: 'authority';
+          type: 'publicKey';
+        },
+      ];
+    },
+    {
+      name: 'newRoot';
+      accounts: [
+        {
+          name: 'authority';
+          isMut: true;
+          isSigner: true;
+        },
+        {
+          name: 'rootState';
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: 'globalState';
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: 'systemProgram';
+          isMut: false;
+          isSigner: false;
+        },
+      ];
+      args: [
+        {
+          name: 'externalId';
+          type: {
+            array: ['u8', 16];
+          };
+        },
+        {
+          name: 'root';
+          type: {
+            array: ['u8', 32];
+          };
         },
       ];
     },
   ];
   accounts: [
     {
-      name: 'ProofState';
+      name: 'GlobalState';
       type: {
         kind: 'struct';
         fields: [
           {
-            name: 'proofHash';
-            type: 'string';
+            name: 'authority';
+            type: 'publicKey';
+          },
+        ];
+      };
+    },
+    {
+      name: 'RootState';
+      type: {
+        kind: 'struct';
+        fields: [
+          {
+            name: 'root';
+            type: {
+              array: ['u8', 32];
+            };
           },
         ];
       };

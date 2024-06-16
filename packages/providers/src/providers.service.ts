@@ -11,17 +11,24 @@ export class ProvidersService {
     public readonly config: ProvidersModuleConfig
   ) {}
 
+  async getPriorityRate() {
+    return 600_000n;
+  }
+
   getPrograms() {
     const { keypair, provider } = this.getSolSigner();
 
     return {
-      merkleSubmitter: new Program<MERKLE_SUBMITTER_IDL_TYPE>(
-        MERKLE_SUBMITTER_IDL as any,
-        this.config.sol.programs.merkleSubmitter,
-        new AnchorProvider(provider, new Wallet(keypair), {
-          commitment: 'confirmed',
-        })
-      ),
+      merkleSubmitter: {
+        globalState: this.config.sol.programs.merkleSubmitter.globalState,
+        program: new Program<MERKLE_SUBMITTER_IDL_TYPE>(
+          MERKLE_SUBMITTER_IDL as any,
+          this.config.sol.programs.merkleSubmitter.programId,
+          new AnchorProvider(provider, new Wallet(keypair), {
+            commitment: 'confirmed',
+          })
+        ),
+      },
     };
   }
 

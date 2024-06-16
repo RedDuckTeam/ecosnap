@@ -6,7 +6,10 @@ export class ProvidersModuleConfig {
     rpc: string;
     pk?: string;
     programs: {
-      merkleSubmitter: PublicKey;
+      merkleSubmitter: {
+        globalState: PublicKey;
+        programId: PublicKey;
+      };
     };
   };
 }
