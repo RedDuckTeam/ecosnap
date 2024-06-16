@@ -63,7 +63,7 @@ export class AcceptResultsDTO {
 export class CleanupController {
   constructor(private readonly cleanUpEventService: CleanupEventService) {}
 
-  @Post('/')
+  @Post('/participate')
   @UseUserAuthGuard()
   async postParticipate(@Body() { eventEntryCode, signature }: ParticipateToEventDTO, @RequestUser() user: UserClaims) {
     const event = await this.cleanUpEventService.participate({ signature, eventEntryCode, userPubKey: user.pubKey });
@@ -72,7 +72,7 @@ export class CleanupController {
     };
   }
 
-  @Post('/admin/accept')
+  @Post('/admin/participate/accept')
   @UseUserAuthGuard()
   async postAcceptParticipation(
     @Body() { participationId, signature, eventId }: AcceptParticipationDTO,
@@ -98,5 +98,20 @@ export class CleanupController {
       participationId,
       signature,
     });
+  }
+
+  @Get('/participate/message')
+  getParticipateMessage(@Query('eventId') eventId: string) {
+    return { message: this.cleanUpEventService.getParticipateMessage(eventId) };
+  }
+
+  @Get('/admin/participate/message')
+  getAcceptParticipationMessage(@Query('eventId') eventId: string) {
+    return { message: this.cleanUpEventService.getAcceptParticipationMessage(eventId) };
+  }
+
+  @Get('/admin/result/message')
+  getAcceptResultsMessage(@Query('eventId') eventId: string) {
+    return { message: this.cleanUpEventService.getAcceptResultMessage(eventId) };
   }
 }

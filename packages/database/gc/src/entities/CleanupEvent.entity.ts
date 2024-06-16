@@ -25,6 +25,7 @@ export class CleanupEvent extends TimeKnownEntity {
   participants: CleanupEventParticipation[];
 
   @ManyToMany(() => User, (v) => v.cleanUpEventsAdmin, { cascade: true })
+  @JoinTable()
   admins: User[];
 
   @ManyToMany(() => MerkleSubmission)

@@ -33,7 +33,7 @@ export abstract class BaseAuthGuard implements CanActivate {
     context: ExecutionContext,
     getRequestUser: (payload: TJwtPayload) => TClaims,
     getToken: (r: Request) => string | undefined = this._extractTokenFromHeader,
-    verifyToken: (token: string) => Promise<TClaims> = this._verifyTokenJwtService
+    verifyToken: (token: string) => Promise<TJwtPayload> = this._verifyTokenJwtService
   ): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const token = getToken.call(this, request);
@@ -44,7 +44,7 @@ export abstract class BaseAuthGuard implements CanActivate {
 
     try {
       const payload = await verifyToken.call(this, token);
-      request['user'] = payload;
+      request['user'] = getRequestUser(payload);
     } catch (err) {
       throw new UnauthorizedException();
     }

@@ -51,11 +51,11 @@ class GlobalProviders {
       inject: [ConfigService],
       useFactory: async (config: ConfigService) => {
         const jwtAuthSecret = config.get('JWT_AUTH_SECRET', 'TEST-SECRET');
-        const jwtExpiresInMs = config.get('JWT_EXPIRES_IN_MS', 2 * 3600 * 1000);
+        const jwtExpiresInS = config.get('JWT_EXPIRES_IN_S', 2 * 3600);
 
         return {
           jwtAuthSecret: jwtAuthSecret,
-          jwtExpiresInMs: jwtExpiresInMs,
+          jwtExpiresInS: jwtExpiresInS,
         };
       },
     }),

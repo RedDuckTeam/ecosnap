@@ -27,14 +27,14 @@ export class CleanupEventParticipation extends TimeKnownEntity {
   @Column({ type: 'enum', nullable: true, enum: ParticipationStatus })
   participationStatus?: ParticipationStatus;
 
-  @Column({ type: 'varchar' })
-  participationStatusSignature: string;
+  @Column({ type: 'varchar', nullable: true })
+  participationStatusSignature?: string;
 
   @Column({ type: 'enum', nullable: true, enum: ParticipationResultsStatus })
   resultsStatus?: ParticipationResultsStatus;
 
-  @Column({ type: 'varchar' })
-  resultStatusSignature: string;
+  @Column({ type: 'varchar', nullable: true })
+  resultStatusSignature?: string;
 
   @ManyToOne(() => CleanupEvent, (v) => v.participants, { onDelete: 'CASCADE' })
   cleanupEvent: CleanupEvent;
