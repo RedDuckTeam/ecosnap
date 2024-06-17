@@ -6,6 +6,7 @@ import 'multer';
 import { File, GarbageCollect, User } from '@gc/database-gc';
 
 import crypto from 'crypto';
+import { getFileExtensionFromFile } from '../lib/utils/utils';
 @Injectable()
 export class GcService {
   constructor(
@@ -49,7 +50,7 @@ export class GcService {
       );
 
       for (const file of [...files.photos, ...files.videos]) {
-        const fileHash = crypto.createHash('sha3').update(file.buffer).digest('hex');
+        const fileHash = crypto.createHash('sha256').update(file.buffer).digest('hex');
         let dbFile = await fileRepo.findOneBy({
           contentHash: fileHash,
         });
@@ -60,22 +61,21 @@ export class GcService {
           fileRepo.create({
             contentHash: fileHash,
             garbageCollect,
-            fileExtension: this._getFileExtensionFromFile(file.originalname),
+            fileExtension: getFileExtensionFromFile(file.originalname),
           })
         );
 
         // TODO: not a good idea to have it inside of a db transaction
-        await this.storageService.writeFile({ content: file.buffer, extension: dbFile.fileExtension, id: dbFile.id });
+        dbFile.remoteStorageId = await this.storageService.writeFile({
+          content: file.buffer,
+          extension: dbFile.fileExtension,
+          id: dbFile.id,
+        });
+
+        await fileRepo.save(dbFile);
       }
 
       return garbageCollect;
     });
-  }
-
-  _getFileExtensionFromFile(fileName: string) {
-    const fileNameSplitted = fileName.split('.');
-    fileNameSplitted.shift();
-
-    return fileNameSplitted.length ? fileNameSplitted[fileNameSplitted.length - 1] : '';
   }
 }

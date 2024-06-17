@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { CleanupEventService } from './cleanup-event.service';
-import { JwtModule } from '../jwt/jwt.module';
 import { DatabaseModule } from '@gc/database-common';
 import { CleanupController } from './cleanup-event.controller';
 import { StorageModule } from '@gc/storage';

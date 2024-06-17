@@ -32,7 +32,7 @@ export class StorageService {
     return stackId;
   }
 
-  async readFile(stackId: string): Promise<string> {
+  async getUri(stackId: string): Promise<string> {
     const akord = await this.getClient();
 
     return akord.stack.getUri(stackId);

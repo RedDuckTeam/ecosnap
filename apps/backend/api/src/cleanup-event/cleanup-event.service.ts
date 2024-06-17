@@ -8,13 +8,21 @@ import {
   ParticipationResultsStatus,
   ParticipationStatus,
   User,
+  File,
 } from '@gc/database-gc';
 import * as nacl from 'tweetnacl';
 import bs58 from 'bs58';
+import crypto from 'crypto';
+import e from 'express';
+import { getFileExtensionFromFile } from '../lib/utils/utils';
+import { StorageService } from '@gc/storage';
 
 @Injectable()
 export class CleanupEventService {
-  constructor(private readonly dataSource: DataSource) {}
+  constructor(
+    private readonly dataSource: DataSource,
+    private readonly storageService: StorageService
+  ) {}
 
   async generatePassCode({ eventId, adminPubKey }: { eventId: string; adminPubKey: PublicKey }) {
     return await this.dataSource.manager.transaction(async (manager) => {
@@ -109,7 +117,7 @@ export class CleanupEventService {
 
       await manager.save(entryCode);
 
-      const participation = await eventParticipationRepo.save(
+      return await eventParticipationRepo.save(
         eventParticipationRepo.create({
           participant: user,
           cleanupEvent: event,
@@ -117,8 +125,6 @@ export class CleanupEventService {
           passCode: entryCode,
         })
       );
-
-      return participation;
     });
   }
 
@@ -225,6 +231,71 @@ export class CleanupEventService {
       // TODO: update `canVote` status if user points >= X points
 
       await manager.save(participation);
+    });
+  }
+
+  async publishEvent({
+    eventId,
+    adminPubKey,
+    files,
+  }: {
+    eventId: string;
+    adminPubKey: PublicKey;
+    files: { photos: Express.Multer.File[]; videos: Express.Multer.File[] };
+  }) {
+    files.photos.forEach((v) => {
+      if (v.size > 5_000_000) throw new BadRequestException('Photo file size should be <=5mb');
+    });
+
+    files.videos.forEach((v) => {
+      if (v.size > 100_000_000) throw new BadRequestException('Video file size should be <=100mb');
+    });
+
+    return await this.dataSource.manager.transaction(async (manager) => {
+      const userRepo = manager.getRepository(User);
+      const eventRepo = manager.getRepository(CleanupEvent);
+      const fileRepo = manager.getRepository(File);
+
+      const admin = await userRepo.findOneBy({
+        pubKey: adminPubKey,
+        cleanUpEventsAdmin: {
+          id: eventId,
+        },
+      });
+
+      if (!admin) throw new BadRequestException('Admin User for provided event is not found');
+
+      const event = await eventRepo.findOneBy({
+        id: eventId,
+      });
+
+      if (!event) throw new BadRequestException('Event is not found');
+
+      for (const file of [...files.photos, ...files.videos]) {
+        const fileHash = crypto.createHash('sha256').update(file.buffer).digest('hex');
+        let dbFile = await fileRepo.findOneBy({
+          contentHash: fileHash,
+        });
+
+        if (dbFile) throw new BadRequestException('This file was already uploaded');
+        dbFile = await fileRepo.save(
+          fileRepo.create({
+            contentHash: fileHash,
+            cleanupEvent: event,
+            fileExtension: getFileExtensionFromFile(file.originalname),
+          })
+        );
+
+        // TODO: not a good idea to have it inside of a db transaction
+        dbFile.remoteStorageId = await this.storageService.writeFile({
+          content: file.buffer,
+          extension: dbFile.fileExtension,
+          id: dbFile.id,
+        });
+
+        await fileRepo.save(dbFile);
+      }
+      return event;
     });
   }
 
