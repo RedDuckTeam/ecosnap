@@ -1,5 +1,9 @@
 import { Plus_Jakarta_Sans } from 'next/font/google';
 
+import { Navbar } from './navbar/navbar';
+
+import { Toaster } from '@/components/ui/toaster';
+
 const plusJakartaSans = Plus_Jakarta_Sans({ subsets: ['latin'] });
 
 interface Props {
@@ -9,7 +13,9 @@ interface Props {
 export const Layout = ({ children }: Props) => {
   return (
     <div className={plusJakartaSans.className}>
-      <button>SDASIDOASODH</button>asdasdsa{children}
+      <Navbar />
+      {children}
+      <Toaster />
     </div>
   );
 };
