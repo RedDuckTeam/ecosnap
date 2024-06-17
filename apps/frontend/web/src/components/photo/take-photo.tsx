@@ -1,19 +1,17 @@
 import { X } from 'lucide-react';
-import Image from 'next/image';
 import type { ChangeEvent } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Input } from '../ui/input';
 import { useToast } from '../ui/use-toast';
 import usePhotoStore from '@/store/photo';
+import { Input } from '../ui/input';
 
 type Props = {
   isBefore: boolean;
 };
 
 export const TakePhoto = ({ isBefore }: Props) => {
-  const { filesAfter, filesBefore, setFilesAfter, setFilesBefore } =
-    usePhotoStore();
+  const { filesAfter, filesBefore, setFilesAfter, setFilesBefore } = usePhotoStore();
 
   const currentFiles = useMemo(() => {
     return isBefore ? filesBefore : filesAfter;
@@ -24,10 +22,7 @@ export const TakePhoto = ({ isBefore }: Props) => {
   useEffect(() => {
     const loadPreviews = async () => {
       const previewPromises = currentFiles
-        .filter(
-          (file) =>
-            file.type.startsWith('image/') || file.type.startsWith('video/'),
-        )
+        .filter((file) => file.type.startsWith('image/') || file.type.startsWith('video/'))
         .map((file) => {
           return new Promise<string>((resolve) => {
             const reader = new FileReader();
@@ -64,7 +59,7 @@ export const TakePhoto = ({ isBefore }: Props) => {
 
       callback([...currentFiles, ...filesToAdd]);
     },
-    [currentFiles, isBefore, setFilesBefore, setFilesAfter, toast],
+    [currentFiles, isBefore, setFilesBefore, setFilesAfter, toast]
   );
 
   const handleDelete = useCallback(
@@ -73,7 +68,7 @@ export const TakePhoto = ({ isBefore }: Props) => {
       const updatedFiles = currentFiles.filter((_, i) => i !== index);
       callback(updatedFiles);
     },
-    [currentFiles, isBefore, setFilesBefore, setFilesAfter],
+    [currentFiles, isBefore, setFilesBefore, setFilesAfter]
   );
 
   return (
@@ -81,17 +76,12 @@ export const TakePhoto = ({ isBefore }: Props) => {
       <p>
         {isBefore ? 'Take photo before' : 'Take photo after'} {'(max 10)'}
       </p>
-      <Input
-        type="file"
-        onChange={handleUpload}
-        multiple
-        accept="image/*,video/*"
-      />
+      <Input type="file" onChange={handleUpload} multiple accept="image/*,video/*" />
       <div className="mt-2 flex flex-wrap gap-2">
         {previews.map((preview, index) => (
           <div key={index} className="relative">
             {preview.startsWith('data:image/') ? (
-              <Image
+              <img
                 src={preview}
                 alt={`Uploaded preview ${index + 1}`}
                 width={100}
@@ -99,18 +89,9 @@ export const TakePhoto = ({ isBefore }: Props) => {
                 className="h-auto max-w-full"
               />
             ) : (
-              <video
-                src={preview}
-                controls
-                width={100}
-                height={100}
-                className="h-auto max-w-full"
-              />
+              <video src={preview} controls width={100} height={100} className="h-auto max-w-full" />
             )}
-            <button
-              onClick={() => handleDelete(index)}
-              className="absolute right-0 top-0"
-            >
+            <button onClick={() => handleDelete(index)} className="absolute right-0 top-0">
               <X className="h-5 w-5 text-red-500" />
             </button>
           </div>
