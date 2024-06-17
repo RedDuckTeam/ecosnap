@@ -32,11 +32,9 @@ export class StorageService {
     return stackId;
   }
 
-  async readFile(stackId: string): Promise<ArrayBuffer | ReadableStream<Uint8Array>> {
+  async readFile(stackId: string): Promise<string> {
     const akord = await this.getClient();
-    const stack = await akord.stack.get(stackId);
-    const file = await akord.stack.getVersion(stackId, stack.versions.length - 1);
 
-    return file.data;
+    return akord.stack.getUri(stackId);
   }
 }
