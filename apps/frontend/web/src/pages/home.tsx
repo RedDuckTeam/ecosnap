@@ -17,9 +17,7 @@ export default function Home() {
   };
 
   return (
-    <main
-      className={`flex min-h-screen flex-col items-center justify-between p-24`}
-    >
+    <main className={`flex flex-1 flex-col items-center justify-between p-24`}>
       <WalletMultiButton />
       {connected && <Button onClick={onSignMessage}>Sign message</Button>}
     </main>

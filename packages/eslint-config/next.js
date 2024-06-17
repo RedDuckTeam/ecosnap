@@ -9,14 +9,14 @@ module.exports = {
     "plugin:import/typescript",
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/recommended-type-checked",
+    'plugin:react-hooks/recommended',
     "prettier",
-    require.resolve("@vercel/style-guide/eslint/next"),
   ],
   env: {
     node: true,
     browser: true,
   },
-  plugins: ["@typescript-eslint", "import", "prettier"],
+  plugins: ["@typescript-eslint", "import",'react-refresh', 'react-hooks',"prettier"],
   settings: {
     "import/resolver": {
       typescript: {

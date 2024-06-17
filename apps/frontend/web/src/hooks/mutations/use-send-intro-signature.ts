@@ -2,13 +2,11 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { useMutation } from '@tanstack/react-query';
 import { encode } from 'bs58';
 
-import { useGetIntroMessage } from '@/hooks/queries/use-get-intro-message';
+import { useGetIntroMessage } from '../queries/use-get-intro-message';
 
 export const useSendIntroSignature = () => {
   const { publicKey, signMessage } = useWallet();
-  const { data: introMessage } = useGetIntroMessage(
-    publicKey?.toBase58() ?? '',
-  );
+  const { data: introMessage } = useGetIntroMessage(publicKey?.toBase58() ?? '');
 
   return useMutation({
     mutationFn: async () => {
