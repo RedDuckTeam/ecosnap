@@ -13,7 +13,6 @@ import {
 import * as nacl from 'tweetnacl';
 import bs58 from 'bs58';
 import crypto from 'crypto';
-import e from 'express';
 import { getFileExtensionFromFile } from '../lib/utils/utils';
 import { StorageService } from '@gc/storage';
 import { AchievementsService } from '../achievements/achievements.service';
@@ -21,12 +20,11 @@ import { DaoService } from '../dao/dao.service';
 
 @Injectable()
 export class CleanupEventService {
-
   constructor(
     private readonly dataSource: DataSource,
     private readonly achievementsService: AchievementsService,
-    private readonly storageService: StorageService
-  private readonly daoService: DaoService
+    private readonly storageService: StorageService,
+    private readonly daoService: DaoService
   ) {}
 
   async generatePassCode({ eventId, adminPubKey }: { eventId: string; adminPubKey: PublicKey }) {
