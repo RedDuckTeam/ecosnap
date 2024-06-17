@@ -9,14 +9,20 @@ module.exports = {
     "plugin:import/typescript",
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/recommended-type-checked",
-    'plugin:react-hooks/recommended',
+    "plugin:react-hooks/recommended",
     "prettier",
   ],
   env: {
     node: true,
     browser: true,
   },
-  plugins: ["@typescript-eslint", "import",'react-refresh', 'react-hooks',"prettier"],
+  plugins: [
+    "@typescript-eslint",
+    "import",
+    "react-refresh",
+    "react-hooks",
+    "prettier",
+  ],
   settings: {
     "import/resolver": {
       typescript: {
@@ -63,6 +69,8 @@ module.exports = {
         ],
         "@typescript-eslint/consistent-type-imports": "error",
         "@typescript-eslint/no-misused-promises": "off",
+        "@typescript-eslint/no-unsafe-call": "off",
+        "@typescript-eslint/no-unsafe-assignment": "off",
       },
     },
   ],
