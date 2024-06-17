@@ -11,10 +11,16 @@ import {
 } from '@gc/database-gc';
 import * as nacl from 'tweetnacl';
 import bs58 from 'bs58';
+import { AchievementsService } from '../achievements/achievements.service';
+import { DaoService } from '../dao/dao.service';
 
 @Injectable()
 export class CleanupEventService {
-  constructor(private readonly dataSource: DataSource) {}
+  constructor(
+    private readonly dataSource: DataSource,
+    private readonly achievementsService: AchievementsService,
+    private readonly daoService: DaoService
+  ) {}
 
   async generatePassCode({ eventId, adminPubKey }: { eventId: string; adminPubKey: PublicKey }) {
     return await this.dataSource.manager.transaction(async (manager) => {
@@ -192,7 +198,9 @@ export class CleanupEventService {
           cleanupEvent: { id: eventId },
         },
         relations: {
-          cleanupEvent: true,
+          cleanupEvent: {
+            achievementBoosts: true,
+          },
           participant: true,
         },
       });
@@ -222,8 +230,16 @@ export class CleanupEventService {
       participation.resultStatusSignature = signature;
       participation.resultsStatus = ParticipationResultsStatus.ACCEPTED;
       participation.participant.points += participation.cleanupEvent.rewards;
-      // TODO: update `canVote` status if user points >= X points
 
+      await this.achievementsService.updateUserFinishedCleanupEventAchievement(
+        {
+          event: participation.cleanupEvent,
+          user: participation.participant,
+        },
+        manager
+      );
+
+      await this.daoService.updateCanVote(participation.participant, manager);
       await manager.save(participation);
     });
   }

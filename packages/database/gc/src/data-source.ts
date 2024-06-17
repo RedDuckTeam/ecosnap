@@ -14,6 +14,9 @@ import {
   Coupon,
   Achievement,
   CleanupEventPassCode,
+  AchievementBoostReward,
+  UserAchievement,
+  UserAchievementBoostReward,
 } from './entities';
 
 export const defaultDataSource = getDataSourceOptions(readEnv, (readEnv) => ({
@@ -29,6 +32,9 @@ export const defaultDataSource = getDataSourceOptions(readEnv, (readEnv) => ({
     Coupon,
     Achievement,
     CleanupEventPassCode,
+    AchievementBoostReward,
+    UserAchievement,
+    UserAchievementBoostReward,
   ],
   migrations: readEnv('RUN_MIGRATION') ? ['**/migrations/*.{ts,js}'] : undefined,
   migrationsRun: false,

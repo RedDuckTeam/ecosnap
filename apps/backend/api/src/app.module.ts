@@ -12,6 +12,7 @@ import { DaoModule } from './dao/dao.module';
 import { GcModule } from './gc/gc.module';
 import { StorageModule } from '@gc/storage';
 import { CleanupEventModule } from './cleanup-event/cleanup-event.module';
+import { AchievementsModule } from './achievements/achievements.module';
 
 class GlobalProviders {
   static forRoot(): DynamicModule {
@@ -66,6 +67,7 @@ class GlobalProviders {
     DaoModule,
     GcModule,
     CleanupEventModule,
+    AchievementsModule,
   ],
   providers: [],
   exports: [],
