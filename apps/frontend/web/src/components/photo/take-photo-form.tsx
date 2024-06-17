@@ -1,9 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Controller, useForm } from 'react-hook-form';
-import { ZodType, z } from 'zod';
-import { Button } from '../ui/button';
 import { useCallback } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import type { ZodType } from 'zod';
+import { z } from 'zod';
+
+import { Button } from '../ui/button';
 import { Input } from '../ui/input';
+
 import usePhotoStore from '@/store/photo';
 
 export interface TakePhotoForm {
@@ -35,19 +38,13 @@ export const TakePhotoForm = () => {
   }, []);
 
   return (
-    <form
-      action=""
-      className="flex flex-col gap-3"
-      onSubmit={handleSubmit(onSubmit)}
-    >
+    <form action="" className="flex flex-col gap-3" onSubmit={handleSubmit(onSubmit)}>
       <div className="flex flex-col gap-2">
         <p>Title</p>
         <Controller
           name="title"
           control={control}
-          render={({ field }) => (
-            <Input placeholder="Title" {...field} id="title" />
-          )}
+          render={({ field }) => <Input placeholder="Title" {...field} id="title" />}
         />
         <div className="text-red-500">{errors.title?.message}</div>
       </div>
@@ -56,16 +53,11 @@ export const TakePhotoForm = () => {
         <Controller
           name="description"
           control={control}
-          render={({ field }) => (
-            <Input placeholder="Description" {...field} id="description" />
-          )}
+          render={({ field }) => <Input placeholder="Description" {...field} id="description" />}
         />
         <div className="text-red-500">{errors.description?.message}</div>
       </div>
-      <Button
-        type="submit"
-        disabled={filesAfter.length === 0 || filesBefore.length === 0}
-      >
+      <Button type="submit" disabled={filesAfter.length === 0 || filesBefore.length === 0}>
         Post!
       </Button>
     </form>

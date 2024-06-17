@@ -60,9 +60,7 @@ export class Fetcher {
     );
   }
 
-  private async _processResponse<T>(
-    responsePromise: Promise<Response>,
-  ): Promise<FetcherResponse<T>> {
+  private async _processResponse<T>(responsePromise: Promise<Response>): Promise<FetcherResponse<T>> {
     const response = await responsePromise;
     const responseText = response.ok ? await response.text() : '';
     const data = responseText ? (JSON.parse(responseText) as T) : null;

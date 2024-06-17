@@ -2,9 +2,10 @@ import { X } from 'lucide-react';
 import type { ChangeEvent } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { useToast } from '../ui/use-toast';
-import usePhotoStore from '@/store/photo';
 import { Input } from '../ui/input';
+import { useToast } from '../ui/use-toast';
+
+import usePhotoStore from '@/store/photo';
 
 type Props = {
   isBefore: boolean;

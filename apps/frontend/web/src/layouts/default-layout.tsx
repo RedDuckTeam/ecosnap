@@ -1,10 +1,11 @@
 import { Suspense, memo } from 'react';
 import { Outlet } from 'react-router-dom';
-import { Toaster } from '@/components/ui/toaster';
+
+import { Footer } from '@/components/footer/footer';
 import { Header } from '@/components/header/header';
 import { PageLoader } from '@/components/page-loader/page-loader';
+import { Toaster } from '@/components/ui/toaster';
 import Providers from '@/providers/Providers';
-import { Footer } from '@/components/footer/footer';
 
 const DefaultLayout = memo(() => {
   return (
