@@ -1,6 +1,6 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { PublicKey } from '@solana/web3.js';
-import { DataSource } from 'typeorm';
+import { DataSource, EntityManager } from 'typeorm';
 import { AuthNonce, CastVoteDirection, DaoVote, GarbageCollect, User } from '@gc/database-gc';
 import * as nacl from 'tweetnacl';
 import bs58 from 'bs58';
@@ -57,6 +57,7 @@ export class DaoService {
       });
 
       if (!gc) throw new BadRequestException('Garbage collect is not found');
+      if (gc.pointsGiven !== undefined) throw new BadRequestException('Voting is already finished');
 
       const votesThreshold = this.votesThreshold();
 
@@ -81,19 +82,33 @@ export class DaoService {
 
       let votes = [...gc.daoVotes, newVote];
 
-      if (votes.length === votesThreshold) {
-        const votesFor = votes.filter((v) => v.voteDirection === CastVoteDirection.FOR).length;
+      const votesFor = votes.filter((v) => v.voteDirection === CastVoteDirection.FOR).length;
 
-        if (votesFor >= Math.floor(votesThreshold / 2) + 1) {
-          gc.pointsGiven = this.pointsPerSuccessFullGc;
-          await manager.save(gc);
-        }
+      // TODO: update achievements statuses
+      if (votesFor >= Math.floor(votesThreshold / 2) + 1) {
+        gc.pointsGiven = this.pointsPerSuccessFullGc;
+        await manager.save(gc);
+
+        await this.updateCanVote(voter, manager);
       }
 
       return {
         newVoteId: newVote,
       };
     });
+  }
+
+  public async updateCanVote(user: User, manager: EntityManager) {
+    if (user.canVote) return;
+
+    if (user.points >= this.canVotePointsThreshold()) {
+      user.canVote = true;
+      await manager.save(user);
+    }
+  }
+
+  canVotePointsThreshold() {
+    return 1000;
   }
 
   votesThreshold() {

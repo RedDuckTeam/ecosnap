@@ -36,6 +36,6 @@ export class DaoController {
 
   @Get('/vote/message')
   getSignMessage(@Query('gcId') gcId: string, @Query('voteDirection') voteDirection: CastVoteDirection) {
-    return this.daoService.getSignMessage(gcId, voteDirection);
+    return { message: this.daoService.getSignMessage(gcId, voteDirection) };
   }
 }

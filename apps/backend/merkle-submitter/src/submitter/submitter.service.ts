@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { ComputeBudgetProgram, PublicKey, sendAndConfirmTransaction, Transaction } from '@solana/web3.js';
 import { DataSource, Equal, IsNull, Not, Or } from 'typeorm';
 import { StorageService } from '@gc/storage';
-import { File, GarbageCollect, MerkleSubmission, MerkleTreeType } from '@gc/database-gc';
+import { File, GarbageCollect, MerkleProof, MerkleSubmission, MerkleTreeType, User } from '@gc/database-gc';
 import { getMerkleProof, getMerkleRoot, getMerkleTree } from '@metaplex-foundation/js';
 import * as borsh from 'borsh';
 import crypto from 'crypto';
@@ -21,6 +21,8 @@ export class SubmitterService {
   async process() {
     const resGc = await this.handleGcSubmission();
     const merkleRepo = this.dataSource.getRepository(MerkleSubmission);
+    const userRepo = this.dataSource.getRepository(User);
+    const proofsRepo = this.dataSource.getRepository(MerkleProof);
 
     const allResults = [resGc];
 
@@ -64,6 +66,29 @@ export class SubmitterService {
         });
 
         await manager.save(res.toSave);
+
+        for (let submission of res.submissions) {
+          if (!submission.proofs) continue;
+
+          for (let [userPubKey, proofs] of Object.entries(submission.proofs)) {
+            for (let { id, proofs: proof } of proofs) {
+              const user = await userRepo.findOneBy({
+                pubKey: new PublicKey(userPubKey),
+              });
+
+              if (!user) throw new Error('User is not found in db');
+
+              await manager.save(
+                proofsRepo.create({
+                  user,
+                  submission: submissions.find((v) => v.id === submission.id),
+                  proof: proof.map((v) => Buffer.from(v)),
+                  leaf: submission.leaves.find((v) => v.id === id)!,
+                })
+              );
+            }
+          }
+        }
       }
     });
   }
@@ -158,12 +183,15 @@ export class SubmitterService {
       {
         rootHash: treeData.fullTree.rootHash,
         id: crypto.randomUUID(),
+        leaves: treeData.fullTree.leaves,
         treeType: MerkleTreeType.FULL,
         fileContent: JSON.stringify(treeData.fullTree),
       },
       {
         rootHash: treeData.rewardsClaimTree.rootHash,
         id: crypto.randomUUID(),
+        leaves: treeData.rewardsClaimTree.leaves,
+        proofs: treeData.rewardsClaimTree.proofs,
         treeType: MerkleTreeType.ONLY_PROOFS,
         fileContent: JSON.stringify(treeData.rewardsClaimTree),
       },
@@ -200,14 +228,16 @@ export class SubmitterService {
       leafsPerUser[v.user] += v.pointsGiven;
     });
 
-    const claimLeafs = Object.entries(leafsPerUser).map(([user, points]) => ({
+    const claimLeafs = Object.entries(leafsPerUser).map(([user, points], i) => ({
+      id: i,
       user,
       pointsGiven: points,
     }));
 
-    const leafToEncoded = ({ user, pointsGiven }: { user: string; pointsGiven: number }) => {
+    const leafToEncoded = ({ user, id, pointsGiven }: { id: number; user: string; pointsGiven: number }) => {
       return Buffer.concat([
         new PublicKey(user).toBuffer(),
+        borsh.serialize('u128', id),
         // TODO: multiply by 10 ** 9
         borsh.serialize('u128', pointsGiven),
       ]);
@@ -233,7 +263,9 @@ export class SubmitterService {
       rewardsClaimTree: {
         rootHash: claimRootHex,
         leaves: claimLeafs,
-        proofs: Object.fromEntries(claimLeafs.map((v) => [v.user, getMerkleProof(encodedLeaves, leafToEncoded(v))])),
+        proofs: Object.fromEntries(
+          claimLeafs.map((v) => [v.user, [{ id: v.id, proofs: getMerkleProof(encodedLeaves, leafToEncoded(v)) }]])
+        ),
       },
     };
   }

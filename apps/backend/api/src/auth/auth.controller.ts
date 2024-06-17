@@ -19,12 +19,14 @@ export class AuthController {
     @Query('nonce') nonce: string,
     @Query('pubKey') pubKey: string
   ) {
-    return this.authService.createAccessToken({ signature, nonce, pubKey: new PublicKey(pubKey) });
+    return {
+      accessToken: await this.authService.createAccessToken({ signature, nonce, pubKey: new PublicKey(pubKey) }),
+    };
   }
 
   @Get('/message')
   async getSignMessage(@Query('pubKey') pubKey: string) {
     const authNonce = await this.authService.getAuthNonce(new PublicKey(pubKey));
-    return this.authService.getSignMessage(authNonce);
+    return { message: this.authService.getSignMessage(authNonce), nonce: authNonce };
   }
 }

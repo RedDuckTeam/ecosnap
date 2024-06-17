@@ -12,6 +12,7 @@ import { DaoModule } from './dao/dao.module';
 import { GcModule } from './gc/gc.module';
 import { StorageModule } from '@gc/storage';
 import { CleanupEventModule } from './cleanup-event/cleanup-event.module';
+import { AchievementsModule } from './achievements/achievements.module';
 
 class GlobalProviders {
   static forRoot(): DynamicModule {
@@ -51,11 +52,11 @@ class GlobalProviders {
       inject: [ConfigService],
       useFactory: async (config: ConfigService) => {
         const jwtAuthSecret = config.get('JWT_AUTH_SECRET', 'TEST-SECRET');
-        const jwtExpiresInMs = config.get('JWT_EXPIRES_IN_MS', 2 * 3600 * 1000);
+        const jwtExpiresInS = config.get('JWT_EXPIRES_IN_S', 2 * 3600);
 
         return {
           jwtAuthSecret: jwtAuthSecret,
-          jwtExpiresInMs: jwtExpiresInMs,
+          jwtExpiresInS: jwtExpiresInS,
         };
       },
     }),
@@ -66,6 +67,7 @@ class GlobalProviders {
     DaoModule,
     GcModule,
     CleanupEventModule,
+    AchievementsModule,
   ],
   providers: [],
   exports: [],
