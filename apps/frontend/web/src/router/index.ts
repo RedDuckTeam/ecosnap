@@ -4,6 +4,7 @@ import { createBrowserRouter } from 'react-router-dom';
 export const routes = {
   root: '/',
   photo: '/photo',
+  profile: '/profile',
 } as const;
 
 export const router = createBrowserRouter([
@@ -18,6 +19,10 @@ export const router = createBrowserRouter([
       {
         path: routes.photo,
         Component: lazy(() => import('@/pages/photo')),
+      },
+      {
+        path: routes.profile,
+        Component: lazy(() => import('@/pages/profile')),
       },
     ],
   },

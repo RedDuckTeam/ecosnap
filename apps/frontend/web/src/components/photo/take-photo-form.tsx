@@ -26,9 +26,6 @@ export const TakePhotoForm = () => {
     control,
     handleSubmit,
     formState: { errors },
-    setError,
-    watch,
-    reset,
   } = useForm<TakePhotoForm>({
     resolver: zodResolver(takePhotoSchema),
   });

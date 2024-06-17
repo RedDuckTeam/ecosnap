@@ -7,7 +7,7 @@ interface PhotoStore {
   setFilesAfter: (files: File[]) => void;
 }
 
-const usePhotoStore = create<PhotoStore>((set, get) => ({
+const usePhotoStore = create<PhotoStore>((set) => ({
   filesBefore: [],
   filesAfter: [],
   setFilesBefore: (files: File[]) => set({ filesBefore: files }),

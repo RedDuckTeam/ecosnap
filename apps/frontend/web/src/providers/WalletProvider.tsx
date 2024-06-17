@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 import '@solana/wallet-adapter-react-ui/styles.css';
 
 const WalletProvider: FC<PropsWithChildren> = ({ children }) => {
-  const endpoint = process.env.NEXT_PUBLIC_SOLANA_RPC_ENDPOINT || 'https://api.mainnet-beta.solana.com';
+  const endpoint = process.env.NEXT_PUBLIC_SOLANA_RPC_ENDPOINT || 'https://solana-rpc.publicnode.com';
 
   const wallets = useMemo(
     () => [

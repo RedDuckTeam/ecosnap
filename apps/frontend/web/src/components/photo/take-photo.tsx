@@ -37,7 +37,7 @@ export const TakePhoto = ({ isBefore }: Props) => {
       setPreviews(loadedPreviews);
     };
 
-    loadPreviews();
+    void loadPreviews();
   }, [currentFiles]);
 
   const { toast } = useToast();
@@ -60,7 +60,7 @@ export const TakePhoto = ({ isBefore }: Props) => {
 
       callback([...currentFiles, ...filesToAdd]);
     },
-    [currentFiles, isBefore, setFilesBefore, setFilesAfter, toast]
+    [currentFiles, isBefore, setFilesBefore, setFilesAfter, toast],
   );
 
   const handleDelete = useCallback(
@@ -69,7 +69,7 @@ export const TakePhoto = ({ isBefore }: Props) => {
       const updatedFiles = currentFiles.filter((_, i) => i !== index);
       callback(updatedFiles);
     },
-    [currentFiles, isBefore, setFilesBefore, setFilesAfter]
+    [isBefore, setFilesBefore, setFilesAfter, currentFiles],
   );
 
   return (
