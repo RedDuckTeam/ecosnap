@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 const config = [
   { label: 'Home', link: '/', icon: <div></div> },
   { label: 'Upload photo', link: '/photo', icon: <div></div> },
+  { label: 'Events', link: '/events', icon: <div></div> },
 ];
 
 export const Links = () => {
