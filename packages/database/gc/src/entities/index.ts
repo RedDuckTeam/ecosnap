@@ -12,3 +12,4 @@ export * from './Achievement.entity';
 export * from './AchievementBoostReward.entity';
 export * from './UserAchievement.entity';
 export * from './UserAchievementBoostReward.entity';
+export * from './MerkleProof.entity';
