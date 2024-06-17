@@ -5,6 +5,7 @@ import { CleanupEventParticipation } from './CleanupEventParticipation.entity';
 import { MerkleSubmission } from './MerkleSubmission.entity';
 import { CleanupEventPassCode } from './CleanupEventPassCode.entity';
 import { File } from './File.entity';
+import { AchievementBoostReward } from './AchievementBoostReward.entity';
 
 @Entity({ name: 'cleanup_event' })
 export class CleanupEvent extends TimeKnownEntity {
@@ -33,6 +34,10 @@ export class CleanupEvent extends TimeKnownEntity {
   @ManyToMany(() => User, (v) => v.cleanUpEventsAdmin, { cascade: true })
   @JoinTable()
   admins: User[];
+
+  @ManyToMany(() => AchievementBoostReward, (v) => v.cleanupEvent)
+  @JoinTable()
+  achievementBoosts: AchievementBoostReward[];
 
   @ManyToMany(() => MerkleSubmission)
   @JoinTable()

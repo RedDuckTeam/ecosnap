@@ -16,12 +16,17 @@ import crypto from 'crypto';
 import e from 'express';
 import { getFileExtensionFromFile } from '../lib/utils/utils';
 import { StorageService } from '@gc/storage';
+import { AchievementsService } from '../achievements/achievements.service';
+import { DaoService } from '../dao/dao.service';
 
 @Injectable()
 export class CleanupEventService {
+
   constructor(
     private readonly dataSource: DataSource,
+    private readonly achievementsService: AchievementsService,
     private readonly storageService: StorageService
+  private readonly daoService: DaoService
   ) {}
 
   async generatePassCode({ eventId, adminPubKey }: { eventId: string; adminPubKey: PublicKey }) {
@@ -198,7 +203,9 @@ export class CleanupEventService {
           cleanupEvent: { id: eventId },
         },
         relations: {
-          cleanupEvent: true,
+          cleanupEvent: {
+            achievementBoosts: true,
+          },
           participant: true,
         },
       });
@@ -228,8 +235,16 @@ export class CleanupEventService {
       participation.resultStatusSignature = signature;
       participation.resultsStatus = ParticipationResultsStatus.ACCEPTED;
       participation.participant.points += participation.cleanupEvent.rewards;
-      // TODO: update `canVote` status if user points >= X points
 
+      await this.achievementsService.updateUserFinishedCleanupEventAchievement(
+        {
+          event: participation.cleanupEvent,
+          user: participation.participant,
+        },
+        manager
+      );
+
+      await this.daoService.updateCanVote(participation.participant, manager);
       await manager.save(participation);
     });
   }
