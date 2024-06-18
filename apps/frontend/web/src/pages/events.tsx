@@ -3,6 +3,7 @@ import { Check, ChevronsUpDown, Loader2 } from 'lucide-react';
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { EventCard } from '@/components/events/event-card';
 import { Button } from '@/components/ui/button';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Input } from '@/components/ui/input';
@@ -29,8 +30,8 @@ export default function Events() {
   );
 
   return (
-    <main className="container">
-      <div className="flex flex-col gap-12">
+    <main className="container ">
+      <div className="flex xl:ml-[268px] flex-col gap-12">
         <div className="flex items-center gap-4">
           <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
@@ -77,20 +78,7 @@ export default function Events() {
               <Loader2 className="animate-spin h-8 w-8" />
             </div>
           ) : (
-            events?.map((event) => (
-              <div
-                key={event.id}
-                className="flex flex-col gap-4 p-4 border border-gray-200 rounded-lg shadow-md transition-all hover:scale-105 cursor-pointer"
-                onClick={() => redirectToEvent(event)}
-              >
-                <div className="flex justify-between">
-                  <h2 className="text-lg font-semibold">{event.name}</h2>
-                  <div className="text-sm text-muted-foreground">{event.date}</div>
-                </div>
-                <p className="text-sm text-muted-foreground">{cities?.find((c) => c.id === event.cityId)?.name}</p>
-                <p className="text-sm">{event.shortDescription}</p>
-              </div>
-            ))
+            events?.map((event) => <EventCard event={event} onClick={redirectToEvent} />)
           )}
         </div>
       </div>

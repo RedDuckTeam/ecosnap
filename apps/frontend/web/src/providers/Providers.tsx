@@ -3,13 +3,17 @@ import type { FC, PropsWithChildren } from 'react';
 
 import WalletProvider from './WalletProvider';
 
+import { TooltipProvider } from '@/components/ui/tooltip';
+
 const queryClient = new QueryClient();
 
 const Providers: FC<PropsWithChildren> = ({ children }) => {
   return (
-    <WalletProvider>
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-    </WalletProvider>
+    <TooltipProvider>
+      <WalletProvider>
+        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      </WalletProvider>
+    </TooltipProvider>
   );
 };
 
