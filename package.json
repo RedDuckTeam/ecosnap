@@ -14,6 +14,7 @@
     "run:api": "yarn build:api && yarn dev --filter=@apps/api",
     "run:submitter": "yarn build:submitter && yarn dev --filter=@apps/merkle-submitter"
   },
+  "packageManager": "yarn@1.22.22",
   "devDependencies": {
     "prettier": "^3.2.5",
     "turbo": "latest"

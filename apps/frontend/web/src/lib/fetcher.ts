@@ -21,11 +21,11 @@ export class Fetcher {
     );
   }
 
-  public async post<T>(url: string, body?: Record<string, unknown>) {
+  public async post<T>(url: string, body?: Record<string, unknown>, headers?: Record<string, string>) {
     return this._processResponse<T>(
       fetch(new URL(url, this._baseURL), {
         method: 'POST',
-        headers: this._headers,
+        headers: {...this._headers, ...(headers ?? {})},
         body: body ? JSON.stringify(body) : undefined,
       }),
     );
