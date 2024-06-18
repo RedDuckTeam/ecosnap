@@ -6,14 +6,14 @@ module.exports = {
   theme: {
     container: {
       center: true,
-      padding: '2rem',
+      padding: '1rem',
       screens: {
         '2xl': '1400px',
       },
     },
     extend: {
       boxShadow: {
-        glow: '0 0 4px 2px #28CCAF',
+        glow: '0 0 6px 1px #28CCAF',
       },
       colors: {
         danger: '#FE4756',

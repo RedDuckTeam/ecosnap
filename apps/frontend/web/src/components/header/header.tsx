@@ -16,7 +16,7 @@ export const Header = () => {
           <TextLogo className="max-xl:w-[63px]" />
         </NavLink>
       </div>
-      <div className="[&_button]:bg-transparent wallet-button flex items-center [&_button]:hover:bg-transparent [&_img]:!hidden">
+      <div className="[&_button]:bg-transparent wallet-button flex items-center [&_button]:hover:bg-transparent">
         {generateBlockies(publicKey)}
         <WalletMultiButton />
       </div>

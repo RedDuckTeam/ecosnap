@@ -1,4 +1,4 @@
-import { RewardSystem } from '@/components/home/reward-system/reward-system';
+// import { RewardSystem } from '@/components/home/reward-system/reward-system';
 import { PostsTabs } from '@/components/posts/posts';
 
 export default function Posts() {

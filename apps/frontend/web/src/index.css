@@ -69,7 +69,7 @@
 .wallet-adapter-button:hover {
   background: transparent !important;
 }
-.wallet-adapter-button-start-icon {
+.wallet-adapter-button-trigger > i {
   display: none !important;
 }
 

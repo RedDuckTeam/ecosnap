@@ -62,7 +62,7 @@ export default function NewPost() {
 
       setFiles([...currentFiles, ...filesToAdd]);
     },
-    [currentFiles, setFiles, toast]
+    [currentFiles, setFiles, toast],
   );
 
   const handleDelete = useCallback(
@@ -70,7 +70,7 @@ export default function NewPost() {
       const updatedFiles = currentFiles.filter((_, i) => i !== index);
       setFiles(updatedFiles);
     },
-    [currentFiles, setFiles]
+    [currentFiles, setFiles],
   );
 
   return (

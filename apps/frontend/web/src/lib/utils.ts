@@ -9,3 +9,9 @@ export const shortenAddress = (address: string) => {
   if (!address) return '';
   return `${address.slice(0, 4)}...${address.slice(-4)}`;
 };
+
+export function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  const options: Intl.DateTimeFormatOptions = { weekday: 'short', day: 'numeric', month: 'short' };
+  return date.toLocaleDateString('en-US', options);
+}
