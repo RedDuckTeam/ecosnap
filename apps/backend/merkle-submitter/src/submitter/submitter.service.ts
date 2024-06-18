@@ -117,11 +117,11 @@ export class SubmitterService {
           id: file.id,
           contentHash: contentHash,
           fileExtension: 'json',
-          remoteStorageId: await this.storageService.writeFile({
+          ...(await this.storageService.writeFile({
             content: Buffer.from(file.fileContent),
             id: file.id,
             extension: 'json',
-          }),
+          })),
         })
       );
 

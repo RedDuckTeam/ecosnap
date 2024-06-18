@@ -31,7 +31,7 @@ export class MerkleSubmission extends TimeKnownEntity {
   @Column({ type: 'enum', enum: MerkleTreeType })
   treeType: MerkleTreeType;
 
-  @Column({ type: 'enum', enum: SubmissionType })
+  @Column({ type: 'enum', enum: SubmissionType, default: SubmissionType.GC })
   submissionType: SubmissionType;
 
   @OneToOne(() => File, { cascade: true, onDelete: 'CASCADE' })

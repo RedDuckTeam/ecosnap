@@ -15,6 +15,7 @@ import { CleanupEventModule } from './cleanup-event/cleanup-event.module';
 import { AchievementsModule } from './achievements/achievements.module';
 import { PointsModule } from './points/points.module';
 import { MerkleController } from './merkle/merkle.controller';
+import { MerkleModule } from './merkle/merkle.module';
 
 class GlobalProviders {
   static forRoot(): DynamicModule {
@@ -71,7 +72,7 @@ class GlobalProviders {
     CleanupEventModule,
     AchievementsModule,
     PointsModule,
-    MerkleController,
+    MerkleModule,
   ],
   providers: [],
   exports: [],

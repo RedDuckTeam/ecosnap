@@ -310,11 +310,14 @@ export class CleanupEventService {
         );
 
         // TODO: not a good idea to have it inside of a db transaction
-        dbFile.remoteStorageId = await this.storageService.writeFile({
-          content: file.buffer,
-          extension: dbFile.fileExtension,
-          id: dbFile.id,
-        });
+        dbFile = {
+          ...dbFile,
+          ...(await this.storageService.writeFile({
+            content: file.buffer,
+            extension: dbFile.fileExtension,
+            id: dbFile.id,
+          })),
+        };
 
         await fileRepo.save(dbFile);
       }

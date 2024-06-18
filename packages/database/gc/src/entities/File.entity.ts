@@ -14,6 +14,9 @@ export class File extends TimeKnownEntity {
   @Column({ type: 'varchar', nullable: true })
   remoteStorageId?: string;
 
+  @Column({ type: 'varchar', nullable: true })
+  uri?: string;
+
   @Column({ type: 'varchar', length: 64 })
   contentHash: string;
 
