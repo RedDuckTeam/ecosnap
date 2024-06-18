@@ -30,9 +30,26 @@ export class CleanupEventService {
   async getAllEvents() {
     return await this.dataSource.manager.transaction(async (manager) => {
       const eventRepo = manager.getRepository(CleanupEvent);
-      const events = await eventRepo.find({});
+      const events = await eventRepo.find({
+        relations: {
+          participants: true,
+          admins: true,
+          files: true,
+        },
+      });
       return events.map((v) => ({
-        ...events,
+        id: v.id,
+        city: v.city,
+        name: v.name,
+        pictureUrl: v.pictureUrl,
+        rewards: v.rewards,
+        eventStartsAt: v.eventStartsAt,
+        eventEndsAt: v.eventEndsAt,
+        participants: v.participants.length,
+        maximumParticipants: v.maximumParticipants,
+        description: v.description,
+        admins: v.admins.map((a) => a.pubKey.toBase58()),
+        files: v.files,
       }));
     });
   }

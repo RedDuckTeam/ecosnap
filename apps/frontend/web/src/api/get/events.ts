@@ -17,7 +17,7 @@ type Events = {
   }[];
 };
 
-const GET_EVENTS = '/events';
+const GET_EVENTS = '/cleanup-event';
 
 export const getEvents = async () => {
   const events = await httpClient.get<Events>(`${GET_EVENTS}`);

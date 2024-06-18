@@ -1,6 +1,6 @@
 import { httpClient } from '../client';
 
-const POST = '/admin/result/accept';
+const POST = 'cleanup-event/admin/result/accept';
 
 export const postParticipationResultAccept = async ({
   jwt,

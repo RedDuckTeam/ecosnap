@@ -19,7 +19,7 @@ export const postVote = async ({
   voteDirection: CastVoteDirection;
 }) => {
   await httpClient.post<void>(
-    `${POST_VOTE}/`,
+    `${POST_VOTE}`,
     {
       garbageCollectId,
       signature,
