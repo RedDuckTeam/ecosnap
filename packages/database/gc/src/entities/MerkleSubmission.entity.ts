@@ -12,6 +12,11 @@ export enum MerkleTreeType {
   ONLY_PROOFS,
 }
 
+export enum SubmissionType {
+  GC,
+  ACHIEVEMENTS,
+}
+
 @Entity({ name: 'merkle_submission' })
 export class MerkleSubmission extends TimeKnownEntity {
   @PrimaryGeneratedColumn('uuid')
@@ -25,6 +30,9 @@ export class MerkleSubmission extends TimeKnownEntity {
 
   @Column({ type: 'enum', enum: MerkleTreeType })
   treeType: MerkleTreeType;
+
+  @Column({ type: 'enum', enum: SubmissionType })
+  submissionType: SubmissionType;
 
   @OneToOne(() => File, { cascade: true, onDelete: 'CASCADE' })
   @JoinColumn()

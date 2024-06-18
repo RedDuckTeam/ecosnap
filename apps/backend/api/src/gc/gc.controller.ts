@@ -21,9 +21,13 @@ import { FileFieldsInterceptor, FileInterceptor, FilesInterceptor } from '@nestj
 import 'multer';
 import { RequestUser, UserClaims } from '../decorators/request-user.decorator';
 import { IsOptional, IsString, MaxLength } from 'class-validator';
-import { PublicKey } from '@solana/web3.js';
+
 import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
 import { mediaFilter } from '../lib/media-filter/mediaFilter';
+
+import { DataSource } from 'typeorm';
+
+
 
 export const GC_API_TAG = 'GC';
 
@@ -43,7 +47,25 @@ const mediaOptions: MulterOptions = {
 @Controller('gc')
 @ApiTags(GC_API_TAG)
 export class GcController {
-  constructor(private readonly gcService: GcService) {}
+  constructor(
+    private readonly gcService: GcService,
+    private readonly dataSource: DataSource
+  ) {}
+
+  @Get('/submission/last')
+  async getLastSubmission() {
+    return await this.dataSource.transaction(this.gcService.getLastSubmissions);
+  }
+
+  @Get('/:pubkey')
+  async getAllGcs(@Query('pubkey') pubkey: string) {
+    return await this.gcService.getGcsByPubkey({ pubkey: new PublicKey(pubkey) });
+  }
+
+  @Get('/')
+  async getGcs() {
+    return await this.gcService.getGcs();
+  }
 
   @Post('/')
   @UseUserAuthGuard()
