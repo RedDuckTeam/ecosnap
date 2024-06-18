@@ -16,6 +16,6 @@ export class PointsController {
   @Get('/')
   @UseUserAuthGuard()
   async postCastVote(@RequestUser() user: UserClaims) {
-    return await this.pointsService.getUserPoints(user.pubKey);
+    return { points: await this.pointsService.getUserPoints(user.pubKey) };
   }
 }

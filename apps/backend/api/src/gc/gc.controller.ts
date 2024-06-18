@@ -26,8 +26,7 @@ import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer
 import { mediaFilter } from '../lib/media-filter/mediaFilter';
 
 import { DataSource } from 'typeorm';
-
-
+import { PublicKey } from '@solana/web3.js';
 
 export const GC_API_TAG = 'GC';
 
