@@ -1,25 +1,19 @@
-import { useWallet } from '@solana/wallet-adapter-react';
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
-
-import { Button } from '@/components/ui/button';
-import { useSendIntroSignature } from '@/hooks/mutations/signatures/use-send-intro-signature';
+import { NFTs } from '@/components/home/nfts/nfts';
+import { Points } from '@/components/home/points/points';
+import { RewardSystem } from '@/components/home/reward-system/reward-system';
+import { TokensAvailable } from '@/components/home/tokens/tokens-available';
 
 export default function Home() {
-  const { connected } = useWallet();
-  const { mutateAsync: sendIntro } = useSendIntroSignature();
-
-  const onSignMessage = async () => {
-    try {
-      await sendIntro();
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   return (
-    <main className={`flex flex-1 flex-col items-center justify-between p-24`}>
-      <WalletMultiButton />
-      {connected && <Button onClick={onSignMessage}>Sign message</Button>}
-    </main>
+    <div className="flex gap-[88px]">
+      <main className={`flex flex-1 container xl:ml-[268px] max-w-[560px] flex-col items-center gap-6 p-4`}>
+        <TokensAvailable />
+        <Points />
+        <NFTs />
+      </main>
+      <div className="max-xl:hidden xl:mr-4">
+        <RewardSystem />
+      </div>
+    </div>
   );
 }
