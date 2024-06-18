@@ -6,7 +6,7 @@ export const Footer = () => {
   const pathname = useLocation().pathname;
 
   return (
-    <nav className="xl:hidden w-full flex justify-around pt-4 pb-10 fixed bottom-0 left-0 bg-gray-blue">
+    <nav className="xl:hidden w-full flex justify-around py-4 fixed bottom-0 left-0 bg-gray-blue">
       {config.map((link) => (
         <NavLink
           key={link.label}

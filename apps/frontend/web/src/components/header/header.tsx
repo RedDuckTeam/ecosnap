@@ -1,8 +1,9 @@
+import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { NavLink } from 'react-router-dom';
 
 import { TextLogo } from '../icons/text-logo';
-import { useWallet } from '@solana/wallet-adapter-react';
+
 import { generateBlockies } from '@/lib/blockies';
 
 export const Header = () => {

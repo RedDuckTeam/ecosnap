@@ -7,9 +7,9 @@ export default function Posts() {
       <main className={`flex flex-1 container xl:ml-[268px] max-w-[560px] flex-col items-center gap-6 p-4`}>
         <PostsTabs />
       </main>
-      <div className="max-xl:hidden xl:mr-4">
+      {/* <div className="max-xl:hidden xl:mr-4">
         <RewardSystem />
-      </div>
+      </div> */}
     </div>
   );
 }

@@ -1,7 +1,13 @@
+import { useMemo } from 'react';
+import { NavLink } from 'react-router-dom';
+
+import { Post } from './post';
+
 import { NewPost } from '../icons/new-post';
 import { Button } from '../ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
-import { Post } from './post';
+
+import { routes } from '@/router';
 
 const config = [
   {
@@ -23,26 +29,42 @@ const config = [
 ];
 
 export const PostsTabs = () => {
+  const myPosts = useMemo(() => {
+    return config.filter((post) => post.isMy);
+  }, []);
+
+  const discoverPosts = useMemo(() => {
+    return config.filter((post) => !post.isMy);
+  }, []);
+
   return (
-    <Tabs defaultValue="my-posts" className="w-full flex items-center flex-col">
+    <Tabs defaultValue="my-posts" className="w-full  flex items-center flex-col">
       <TabsList className="mx-auto">
         <TabsTrigger value="my-posts">My posts</TabsTrigger>
         <TabsTrigger value="discover">Discover</TabsTrigger>
       </TabsList>
-      <div className="relative">
-        <TabsContent value="my-posts">
-          {config.map((post, i) => (
-            <div className="flex flex-col ">
-              <Post isMy={post.isMy} address={post.address} />
-              {i < config.length - 1 && <div className="w-full h-[1px] my-4 bg-gray-blue" />}
-            </div>
-          ))}
-          <Button className="rounded-full fixed top-0 left-0 p-3 shadow-glow">
-            <NewPost />
-          </Button>
-        </TabsContent>
-        <TabsContent value="discover">Change your password here.</TabsContent>
-      </div>
+
+      <TabsContent value="my-posts">
+        {myPosts.map((post, i) => (
+          <div className="flex flex-col ">
+            <Post isMy={post.isMy} address={post.address} />
+            {i < myPosts.length - 1 && <div className="w-full h-[1px] my-4 bg-gray-blue" />}
+          </div>
+        ))}
+      </TabsContent>
+      <TabsContent value="discover">
+        {discoverPosts.map((post, i) => (
+          <div className="flex flex-col ">
+            <Post isMy={post.isMy} address={post.address} />
+            {i < discoverPosts.length - 1 && <div className="w-full h-[1px] my-4 bg-gray-blue" />}
+          </div>
+        ))}
+      </TabsContent>
+      <NavLink to={routes.newPost}>
+        <Button className="rounded-full xl:hidden fixed bottom-[150px] lg:right-[20%] right-[10%]  p-3 shadow-glow">
+          <NewPost />
+        </Button>
+      </NavLink>
     </Tabs>
   );
 };

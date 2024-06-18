@@ -20,7 +20,7 @@ export const Post = ({ isMy, address }: Props) => {
         </div>
         <div className="flex items-center gap-3">
           <p className="text-[12px] font-medium text-gray">15 min</p>
-          {isMy && <Button>s</Button>}
+          {isMy && <Button className="p-2 h-4">...</Button>}
         </div>
       </div>
       <div className="flex flex-col gap-3">
