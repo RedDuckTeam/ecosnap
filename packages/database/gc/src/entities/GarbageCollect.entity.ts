@@ -1,27 +1,35 @@
-import { Column, Entity, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { TimeKnownEntity } from '@gc/database-common';
 import { DaoVote } from './DaoVote.entity';
 import { User } from './User.entity';
-import { GarbageCollectDaoMerkleSubmission } from './GarbageCollectDaoMerkleSubmission.entity';
+import { File } from './File.entity';
+import { MerkleSubmission } from './MerkleSubmission.entity';
 
 @Entity({ name: 'garbage_collect' })
 export class GarbageCollect extends TimeKnownEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+  // TODO: should add user`s signature here
 
-  @ManyToOne(() => User, (v) => v.garbageCollects, { nullable: false, eager: true, onDelete: 'CASCADE' })
-  user: User;
+  @Column({ type: 'int', nullable: true })
+  pointsGiven?: number;
+
+  @Column({ type: 'varchar', nullable: true, length: 120 })
+  description?: string;
+
+  @Column({ type: 'boolean', default: false })
+  merkleSubmitted: boolean;
 
   @OneToMany(() => DaoVote, (v) => v.garbageCollect, { cascade: true })
   daoVotes: DaoVote[];
 
-  @Column({ type: 'number', nullable: true })
-  pointsGiven?: number;
+  @OneToMany(() => File, (v) => v.garbageCollect, { cascade: true })
+  files: File[];
 
-  @ManyToOne(() => GarbageCollectDaoMerkleSubmission, (v) => v.garbageCollects, {
-    nullable: true,
-    eager: true,
-    onDelete: 'CASCADE',
-  })
-  merkleSubmission?: GarbageCollectDaoMerkleSubmission;
+  @ManyToOne(() => User, (v) => v.garbageCollects, { nullable: false, eager: true, onDelete: 'CASCADE' })
+  user: User;
+
+  @ManyToMany(() => MerkleSubmission, { cascade: true })
+  @JoinTable()
+  merkleSubmissions: MerkleSubmission[];
 }

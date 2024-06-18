@@ -1,6 +1,6 @@
 {
   "extends": "@gc/typescript-config/nestjs.json",
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "src/entities/.entity.ts", "src/entities/.entity.ts"],
   "compilerOptions": {
     "outDir": "dist",
     "emitDecoratorMetadata": true,

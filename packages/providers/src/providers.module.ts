@@ -3,13 +3,30 @@ import { ASYNC_OPTIONS_TYPE, ConfigurableModuleClass, ProvidersModuleConfig } fr
 
 import { ConfigService } from '@nestjs/config';
 import { ProvidersService } from './providers.service';
+import { PublicKey } from '@solana/web3.js';
 
 export const providersModuleDefaultFactory = (configService: ConfigService) => {
-  const solRpc = configService.get<string>('SOL_RPC');
+  const solRpc = configService.get<string>('SOL_RPC', 'https://api.mainnet-beta.solana.com');
+  const solPk = configService.get<string>('SOL_PK');
+  const solMerkleSubmitter = configService.get<string>(
+    'SOL_MERKLE_SUBMITTER_PROGRAM_ID',
+    '5Mew5NxqLr5NGG6VbHtkNNK6LNGa5ucKyuV6stWmfy16'
+  );
+  const globalState = configService.get<string>(
+    'SOL_MERKLE_SUBMITTER_GLOBAL_STATE',
+    '5Mew5NxqLr5NGG6VbHtkNNK6LNGa5ucKyuV6stWmfy16' // FIXME
+  );
 
   return {
     sol: {
       rpc: solRpc,
+      pk: solPk,
+      programs: {
+        merkleSubmitter: {
+          programId: new PublicKey(solMerkleSubmitter),
+          globalState: new PublicKey(globalState),
+        },
+      },
     },
   } as ProvidersModuleConfig;
 };
