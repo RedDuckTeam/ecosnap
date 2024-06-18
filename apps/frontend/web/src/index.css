@@ -66,9 +66,26 @@
   }
 }
 
+.wallet-adapter-button:hover {
+  background: transparent !important;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-thumb {
+  background: #28ccaf;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px rgba(255, 255, 255, 0);
+  border-radius: 10px;
+}
+
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border text-light;
   }
   body {
     @apply bg-background text-foreground;

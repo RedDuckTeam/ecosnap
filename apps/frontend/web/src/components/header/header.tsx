@@ -1,16 +1,20 @@
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { NavLink } from 'react-router-dom';
 
-import { Links } from './links';
+import { TextLogo } from '../icons/text-logo';
 
 export const Header = () => {
   return (
-    <div className="flex justify-between items-center">
+    <div className="flex justify-between items-center p-4">
       <div className="flex items-center gap-4">
-        <NavLink to={'/'}>LOGO</NavLink>
-        <Links />
+        <NavLink to={'/'} className="flex items-center gap-3">
+          <img alt="logo" src="/images/logo.png" />
+          <TextLogo />
+        </NavLink>
       </div>
-      <WalletMultiButton />
+      <div className="[&_button]:bg-transparent wallet-button [&_button]:hover:bg-transparent [&_img]:rounded-full">
+        <WalletMultiButton />
+      </div>
     </div>
   );
 };
