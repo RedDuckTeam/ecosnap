@@ -1,6 +1,6 @@
 import { httpClient } from '../client';
 
-type Events = {
+export type Events = {
   events: {
     id: string;
     city: string;

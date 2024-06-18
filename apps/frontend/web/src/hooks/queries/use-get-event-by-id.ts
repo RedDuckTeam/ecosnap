@@ -7,7 +7,7 @@ export const useGetEventById = (id: string | undefined) => {
 
   return useQuery({
     queryKey: ['event', events, id],
-    queryFn: async () => {
+    queryFn: () => {
       return events?.find((e) => e.id === id) ?? null;
     },
     enabled: !!events && !!id,

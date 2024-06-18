@@ -69,11 +69,11 @@ export default function Event() {
         <div className="rounded-[16px] bg-gray-blue p-4 flex gap-2 items-center flex-wrap mb-6">
           <div className="flex gap-1.5 items-center">
             <Calendar />
-            {formatDate(new Date(city.eventStartsAt as number))}
+            {formatDate(new Date(city.eventStartsAt))}
           </div>
           <div className="flex gap-1.5 items-center">
             <Clock />
-            {formatDate(new Date(city.eventStartsAt as number))}
+            {formatDate(new Date(city.eventStartsAt))}
           </div>
           {location && (
             <div className="flex gap-1.5 items-center">
