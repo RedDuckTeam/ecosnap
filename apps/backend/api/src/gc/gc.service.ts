@@ -1,9 +1,9 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PublicKey } from '@solana/web3.js';
-import { DataSource } from 'typeorm';
+import { DataSource, EntityManager, IsNull, Not } from 'typeorm';
 import { StorageService } from '@gc/storage';
 import 'multer';
-import { File, GarbageCollect, User } from '@gc/database-gc';
+import { File, GarbageCollect, MerkleSubmission, MerkleTreeType, SubmissionType, User } from '@gc/database-gc';
 
 import crypto from 'crypto';
 @Injectable()
@@ -12,6 +12,43 @@ export class GcService {
     private readonly dataSource: DataSource,
     private readonly storageService: StorageService
   ) {}
+
+  async getLastSubmissions(manager: EntityManager) {
+    const lastFull = await manager.getRepository(MerkleSubmission).findOne({
+      order: {
+        createdAt: 'DESC',
+      },
+      where: {
+        submissionType: SubmissionType.GC,
+        treeType: MerkleTreeType.FULL,
+        treeFile: Not(IsNull()),
+        submissionTxHash: Not(IsNull()),
+      },
+      relations: {
+        treeFile: true,
+      },
+    });
+
+    const lastProofs = await manager.getRepository(MerkleSubmission).findOne({
+      order: {
+        createdAt: 'DESC',
+      },
+      where: {
+        submissionType: SubmissionType.GC,
+        treeType: MerkleTreeType.ONLY_PROOFS,
+        treeFile: Not(IsNull()),
+        submissionTxHash: Not(IsNull()),
+      },
+      relations: {
+        treeFile: true,
+      },
+    });
+
+    return {
+      lastFull,
+      lastProofs,
+    };
+  }
 
   async publish({
     files,

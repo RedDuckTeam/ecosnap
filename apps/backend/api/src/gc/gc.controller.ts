@@ -17,6 +17,7 @@ import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import 'multer';
 import { RequestUser, UserClaims } from '../decorators/request-user.decorator';
 import { IsOptional, IsString, MaxLength } from 'class-validator';
+import { DataSource } from 'typeorm';
 
 export const GC_API_TAG = 'GC';
 
@@ -42,7 +43,15 @@ const fileValidationPipe = new ParseFilePipeBuilder()
 @Controller('gc')
 @ApiTags(GC_API_TAG)
 export class GcController {
-  constructor(private readonly gcService: GcService) {}
+  constructor(
+    private readonly gcService: GcService,
+    private readonly dataSource: DataSource
+  ) {}
+
+  @Get('/submission/last')
+  async getLastSubmission() {
+    return await this.dataSource.transaction(this.gcService.getLastSubmissions);
+  }
 
   @Post('/')
   @UseUserAuthGuard()
