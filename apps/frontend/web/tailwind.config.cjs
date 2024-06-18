@@ -16,6 +16,7 @@ module.exports = {
         glow: '0 0 4px 2px #28CCAF',
       },
       colors: {
+        danger: '#FE4756',
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',

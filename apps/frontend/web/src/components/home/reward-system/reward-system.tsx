@@ -8,11 +8,19 @@ export const RewardSystem = () => {
   return (
     <div className="flex  xl:max-w-[430px] xl:rounded-[16px] xl:p-6 right-4 bg-gray-blue top-0 flex-col gap-4">
       <h1 className="font-semibold text-[18px]">Reward system</h1>
-      <h2 className="text-[16px] font-semibold">Points</h2>
-      <div className="grid grid-cols-2 gap-4">
-        <PointsItem label="First 10 garbage/day" value={'25'} />
-        <PointsItem label="Every next garbage" value={'10'} />
-        <PointsItem label="Team participation" value={'200'} />
+      <h2 className="text-[16px] font-semibold">
+        Points<sup className="text-danger text-[16px] relative top-0">*</sup>
+      </h2>
+      <div className="flex flex-col gap-2">
+        <div className="grid grid-cols-2 gap-4">
+          <PointsItem label="First 10 garbage/day" value={'25'} />
+          <PointsItem label="Every next garbage" value={'10'} />
+          <PointsItem label="Team participation" value={'200'} />
+        </div>
+        <p className="text-gray text-[12px]">
+          <sup className="text-danger relative top-0 font-bold text-[14px]">*</sup> In case if your post gets more 👍
+          Likes than 👎 Dislikes.
+        </p>
       </div>
       <h2 className="text-[16px] font-semibold">NFTs</h2>
       <div className="flex items-center gap-4">
