@@ -6,19 +6,11 @@ pub struct InitializeGlobalState<'info> {
     #[account(mut)]
     pub signer: Signer<'info>,
 
-    #[account(
-        init,
-        payer = signer,
-        space = GlobalState::MEM_LENGTH
-    )]
-    pub global_state: Account<'info, GlobalState>,
-
     pub system_program: Program<'info, System>,
 }
 
-pub fn handle(ctx: Context<InitializeGlobalState>, authority: Pubkey) -> Result<()> {
-    let state = &mut ctx.accounts.global_state;
-    state.authority = authority;
+pub fn handle(ctx: Context<InitializeGlobalState>, address: Pubkey) -> Result<()> {
+    let gc_address = address;
 
     Ok(())
 }

@@ -1,28 +1,38 @@
 use anchor_lang::prelude::*;
 
-pub mod constants;
-pub mod errors;
-pub mod events;
 pub mod instructions;
-pub mod state;
 pub mod utils;
+pub mod state;
+pub mod errors;
+pub mod constants;
 
 use instructions::*;
+pub use utils::*;
+pub use state::*;
 
-declare_id!("5Mew5NxqLr5NGG6VbHtkNNK6LNGa5ucKyuV6stWmfy16");
+declare_id!("7PkvYFurAyci1hZFhkvfwHvMFZt9ctdpK8pogGNVizjm");
 
 #[program]
-pub mod gc {
+pub mod nft {
     use super::*;
 
-    pub fn initialize_global_state(
-        ctx: Context<InitializeGlobalState>,
-        authority: Pubkey,
+     pub fn initialize_global_state(
+         ctx: Context<InitializeGlobalState>,
+         gc_address: Pubkey,
+     ) -> Result<()> {
+         initialize_global_state::handle(ctx, gc_address)
+     }
+
+    pub fn create_mint_account(
+        ctx: Context<CreateMintAccount>,
+        args: CreateMintAccountArgs,
     ) -> Result<()> {
-        initialize_global_state::handle(ctx, authority)
+        instructions::handler(ctx, args)
     }
 
-    pub fn new_root(ctx: Context<NewRoot>, external_id: [u8; 16], root: [u8; 32]) -> Result<()> {
-        new_root::handle(ctx, external_id, root)
+    pub fn check_mint_extensions_constraints(
+        _ctx: Context<CheckMintExtensionConstraints>,
+    ) -> Result<()> {
+        Ok(())
     }
 }

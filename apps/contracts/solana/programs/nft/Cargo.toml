@@ -10,6 +10,7 @@ name = "nft"
 
 [features]
 cpi = ["no-entrypoint"]
+idl-build = ["anchor-lang/idl-build", "anchor-spl/idl-build"]
 no-entrypoint = []
 no-idl = []
 no-log-ix-name = []
@@ -18,4 +19,11 @@ mainnet = []
 devnet = []
 
 [dependencies]
-anchor-lang = "0.28.0"
+anchor-lang = { version = "0.30.0", features = ["init-if-needed"] }
+anchor-spl = "0.30.0"
+spl-tlv-account-resolution = "0.6.3"
+spl-transfer-hook-interface = "0.6.3"
+spl-type-length-value = "0.4.3"
+spl-pod = "0.2.2"
+
+gc = { path = "../gc", features = ["cpi"]}
