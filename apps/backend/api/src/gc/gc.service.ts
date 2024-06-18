@@ -1,9 +1,17 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PublicKey } from '@solana/web3.js';
-import { DataSource } from 'typeorm';
+import { DataSource, EntityManager, IsNull, Not } from 'typeorm';
 import { StorageService } from '@gc/storage';
 import 'multer';
-import { File, GarbageCollect, User } from '@gc/database-gc';
+import {
+  CastVoteDirection,
+  File,
+  GarbageCollect,
+  MerkleSubmission,
+  MerkleTreeType,
+  SubmissionType,
+  User,
+} from '@gc/database-gc';
 
 import crypto from 'crypto';
 @Injectable()
@@ -12,6 +20,88 @@ export class GcService {
     private readonly dataSource: DataSource,
     private readonly storageService: StorageService
   ) {}
+
+  async getGcsByPubkey({ pubkey }: { pubkey: PublicKey }) {
+    const allGcs = await this.dataSource.getRepository(GarbageCollect).find({
+      where: {
+        user: { pubKey: pubkey },
+      },
+      relations: {
+        files: true,
+        daoVotes: true,
+      },
+    });
+
+    return this.formatGcs(allGcs);
+  }
+
+  async getGcs() {
+    const allGcs = await this.dataSource.getRepository(GarbageCollect).find({
+      relations: {
+        files: true,
+        daoVotes: true,
+      },
+    });
+
+    return this.formatGcs(allGcs);
+  }
+
+  formatGcs(gcs: GarbageCollect[]) {
+    return gcs.map((v) => ({
+      daoVotes: {
+        for: v.daoVotes.filter((d) => d.voteDirection === CastVoteDirection.FOR).length,
+        against: v.daoVotes.filter((d) => d.voteDirection === CastVoteDirection.AGAINST).length,
+        threshold: 0,
+      },
+      merkleSubmitted: v.merkleSubmitted,
+      pointsGiven: v.merkleSubmitted ?? 0,
+      description: v.description,
+      id: v.id,
+      files: v.files.map((f) => {
+        return {
+          ...f,
+          // TODO: get link from storage service
+        };
+      }),
+    }));
+  }
+
+  async getLastSubmissions(manager: EntityManager) {
+    const lastFull = await manager.getRepository(MerkleSubmission).findOne({
+      order: {
+        createdAt: 'DESC',
+      },
+      where: {
+        submissionType: SubmissionType.GC,
+        treeType: MerkleTreeType.FULL,
+        treeFile: Not(IsNull()),
+        submissionTxHash: Not(IsNull()),
+      },
+      relations: {
+        treeFile: true,
+      },
+    });
+
+    const lastProofs = await manager.getRepository(MerkleSubmission).findOne({
+      order: {
+        createdAt: 'DESC',
+      },
+      where: {
+        submissionType: SubmissionType.GC,
+        treeType: MerkleTreeType.ONLY_PROOFS,
+        treeFile: Not(IsNull()),
+        submissionTxHash: Not(IsNull()),
+      },
+      relations: {
+        treeFile: true,
+      },
+    });
+
+    return {
+      lastFull,
+      lastProofs,
+    };
+  }
 
   async publish({
     files,
