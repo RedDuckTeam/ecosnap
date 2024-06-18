@@ -26,7 +26,7 @@ export default function Event() {
   const location = useMemo(() => {
     if (!city) return null;
 
-    return cities?.find((c) => c.id === city.cityId)?.name ?? null;
+    return cities?.find((c) => c.id === city.city)?.name ?? null;
   }, [cities, city]);
 
   if (isLoading) {
@@ -69,11 +69,11 @@ export default function Event() {
         <div className="rounded-[16px] bg-gray-blue p-4 flex gap-2 items-center flex-wrap mb-6">
           <div className="flex gap-1.5 items-center">
             <Calendar />
-            {formatDate(city.date)}
+            {formatDate(new Date(city.eventStartsAt))}
           </div>
           <div className="flex gap-1.5 items-center">
             <Clock />
-            {formatDate(city.date)}
+            {formatDate(new Date(city.eventStartsAt))}
           </div>
           {location && (
             <div className="flex gap-1.5 items-center">

@@ -2,7 +2,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { useMutation } from '@tanstack/react-query';
 import { encode } from 'bs58';
 
-import { useGetIntroMessage } from '../queries/use-get-intro-message';
+import { useGetIntroMessage } from '../../queries/use-get-intro-message';
 
 export const useSendIntroSignature = () => {
   const { publicKey, signMessage } = useWallet();

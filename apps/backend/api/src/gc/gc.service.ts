@@ -15,11 +15,13 @@ import {
 
 import crypto from 'crypto';
 import { getFileExtensionFromFile } from '../lib/utils/utils';
+import { DaoService } from '../dao/dao.service';
 @Injectable()
 export class GcService {
   constructor(
     private readonly dataSource: DataSource,
-    private readonly storageService: StorageService
+    private readonly storageService: StorageService,
+    private readonly daoService: DaoService
   ) {}
 
   async getGcsByPubkey({ pubkey }: { pubkey: PublicKey }) {
@@ -52,18 +54,13 @@ export class GcService {
       daoVotes: {
         for: v.daoVotes.filter((d) => d.voteDirection === CastVoteDirection.FOR).length,
         against: v.daoVotes.filter((d) => d.voteDirection === CastVoteDirection.AGAINST).length,
-        threshold: 0,
+        threshold: this.daoService.votesThreshold(),
       },
       merkleSubmitted: v.merkleSubmitted,
       pointsGiven: v.merkleSubmitted ?? 0,
       description: v.description,
       id: v.id,
-      files: v.files.map((f) => {
-        return {
-          ...f,
-          // TODO: get link from storage service
-        };
-      }),
+      files: v.files,
     }));
   }
 

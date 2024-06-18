@@ -9,7 +9,6 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useGetCities } from '@/hooks/queries/use-get-cities';
-import type { Event } from '@/hooks/queries/use-get-events';
 import { useGetEvents } from '@/hooks/queries/use-get-events';
 import { cn } from '@/lib/utils';
 
@@ -23,7 +22,7 @@ export default function Events() {
   const { data: events, isLoading: isEventsLoading } = useGetEvents(cityId, name);
 
   const redirectToEvent = useCallback(
-    (event: Event) => {
+    (event: Exclude<typeof events, undefined>[number]) => {
       navigate(`/events/${event.id}`);
     },
     [navigate],

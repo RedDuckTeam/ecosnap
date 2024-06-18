@@ -1,12 +1,12 @@
 import { Button } from '../ui/button';
 
+import type { Events } from '@/api/get/events';
 import { useGetCities } from '@/hooks/queries/use-get-cities';
-import type { Event } from '@/hooks/queries/use-get-events';
 import { formatDate } from '@/lib/utils';
 
 type Props = {
-  event: Event;
-  onClick: (event: Event) => void;
+  event: Events['events'][number];
+  onClick: (event: Events['events'][number]) => void;
 };
 
 export const EventCard = ({ event, onClick }: Props) => {
@@ -25,9 +25,9 @@ export const EventCard = ({ event, onClick }: Props) => {
       />
       <div className="flex flex-col gap-2">
         <h2 className="text-lg font-semibold">{event.name}</h2>
-        <div className="text-[14px] font-semibold">{formatDate(event.date)}</div>
-        <p className="text-sm text-gray">{cities?.find((c) => c.id === event.cityId)?.name}</p>
-        <p className="text-sm">{event.shortDescription}</p>
+        <div className="text-[14px] font-semibold">{formatDate(new Date(event.eventEndsAt))}</div>
+        <p className="text-sm text-gray">{cities?.find((c) => c.id === event.city)?.name}</p>
+        <p className="text-sm">{event.description}</p>
         <div className="flex-1 flex items-end">
           <Button>Participate</Button>
         </div>
