@@ -189,12 +189,27 @@ export class SubmitterService {
 
     if (!garbageCollectToBatch.length) return { submissions: [], toSave: [] };
 
-    const treeData = await this.generateTreeDataForGc(garbageCollectToBatch);
+    const lastFull = await this.dataSource.manager.getRepository(MerkleSubmission).findOne({
+      order: {
+        createdAt: 'DESC',
+      },
+      where: {
+        submissionType: SubmissionType.GC,
+        treeType: MerkleTreeType.FULL,
+        treeFile: Not(IsNull()),
+        submissionTxHash: Not(IsNull()),
+      },
+      relations: {
+        treeFile: true,
+      },
+    });
+
+    const treeData = await this.generateTreeDataForGc(lastFull, garbageCollectToBatch);
 
     const submissions = [
       {
         rootHash: treeData.fullTree.rootHash,
-        id: crypto.randomUUID(),
+        id: treeData.fullTree.id,
         leaves: treeData.fullTree.leaves,
         treeType: MerkleTreeType.FULL,
         submissionType: SubmissionType.GC,
@@ -202,7 +217,7 @@ export class SubmitterService {
       },
       {
         rootHash: treeData.rewardsClaimTree.rootHash,
-        id: crypto.randomUUID(),
+        id: treeData.rewardsClaimTree.id,
         leaves: treeData.rewardsClaimTree.leaves,
         proofs: treeData.rewardsClaimTree.proofs,
         submissionType: SubmissionType.GC,
@@ -233,12 +248,27 @@ export class SubmitterService {
 
     if (!achievementsToBatch.length) return { submissions: [], toSave: [] };
 
-    const treeData = await this.generateTreeDataForAchievements(achievementsToBatch);
+    const lastFull = await this.dataSource.manager.getRepository(MerkleSubmission).findOne({
+      order: {
+        createdAt: 'DESC',
+      },
+      where: {
+        submissionType: SubmissionType.ACHIEVEMENTS,
+        treeType: MerkleTreeType.FULL,
+        treeFile: Not(IsNull()),
+        submissionTxHash: Not(IsNull()),
+      },
+      relations: {
+        treeFile: true,
+      },
+    });
+
+    const treeData = await this.generateTreeDataForAchievements(lastFull, achievementsToBatch);
 
     const submissions = [
       {
         rootHash: treeData.fullTree.rootHash,
-        id: crypto.randomUUID(),
+        id: treeData.fullTree.id,
         leaves: treeData.fullTree.leaves,
         treeType: MerkleTreeType.FULL,
         submissionType: SubmissionType.ACHIEVEMENTS,
@@ -246,7 +276,7 @@ export class SubmitterService {
       },
       {
         rootHash: treeData.rewardsClaimTree.rootHash,
-        id: crypto.randomUUID(),
+        id: treeData.rewardsClaimTree.id,
         leaves: treeData.rewardsClaimTree.leaves,
         proofs: treeData.rewardsClaimTree.proofs,
         treeType: MerkleTreeType.ONLY_PROOFS,
@@ -261,9 +291,12 @@ export class SubmitterService {
     };
   }
 
-  async generateTreeDataForGc(gcs: GarbageCollect[]) {
-    const prevRootHash = Buffer.from(''); // FIXME
+  async generateTreeDataForGc(prevSubmission: MerkleSubmission | null, gcs: GarbageCollect[]) {
+    const prevRootHash = prevSubmission ? Buffer.from(prevSubmission.merkleRootHash) : Buffer.from([]); // FIXME
     const prevRootHex = prevRootHash.toString('hex');
+
+    const treeId = crypto.randomUUID();
+    const claimTreeId = crypto.randomUUID();
 
     const leafs = gcs.map((gc) => ({
       files: gc.files.map((f) => ({ hash: f.contentHash, id: f.remoteStorageId })),
@@ -306,7 +339,16 @@ export class SubmitterService {
     const rootClaim = claimMerkleTree.getRoot();
     const claimRootHex = rootClaim.toString('hex');
 
-    const leavesWithPrevRoot = [{ prevRootHash: prevRootHex, claimRootHash: claimRootHex }, ...leafs];
+    const leavesWithPrevRoot = [
+      {
+        treeId,
+        claimTreeId,
+        prevTreeId: prevSubmission?.id ?? '',
+        prevRootHash: prevRootHex,
+        claimRootHash: claimRootHex,
+      },
+      ...leafs,
+    ];
     const encodedLeaves = leavesWithPrevRoot.map((l) => JSON.stringify(l));
     const merkleTree = getMerkleTree(encodedLeaves);
     const root = merkleTree.getRoot();
@@ -314,11 +356,13 @@ export class SubmitterService {
 
     return {
       fullTree: {
+        id: treeId,
         rootHash: rootHex,
         prevRootHash: prevRootHex,
         leaves: leavesWithPrevRoot,
       },
       rewardsClaimTree: {
+        id: claimTreeId,
         rootHash: claimRootHex,
         leaves: claimLeafs,
         proofs: Object.fromEntries(
@@ -328,9 +372,12 @@ export class SubmitterService {
     };
   }
 
-  async generateTreeDataForAchievements(achievements: UserAchievement[]) {
-    const prevRootHash = Buffer.from(''); // FIXME
+  async generateTreeDataForAchievements(prevSubmission: MerkleSubmission | null, achievements: UserAchievement[]) {
+    const prevRootHash = prevSubmission ? Buffer.from(prevSubmission.merkleRootHash) : Buffer.from([]);
     const prevRootHex = prevRootHash.toString('hex');
+
+    const treeId = crypto.randomUUID();
+    const claimTreeId = crypto.randomUUID();
 
     const leafs = achievements.map((ach) => ({
       user: ach.user.pubKey,
@@ -369,7 +416,16 @@ export class SubmitterService {
     const rootClaim = claimMerkleTree.getRoot();
     const claimRootHex = rootClaim.toString('hex');
 
-    const leavesWithPrevRoot = [{ prevRootHash: prevRootHex, claimRootHash: claimRootHex }, ...leafs];
+    const leavesWithPrevRoot = [
+      {
+        treeId,
+        claimTreeId,
+        prevTreeId: prevSubmission?.id ?? '',
+        prevRootHash: prevRootHex,
+        claimRootHash: claimRootHex,
+      },
+      ...leafs,
+    ];
     const encodedLeaves = leavesWithPrevRoot.map((l) => JSON.stringify(l));
     const merkleTree = getMerkleTree(encodedLeaves);
     const root = merkleTree.getRoot();
@@ -377,11 +433,14 @@ export class SubmitterService {
 
     return {
       fullTree: {
+        id: treeId,
         rootHash: rootHex,
         prevRootHash: prevRootHex,
         leaves: leavesWithPrevRoot,
       },
       rewardsClaimTree: {
+        id: claimTreeId,
+
         rootHash: claimRootHex,
         leaves: claimLeafs,
         proofs: Object.fromEntries(
