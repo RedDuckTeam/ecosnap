@@ -28,7 +28,7 @@ async function bootstrap() {
   app.setGlobalPrefix(globalPrefix);
 
   const logger = app.get(Logger);
-  const config = new DocumentBuilder().setTitle('GC API').setVersion('1.0').build();
+  const config = new DocumentBuilder().setTitle('GC API').addBearerAuth().setVersion('1.0').build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup(`${globalPrefix}/swagger`, app, document);
 

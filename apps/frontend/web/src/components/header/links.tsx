@@ -10,7 +10,7 @@ import { routes } from '@/router';
 export const config = [
   { label: 'Home', link: routes.root, icon: <Home /> },
   { label: 'Posts', link: routes.posts, icon: <Message /> },
-  { label: 'Events', link: '/photo', icon: <Events /> },
+  { label: 'Events', link: routes.events, icon: <Events /> },
   { label: 'Market', link: '/photo', icon: <Market /> },
 ];
 

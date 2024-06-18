@@ -1,0 +1,16 @@
+# Ignore all directories named dist in all directories
+**/dist/
+
+# Ignore directories that are not formatted by Prettier
+**/node_modules/
+**/.git/
+**/.svn/
+**/.hg/
+
+# Ignore specific files
+**/*.lock
+**/*.log
+
+# Ignore files that are not formatted by Prettier
+**/*.min.js
+**/*.bundle.js

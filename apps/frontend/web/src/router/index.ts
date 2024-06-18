@@ -6,6 +6,8 @@ export const routes = {
   photo: '/photo',
   posts: '/posts',
   newPost: '/new-post',
+  events: '/events',
+  event: '/events/:id',
 } as const;
 
 export const router = createBrowserRouter([
@@ -28,6 +30,14 @@ export const router = createBrowserRouter([
       {
         path: routes.newPost,
         Component: lazy(() => import('@/pages/new-post')),
+      },
+      {
+        path: routes.events,
+        Component: lazy(() => import('@/pages/events')),
+      },
+      {
+        path: routes.event,
+        Component: lazy(() => import('@/pages/events/[id]')),
       },
     ],
   },

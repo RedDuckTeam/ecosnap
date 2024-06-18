@@ -2,7 +2,7 @@ import { ConfigurableModuleBuilder } from '@nestjs/common';
 
 export class JwtModuleOptions {
   jwtAuthSecret: string;
-  jwtExpiresInMs: number;
+  jwtExpiresInS: number;
 }
 
 export const { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN, ASYNC_OPTIONS_TYPE, OPTIONS_TYPE } =
@@ -14,7 +14,7 @@ export const { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN, ASYNC_OPTIONS_TYPE
       (definition, extras) => ({
         ...definition,
         global: extras.global,
-      }),
+      })
     )
     .setClassMethodName('forRoot')
     .build();
