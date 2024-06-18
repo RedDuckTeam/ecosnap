@@ -15,11 +15,11 @@ use anchor_spl::{
 };
 use spl_pod::optional_keys::OptionalNonZeroPubkey;
 
-use gc::state::RootState;
+use gc::state::{RootState, GlobalState};
 
 use crate::{
     get_meta_list_size, get_mint_extensible_extension_data, get_mint_extension_data,
-    update_account_lamports_to_minimum_balance, constants::*, state::GlobalState, utils::verify, errors::GcError
+    update_account_lamports_to_minimum_balance, constants::*, utils::verify, errors::GcError
 };
 
 #[derive(AnchorDeserialize, AnchorSerialize)]
@@ -35,7 +35,7 @@ pub struct CreateMintAccountArgs {
 }
 
 #[derive(Accounts)]
-#[instruction(args: CreateMintAccountArgs)]
+#[instruction(achievement_uuid: [u8;16], merkle_uuid: [u8;16])]
 pub struct CreateMintAccount<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
@@ -53,9 +53,8 @@ pub struct CreateMintAccount<'info> {
     pub receiver: UncheckedAccount<'info>,
     #[account(
         init,
-        seeds = [MINT_ACCOUNT_SEED, &args.achievement_uuid],
+        seeds = [MINT_ACCOUNT_SEED, &achievement_uuid],
         bump,
-        signer,
         payer = payer,
         mint::token_program = token_program,
         mint::decimals = 0,
@@ -76,7 +75,7 @@ pub struct CreateMintAccount<'info> {
     pub mint_token_account: Box<InterfaceAccount<'info, TokenAccount>>,
 
     #[account(
-        seeds = [RootState::SEED, global_state.key().as_ref(), &args.merkle_uuid],
+        seeds = [RootState::SEED, global_state.key().as_ref(), &merkle_uuid],
         bump
     )]
     pub root_account: Account<'info, RootState>,
@@ -118,28 +117,28 @@ impl<'info> CreateMintAccount<'info> {
     }
 }
 
-pub fn handler(ctx: Context<CreateMintAccount>, args: CreateMintAccountArgs) -> Result<()> {
+pub fn handler(ctx: Context<CreateMintAccount>,user: Pubkey, amount: u16, name: String, symbol: String, uri: String, achievement_uuid: [u8;16], merkle_uuid: [u8;16], proofs:Vec<[u8; 32]>) -> Result<()> {
     let root_account = &mut ctx.accounts.root_account;
 
-    let node = hashv(&[
-        &args.user.key().to_bytes(),
-        &args.amount.to_le_bytes(),
-        &args.name.clone().into_bytes(),
-        &args.symbol.clone().into_bytes(),
-        &args.uri.clone().into_bytes(),
-        &args.achievement_uuid,
-        &args.merkle_uuid
-    ]);
+//     let node = hashv(&[
+//         user.key().to_bytes(),
+//         amount.to_le_bytes(),
+//         name.clone().into_bytes(),
+//         symbol.clone().into_bytes(),
+//         uri.clone().into_bytes(),
+//         achievement_uuid,
+//         merkle_uuid
+//     ]);
+//
 
-    require!(
-        verify(args.proofs, root_account.root, node.to_bytes()),
-        GcError::InvalidProof
-    );
+//     require!(
+//         verify(proofs, root_account.root, node.to_bytes()),
+//         GcError::InvalidProof
+//     );
 
-    ctx.accounts.initialize_token_metadata(
-        args.name.clone(),
-        args.symbol.clone(),
-        args.uri.clone(),
+    ctx.accounts.initialize_token_metadata(name.clone(),
+       symbol.clone(),
+       uri.clone(),
     )?;
 
     ctx.accounts.mint.reload()?;

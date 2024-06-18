@@ -25,9 +25,13 @@ pub mod nft {
 
     pub fn create_mint_account(
         ctx: Context<CreateMintAccount>,
-        args: CreateMintAccountArgs,
+         user: Pubkey,amount: u16,name: String, symbol: String, uri: String,
+          achievement_uuid: [u8;16], merkle_uuid: [u8;16],
+           proofs: Vec<[u8; 32]>
     ) -> Result<()> {
-        instructions::handler(ctx, args)
+        instructions::handler(
+            ctx, user, amount, name, symbol, uri, achievement_uuid, merkle_uuid, proofs);
+        Ok(())
     }
 
     pub fn check_mint_extensions_constraints(

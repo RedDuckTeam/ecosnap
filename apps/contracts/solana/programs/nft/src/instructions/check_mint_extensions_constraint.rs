@@ -14,7 +14,6 @@ use anchor_spl::{
 };
 
 #[derive(Accounts)]
-#[instruction()]
 pub struct CheckMintExtensionConstraints<'info> {
     #[account(mut)]
     /// CHECK: can be any account
