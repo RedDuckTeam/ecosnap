@@ -12,8 +12,10 @@ export enum CastVoteDirection {
 export const postVote = async ({
     garbageCollectId,
     signature,
-    voteDirection
+    voteDirection,
+    jwt
  }: { 
+    jwt: string,
     garbageCollectId: string,
     signature: string,
     voteDirection: CastVoteDirection
@@ -22,5 +24,7 @@ export const postVote = async ({
     garbageCollectId,
     signature,
     voteDirection
+  }, { 
+    Authorization: 'Bearer ' + jwt
   }));
 };
