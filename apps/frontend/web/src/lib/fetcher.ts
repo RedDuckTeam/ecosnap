@@ -25,7 +25,7 @@ export class Fetcher {
     return this._processResponse<T>(
       fetch(new URL(url, this._baseURL), {
         method: 'POST',
-        headers: {...this._headers, ...(headers ?? {})},
+        headers: { ...this._headers, ...(headers ?? {}) },
         body: body ? JSON.stringify(body) : undefined,
       }),
     );

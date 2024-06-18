@@ -15,10 +15,10 @@ export const useSignAuth = () => {
       const encodedMessage = new TextEncoder().encode(`Authorize in GarbageCollector: ${nonce}`);
       const signature = encode(await signMessage(encodedMessage));
 
-      return { 
+      return {
         signature,
-        nonce
-      }
+        nonce,
+      };
     },
   });
 };

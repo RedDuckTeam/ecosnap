@@ -1,5 +1,3 @@
-
-
 import { httpClient } from '../client';
 
 const POST_VOTE = '/dao/vote';
@@ -10,21 +8,25 @@ export enum CastVoteDirection {
 }
 
 export const postVote = async ({
-    garbageCollectId,
-    signature,
-    voteDirection,
-    jwt
- }: { 
-    jwt: string,
-    garbageCollectId: string,
-    signature: string,
-    voteDirection: CastVoteDirection
+  garbageCollectId,
+  signature,
+  voteDirection,
+  jwt,
+}: {
+  jwt: string;
+  garbageCollectId: string;
+  signature: string;
+  voteDirection: CastVoteDirection;
 }) => {
-  (await httpClient.post<void>(`${POST_VOTE}/`, {
-    garbageCollectId,
-    signature,
-    voteDirection
-  }, { 
-    Authorization: 'Bearer ' + jwt
-  }));
+  await httpClient.post<void>(
+    `${POST_VOTE}/`,
+    {
+      garbageCollectId,
+      signature,
+      voteDirection,
+    },
+    {
+      Authorization: 'Bearer ' + jwt,
+    },
+  );
 };

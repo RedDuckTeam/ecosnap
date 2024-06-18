@@ -1,10 +1,9 @@
+import { useWallet } from '@solana/wallet-adapter-react';
 import { useQuery } from '@tanstack/react-query';
 
-import { useWallet } from '@solana/wallet-adapter-react';
 import { getUserGcs } from '@/api/get/user-gcs';
 
 export const useGetUserGcs = () => {
-
   const { publicKey } = useWallet();
 
   return useQuery({
@@ -13,6 +12,6 @@ export const useGetUserGcs = () => {
       const gcs = await getUserGcs(publicKey!.toBase58());
       return gcs;
     },
-    enabled: !!publicKey
+    enabled: !!publicKey,
   });
 };

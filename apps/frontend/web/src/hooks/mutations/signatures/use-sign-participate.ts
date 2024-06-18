@@ -6,7 +6,7 @@ export const useSignParticipate = () => {
   const { publicKey, signMessage } = useWallet();
 
   return useMutation({
-    mutationFn: async ({eventId}:{eventId: string}) => {
+    mutationFn: async ({ eventId }: { eventId: string }) => {
       if (!signMessage || !publicKey) {
         throw new Error('No sign message found');
       }
@@ -14,9 +14,9 @@ export const useSignParticipate = () => {
       const encodedMessage = new TextEncoder().encode(`Confirming participation for: ${eventId}`);
       const signature = encode(await signMessage(encodedMessage));
 
-      return { 
+      return {
         signature,
-      }
+      };
     },
   });
 };
