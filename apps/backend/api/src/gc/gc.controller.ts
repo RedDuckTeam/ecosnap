@@ -18,6 +18,7 @@ import 'multer';
 import { RequestUser, UserClaims } from '../decorators/request-user.decorator';
 import { IsOptional, IsString, MaxLength } from 'class-validator';
 import { DataSource } from 'typeorm';
+import { PublicKey } from '@solana/web3.js';
 
 export const GC_API_TAG = 'GC';
 
@@ -51,6 +52,16 @@ export class GcController {
   @Get('/submission/last')
   async getLastSubmission() {
     return await this.dataSource.transaction(this.gcService.getLastSubmissions);
+  }
+
+  @Get('/:pubkey')
+  async getAllGcs(@Query('pubkey') pubkey: string) {
+    return await this.gcService.getGcsByPubkey({ pubkey: new PublicKey(pubkey) });
+  }
+
+  @Get('/')
+  async getGcs() {
+    return await this.gcService.getGcs();
   }
 
   @Post('/')

@@ -17,6 +17,9 @@ export class CleanupEvent extends TimeKnownEntity {
   @Column({ type: 'varchar' })
   city: string;
 
+  @Column({ type: 'varchar', nullable: true })
+  pictureUrl?: string;
+
   // TODO: check those dates in cleanup service
   @Column({ type: 'timestamptz' })
   eventStartsAt: Date;
