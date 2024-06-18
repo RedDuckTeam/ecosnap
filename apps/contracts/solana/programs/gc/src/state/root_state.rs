@@ -8,5 +8,5 @@ pub struct RootState {
 impl RootState {
     pub const SEED: &'static [u8; 10] = b"root_state";
 
-    pub const MEM_LENGTH: usize = 32;
+    pub const MEM_LENGTH: usize = 8 + 32;
 }

@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   HttpStatus,
+  NotImplementedException,
   ParseFilePipeBuilder,
   Post,
   Query,
@@ -17,6 +18,9 @@ import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import 'multer';
 import { RequestUser, UserClaims } from '../decorators/request-user.decorator';
 import { IsOptional, IsString, IsUUID, MaxLength } from 'class-validator';
+import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
+import { mediaFilter } from '../lib/media-filter/mediaFilter';
+import { PublicKey } from '@solana/web3.js';
 
 export const CLEANUP_EVENT_API_TAG = 'Cleanup event';
 
@@ -64,10 +68,26 @@ export class AcceptResultsDTO {
   eventId: string;
 }
 
+export class PublishEventDTO {
+  @ApiProperty({ type: String })
+  @IsUUID()
+  eventId: string;
+}
+
+const mediaOptions: MulterOptions = {
+  limits: { fileSize: 100_000_000 },
+  fileFilter: mediaFilter,
+};
+
 @Controller('cleanup-event')
 @ApiTags(CLEANUP_EVENT_API_TAG)
 export class CleanupController {
   constructor(private readonly cleanUpEventService: CleanupEventService) {}
+
+  @Get('/')
+  async getAllEvents() {
+    return { events: await this.cleanUpEventService.getAllEvents() };
+  }
 
   @Post('/participate')
   @UseUserAuthGuard()
@@ -114,6 +134,33 @@ export class CleanupController {
       eventId,
       participationId,
       signature,
+    });
+  }
+
+  @Post('/admin/result/publish')
+  @UseUserAuthGuard()
+  @UseInterceptors(
+    FileFieldsInterceptor(
+      [
+        { name: 'photos', maxCount: 3 },
+        { name: 'videos', maxCount: 2 },
+      ],
+      mediaOptions
+    )
+  )
+  async postPublishEvent(
+    @Body() { eventId }: PublishEventDTO,
+    @RequestUser() user: UserClaims,
+    @UploadedFiles()
+    { photos, videos }: { photos?: Express.Multer.File[]; videos?: Express.Multer.File[] }
+  ) {
+    return await this.cleanUpEventService.publishEvent({
+      eventId,
+      adminPubKey: user.pubKey,
+      files: {
+        photos: photos ?? [],
+        videos: videos ?? [],
+      },
     });
   }
 

@@ -4,6 +4,7 @@ import { DaoVote } from './DaoVote.entity';
 import { GarbageCollect } from './GarbageCollect.entity';
 import { AuthNonce } from './AuthNonce.entity';
 import { PublicKey } from '@solana/web3.js';
+import { CleanupEvent } from './CleanupEvent.entity';
 
 @Entity({ name: 'file' })
 export class File extends TimeKnownEntity {
@@ -13,6 +14,9 @@ export class File extends TimeKnownEntity {
   @Column({ type: 'varchar', nullable: true })
   remoteStorageId?: string;
 
+  @Column({ type: 'varchar', nullable: true })
+  uri?: string;
+
   @Column({ type: 'varchar', length: 64 })
   contentHash: string;
 
@@ -21,4 +25,7 @@ export class File extends TimeKnownEntity {
 
   @ManyToOne(() => GarbageCollect, (v) => v.files, { nullable: true, onDelete: 'SET NULL' })
   garbageCollect?: GarbageCollect;
+
+  @ManyToOne(() => CleanupEvent, (v) => v.files, { nullable: true, onDelete: 'SET NULL' })
+  cleanupEvent?: CleanupEvent;
 }

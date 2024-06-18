@@ -14,7 +14,7 @@ export class StorageService {
     return new Akord(wallet);
   }
 
-  async writeFile({ content, id, extension }: { content: Buffer; id: string; extension: string }): Promise<string> {
+  async writeFile({ content, id, extension }: { content: Buffer; id: string; extension: string }) {
     const akord = await this.getClient();
 
     const vaults = await akord.vault.listAll();
@@ -27,16 +27,14 @@ export class StorageService {
       vaultId = vaults[0].id;
     }
 
-    const { stackId } = await akord.stack.create(vaultId, content, { public: true, name: `${id}.${extension}` });
+    const { stackId, uri } = await akord.stack.create(vaultId, content, { public: true, name: `${id}.${extension}` });
 
-    return stackId;
+    return { externalId: stackId, uri };
   }
 
-  async readFile(stackId: string): Promise<ArrayBuffer | ReadableStream<Uint8Array>> {
+  async getUri(stackId: string): Promise<string> {
     const akord = await this.getClient();
-    const stack = await akord.stack.get(stackId);
-    const file = await akord.stack.getVersion(stackId, stack.versions.length - 1);
 
-    return file.data;
+    return akord.stack.getUri(stackId);
   }
 }

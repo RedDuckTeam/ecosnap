@@ -3,7 +3,7 @@
 import { DynamicModule, Logger, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DatabaseModule } from '@gc/database-common';
-import { defaultDataSource } from '../../../../packages/database/gc/dist';
+import { defaultDataSource } from '@gc/database-gc';
 
 import path from 'path';
 import { JwtModule } from './jwt/jwt.module';
@@ -13,6 +13,9 @@ import { GcModule } from './gc/gc.module';
 import { StorageModule } from '@gc/storage';
 import { CleanupEventModule } from './cleanup-event/cleanup-event.module';
 import { AchievementsModule } from './achievements/achievements.module';
+import { PointsModule } from './points/points.module';
+import { MerkleController } from './merkle/merkle.controller';
+import { MerkleModule } from './merkle/merkle.module';
 
 class GlobalProviders {
   static forRoot(): DynamicModule {
@@ -68,6 +71,8 @@ class GlobalProviders {
     GcModule,
     CleanupEventModule,
     AchievementsModule,
+    PointsModule,
+    MerkleModule,
   ],
   providers: [],
   exports: [],
