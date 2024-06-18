@@ -69,6 +69,9 @@
 .wallet-adapter-button:hover {
   background: transparent !important;
 }
+.wallet-adapter-button-start-icon {
+  display: none !important;
+}
 
 ::-webkit-scrollbar {
   width: 4px;
