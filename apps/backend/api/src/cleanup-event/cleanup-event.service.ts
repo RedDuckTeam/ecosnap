@@ -27,6 +27,16 @@ export class CleanupEventService {
     private readonly daoService: DaoService
   ) {}
 
+  async getAllEvents() {
+    return await this.dataSource.manager.transaction(async (manager) => {
+      const eventRepo = manager.getRepository(CleanupEvent);
+      const events = await eventRepo.find({});
+      return events.map((v) => ({
+        ...events,
+      }));
+    });
+  }
+
   async generatePassCode({ eventId, adminPubKey }: { eventId: string; adminPubKey: PublicKey }) {
     return await this.dataSource.manager.transaction(async (manager) => {
       const eventRepo = manager.getRepository(CleanupEvent);

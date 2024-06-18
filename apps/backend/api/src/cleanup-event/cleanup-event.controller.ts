@@ -84,6 +84,11 @@ const mediaOptions: MulterOptions = {
 export class CleanupController {
   constructor(private readonly cleanUpEventService: CleanupEventService) {}
 
+  @Get('/')
+  async getAllEvents() {
+    return { events: await this.cleanUpEventService.getAllEvents() };
+  }
+
   @Post('/participate')
   @UseUserAuthGuard()
   async postParticipate(@Body() { eventEntryCode, signature }: ParticipateToEventDTO, @RequestUser() user: UserClaims) {
