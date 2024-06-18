@@ -1,11 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { SolanaPubKeyColumn, TimeKnownEntity } from '@gc/database-common';
-import { DaoVote } from './DaoVote.entity';
-import { GarbageCollect } from './GarbageCollect.entity';
-import { PublicKey } from '@solana/web3.js';
+import { TimeKnownEntity } from '@gc/database-common';
 import { File } from './File.entity';
-import { CleanupEvent } from './CleanupEvent.entity';
-import { Achievement } from './Achievement.entity';
 
 export enum MerkleTreeType {
   FULL,
