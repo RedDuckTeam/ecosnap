@@ -10,6 +10,7 @@ import { Button } from '../ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 
 import { useGetGcs } from '@/hooks/queries/use-get-gcs.ts';
+import { useGetUser } from '@/hooks/queries/use-get-user';
 import { useGetUserGcs } from '@/hooks/queries/use-get-user-gcs.ts';
 import { generateBlockies } from '@/lib/blockies';
 import { shortenAddress } from '@/lib/utils';
@@ -19,6 +20,8 @@ export const PostsTabs = () => {
   const navigate = useNavigate();
   const { publicKey } = useWallet();
   const posts = useGetGcs();
+  const user = useGetUser();
+
   const userPosts = useGetUserGcs();
 
   const allPosts = useMemo(() => {
@@ -54,7 +57,7 @@ export const PostsTabs = () => {
               <div className="flex items-center gap-1">
                 <img src="/images/star.png" alt="star" />
                 <p className="font-medium text-[16px] text-gray">Points</p>
-                <p className="font-semibold text-[16px]">1452</p>
+                <p className="font-semibold text-[16px]">{user.data?.points ?? 0}</p>
               </div>
             </div>
           </div>

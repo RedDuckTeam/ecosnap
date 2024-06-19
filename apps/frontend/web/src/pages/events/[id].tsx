@@ -48,7 +48,7 @@ export default function Event() {
   const location = useMemo(() => {
     if (!city) return null;
 
-    return cities?.find((c) => c.id === city.city)?.name ?? null;
+    return cities?.find((c) => c === city.city) ?? null;
   }, [cities, city]);
 
   const isAdmin = useMemo(() => {
