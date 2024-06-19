@@ -6,7 +6,7 @@ import { Button } from '../ui/button';
 
 import { generateBlockies } from '@/lib/blockies';
 import { getMediaType, shortenAddress } from '@/lib/utils';
-import { GgcResponse, IGcsBody } from '@/api/get/gcs.ts';
+import { IGcsBody } from '@/api/get/gcs.ts';
 
 export const Post = ({ gcs, isMy }: { gcs: IGcsBody; isMy: boolean }) => {
   return (
