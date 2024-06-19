@@ -1,6 +1,6 @@
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
-import { PublicKey, Keypair } from "@solana/web3.js";
+import { PublicKey, Keypair, sendAndConfirmTransaction } from "@solana/web3.js";
 import { Nft } from "../target/types/nft";
 import { ASSOCIATED_PROGRAM_ID } from "@coral-xyz/anchor/dist/cjs/utils/token";
 import { assert, expect } from "chai";
@@ -14,6 +14,19 @@ import {
   getMerkleRoot,
   getMerkleTree,
 } from "@metaplex-foundation/js";
+
+import {
+  createAssociatedTokenAccountInstruction,
+  createTransferCheckedInstruction,
+  getAccount,
+  getAssociatedTokenAddressSync,
+  getOrCreateAssociatedTokenAccount,
+  TOKEN_PROGRAM_ID,
+  Account as SplAccount,
+  createCloseAccountInstruction,
+  createTransferInstruction,
+} from "@solana/spl-token";
+import { BN } from "bn.js";
 
 const TOKEN_2022_PROGRAM_ID = new anchor.web3.PublicKey(
   "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
@@ -60,20 +73,21 @@ describe("token extensions", () => {
     id: number;
     user: string;
   }) => {
-    return Buffer.concat([
-      new PublicKey(user).toBuffer(),
-      borsh.serialize("u16", amount),
-      borsh.serialize("string", "name"),
-      borsh.serialize("string", "symb"),
-      borsh.serialize("string", "uri"),
-      borsh.serialize(
-        { array: { type: "u8", len: 16 } },
-        toBinaryUUID(achievementId)
-      ),
-      borsh.serialize(
-        { array: { type: "u8", len: 16 } },
-        toBinaryUUID(gcExternalUUIDBuffer)
-      ),
+    return Buffer.from([
+      ...new PublicKey(user).toBuffer(),
+      // ...borsh.serialize("u64", amount),
+      ...new BN(amount).toArray("le", 8),
+      // ...borsh.serialize({ array: { type: "u8" } }, Buffer.from("name")),
+      // borsh.serialize({ array: { type: "u8" } }, Buffer.from("symb")),
+      // borsh.serialize({ array: { type: "u8" } }, Buffer.from("uri")),
+      // ...borsh.serialize(
+      //   { array: { type: "u8", len: 16 } },
+      //   toBinaryUUID(achievementId)
+      // ),
+      // ...borsh.serialize(
+      //   { array: { type: "u8", len: 16 } },
+      //   toBinaryUUID(gcExternalUUIDBuffer)
+      // ),
     ]);
   };
 
@@ -87,7 +101,8 @@ describe("token extensions", () => {
   ];
   const encodedClaimLeaves = claimLeafs.map(leafToEncoded);
   const claimMerkleTree = getMerkleTree(encodedClaimLeaves);
-  const proofs = claimMerkleTree.getProof(encodedClaimLeaves[0]);
+  const proofs = getMerkleProof(encodedClaimLeaves, encodedClaimLeaves[0]);
+  const root = getMerkleRoot(encodedClaimLeaves);
 
   const [mintAuthority] = PublicKey.findProgramAddressSync(
     [anchor.utils.bytes.utf8.encode("authority-seed")],
@@ -132,7 +147,7 @@ describe("token extensions", () => {
 
     try {
       await gcProgram.methods
-        .newRoot(Array.from(gcExternalUUID), Array.from(new Uint8Array(32)))
+        .newRoot(Array.from(gcExternalUUID), Array.from(root))
         .accountsStrict({
           authority: payer.publicKey,
           globalState: gcGlobalState.publicKey,
@@ -176,16 +191,16 @@ describe("token extensions", () => {
       Array.from(new Uint8Array(achievementUUID))
     );
 
-    await nftProgram.methods
+    const tx = await nftProgram.methods
       .createMintAccount(
         payer.publicKey,
-        1,
+        new BN(1),
         "name",
         "symb",
         "uri",
         Array.from(new Uint8Array(achievementUUID)),
         Array.from(new Uint8Array(gcExternalUUID)),
-        proofs.map((v) => Array.from(new Uint8Array(v.data)))
+        proofs.map((v) => Array.from(v))
       )
       .accountsStrict({
         payer: payer.publicKey,
@@ -204,7 +219,20 @@ describe("token extensions", () => {
         nftGlobalState: nftGlobalState.publicKey,
       })
       .signers([payer])
-      .rpc();
+      .transaction();
+
+    await sendAndConfirmTransaction(provider.connection, tx, [payer]);
+
+    const acc = await getAccount(
+      provider.connection,
+      associatedAddress({
+        mint,
+        owner: payer.publicKey,
+      }),
+      undefined,
+      TOKEN_2022_PROGRAM_ID
+    );
+    console.log(acc);
   });
 
   // it("mint extension constraints test passes", async () => {

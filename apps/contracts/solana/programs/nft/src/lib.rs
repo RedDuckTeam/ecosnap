@@ -26,7 +26,7 @@ pub mod nft {
     pub fn create_mint_account(
         ctx: Context<CreateMintAccount>,
         user: Pubkey,
-        amount: u16,
+        amount: u64,
         name: String,
         symbol: String,
         uri: String,
