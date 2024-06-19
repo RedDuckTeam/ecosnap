@@ -142,6 +142,7 @@ describe("token extensions", () => {
         tokenProgram: TOKEN_2022_PROGRAM_ID,
         rootAccount: gcRootState,
         globalState: gcGlobalState.publicKey,
+        nftGlobalState: nftGlobalState.publicKey,
       })
       .signers([payer])
       .rpc();
