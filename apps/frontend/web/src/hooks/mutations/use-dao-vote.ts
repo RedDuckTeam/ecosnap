@@ -1,5 +1,5 @@
 import { useWallet } from '@solana/wallet-adapter-react';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { useSignDaoVote } from './signatures/use-sign-dao-vote';
 import { useAuth } from './use-auth';
@@ -11,6 +11,7 @@ export const useDaoVote = () => {
   const { publicKey } = useWallet();
   const { mutateAsync: auth } = useAuth();
   const { mutateAsync: signDaoVote } = useSignDaoVote();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async ({ gcId, voteDirection }: { gcId: string; voteDirection: CastVoteDirection }) => {
@@ -28,6 +29,9 @@ export const useDaoVote = () => {
         voteDirection,
         jwt: accessToken,
       });
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['gcs'] });
     },
   });
 };

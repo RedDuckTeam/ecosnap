@@ -63,6 +63,12 @@ export class GcService {
       id: v.id,
       files: v.files,
       user: v.user.pubKey.toBase58(),
+      votes: v.daoVotes.map((vote) => {
+        return {
+          direction: vote.voteDirection,
+          user: vote.voter.pubKey,
+        };
+      }),
     }));
   }
 

@@ -49,7 +49,7 @@ export const PostsTabs = () => {
               <div className="flex items-center gap-1">
                 <Message className="w-4 h-4 [&_path]:fill-primary" />
                 <p className="font-medium text-[16px] text-gray">Posts</p>
-                <p className="font-semibold text-[16px]">15</p>
+                <p className="font-semibold text-[16px]">{discoverPosts.length}</p>
               </div>
               <div className="flex items-center gap-1">
                 <img src="/images/star.png" alt="star" />

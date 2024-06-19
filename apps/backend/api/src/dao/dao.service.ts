@@ -57,7 +57,7 @@ export class DaoService {
       });
 
       if (!gc) throw new BadRequestException('Garbage collect is not found');
-      if (gc.pointsGiven !== undefined) throw new BadRequestException('Voting is already finished');
+      if (gc.pointsGiven !== null) throw new BadRequestException('Voting is already finished');
 
       const votesThreshold = this.votesThreshold();
 
