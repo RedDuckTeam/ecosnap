@@ -11,12 +11,21 @@ export class UserService {
   async getUser(pubKey: PublicKey) {
     const userRepository = this.dataSource.getRepository(User);
 
-    const userData = await userRepository.findOne({ where: { pubKey } });
+    const userData = await userRepository.findOne({
+      where: { pubKey },
+      relations: {
+        garbageCollects: true,
+      },
+    });
 
     if (!userData) throw new NotFoundException('No such user!');
 
     return {
-      ...userData,
+      registrationDate: userData.createdAt,
+      points: userData.points,
+      pubKey: userData.pubKey.toBase58(),
+      canVote: userData.canVote,
+      garbageCollects: userData.garbageCollects.length,
     };
   }
 }
