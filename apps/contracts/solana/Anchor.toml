@@ -16,7 +16,7 @@ gc = "5Mew5NxqLr5NGG6VbHtkNNK6LNGa5ucKyuV6stWmfy16"
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "devnet"
+cluster = "localnet"
 wallet = "~/.config/solana/id.json"
 
 [test.validator]
