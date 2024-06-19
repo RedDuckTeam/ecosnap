@@ -1,13 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { timeout } from '@/lib/timeout';
+import { useGetUser } from './use-get-user';
 
 export const useGetMyPoints = () => {
+  const { data: user } = useGetUser();
+
   return useQuery({
-    queryKey: ['my-points'],
-    queryFn: async () => {
-      await timeout(1000);
-      return 1000;
+    queryKey: ['my-points', user],
+    queryFn: () => {
+      return user?.points ?? 0;
     },
   });
 };

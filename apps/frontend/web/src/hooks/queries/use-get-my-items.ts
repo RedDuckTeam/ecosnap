@@ -1,37 +1,22 @@
+import { useWallet } from '@solana/wallet-adapter-react';
 import { useQuery } from '@tanstack/react-query';
 
-import type { Item } from '@/hooks/queries/use-get-items';
-import { timeout } from '@/lib/timeout';
+import type { UserCoupon } from '@/api/get/user-coupons';
+import { getUserCoupons } from '@/api/get/user-coupons';
 
-export type MyItem = Item & {
-  isRedeemed: boolean;
-};
-
-const myItems: MyItem[] = [
-  {
-    id: '3',
-    name: 'Eco leather backpack',
-    description: 'A cup of coffee',
-    price: 1077,
-    imageUrl: 'https://i.imgur.com/N3xZiLL.png',
-    isRedeemed: false,
-  },
-  {
-    id: '1',
-    name: 'Cup of coffee',
-    description: 'A cup of coffee',
-    price: 20,
-    imageUrl: 'https://i.imgur.com/0eYvKNy.png',
-    isRedeemed: true,
-  },
-];
+export type MyCoupon = UserCoupon['coupon'] & { isRedeemed: boolean };
 
 export const useGetMyItems = () => {
+  const { publicKey } = useWallet();
+
   return useQuery({
-    queryKey: ['my-items'],
+    queryKey: ['my-items', publicKey],
     queryFn: async () => {
-      await timeout(1000);
-      return myItems;
+      if (!publicKey) return [];
+
+      const { coupons } = await getUserCoupons(publicKey.toBase58());
+
+      return coupons.map((c) => ({ ...c.coupon, isRedeemed: c.isRedeemed }));
     },
   });
 };
