@@ -3,7 +3,7 @@ import { Button } from '../ui/button';
 
 import type { Events } from '@/api/get/events';
 import { useGetCities } from '@/hooks/queries/use-get-cities';
-import { formatDate } from '@/lib/utils';
+import { formatDate, formatTime } from '@/lib/utils';
 
 type Props = {
   event: Events['events'][number];
@@ -26,7 +26,9 @@ export const EventCard = ({ event, onClick }: Props) => {
       />
       <div className="flex flex-col gap-2">
         <h2 className="text-lg font-semibold">{event.name}</h2>
-        <div className="text-[14px] font-semibold">{formatDate(new Date(event.eventEndsAt))}</div>
+        <div className="text-[14px] font-semibold">
+          {formatDate(new Date(event.eventStartsAt))} {formatTime(event.eventStartsAt.toString())}
+        </div>
         <p className="text-sm text-gray">{cities?.find((c) => c.id === event.city)?.name}</p>
         {/* <p className="text-sm">{event.description}</p> */}
         <div className="flex items-center gap-2">

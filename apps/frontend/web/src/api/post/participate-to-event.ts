@@ -19,7 +19,7 @@ export const postParticipate = async ({
     },
     {
       Authorization: 'Bearer ' + jwt,
-    }
+    },
   );
 
   return res;

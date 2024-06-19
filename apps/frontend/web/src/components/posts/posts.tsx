@@ -1,6 +1,6 @@
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useMemo } from 'react';
-import { NavLink } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { Post } from './post';
 
@@ -9,13 +9,14 @@ import { NewPost } from '../icons/new-post';
 import { Button } from '../ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 
+import { useGetGcs } from '@/hooks/queries/use-get-gcs.ts';
 import { useGetUserGcs } from '@/hooks/queries/use-get-user-gcs.ts';
 import { generateBlockies } from '@/lib/blockies';
 import { shortenAddress } from '@/lib/utils';
 import { routes } from '@/router';
-import { useGetGcs } from '@/hooks/queries/use-get-gcs.ts';
 
 export const PostsTabs = () => {
+  const navigate = useNavigate();
   const { publicKey } = useWallet();
   const posts = useGetGcs();
   const userPosts = useGetUserGcs();
@@ -29,31 +30,35 @@ export const PostsTabs = () => {
   }, [userPosts]);
 
   return (
-    <Tabs defaultValue="my-posts" className="w-full  flex items-center flex-col">
+    <Tabs defaultValue="discover" className="w-full gap-4  flex items-center flex-col">
       <TabsList className="mx-auto">
-        <TabsTrigger value="my-posts">My posts</TabsTrigger>
+        <TabsTrigger disabled={!publicKey} value="my-posts">
+          My posts
+        </TabsTrigger>
         <TabsTrigger value="discover">Discover</TabsTrigger>
       </TabsList>
 
-      <TabsContent value="my-posts" className="gap-10 flex flex-col">
-        <div className="w-full rounded-[24px] p-6 flex bg-gray-blue flex-col gap-4">
-          <div className="flex items-center gap-2">
-            {generateBlockies(publicKey, 14)}
-            <p>{shortenAddress(publicKey?.toString() || '')}</p>
-          </div>
-          <div className="flex gap-6 items-center">
-            <div className="flex items-center gap-1">
-              <Message className="w-4 h-4 [&_path]:fill-primary" />
-              <p className="font-medium text-[16px] text-gray">Posts</p>
-              <p className="font-semibold text-[16px]">15</p>
+      <TabsContent value="my-posts" className="gap-10 w-full flex flex-col">
+        {publicKey && (
+          <div className="w-full  rounded-[24px] p-6 flex bg-gray-blue flex-col gap-4">
+            <div className="flex items-center gap-2">
+              {generateBlockies(publicKey, 14)}
+              <p>{shortenAddress(publicKey?.toString() || '')}</p>
             </div>
-            <div className="flex items-center gap-1">
-              <img src="/images/star.png" alt="star" />
-              <p className="font-medium text-[16px] text-gray">Points</p>
-              <p className="font-semibold text-[16px]">1452</p>
+            <div className="flex gap-6 items-center">
+              <div className="flex items-center gap-1">
+                <Message className="w-4 h-4 [&_path]:fill-primary" />
+                <p className="font-medium text-[16px] text-gray">Posts</p>
+                <p className="font-semibold text-[16px]">15</p>
+              </div>
+              <div className="flex items-center gap-1">
+                <img src="/images/star.png" alt="star" />
+                <p className="font-medium text-[16px] text-gray">Points</p>
+                <p className="font-semibold text-[16px]">1452</p>
+              </div>
             </div>
           </div>
-        </div>
+        )}
         {discoverPosts.map((post, i) => (
           <div className="flex flex-col ">
             <Post gcs={post} isMy={false} />
@@ -61,7 +66,7 @@ export const PostsTabs = () => {
           </div>
         ))}
       </TabsContent>
-      <TabsContent value="discover">
+      <TabsContent className="w-full" value="discover">
         {allPosts.map((post, i) => (
           <div className="flex flex-col ">
             <Post key={i} gcs={post} isMy={false} />
@@ -69,11 +74,13 @@ export const PostsTabs = () => {
           </div>
         ))}
       </TabsContent>
-      <NavLink to={routes.newPost}>
-        <Button className="rounded-full xl:hidden fixed bottom-[150px] lg:right-[20%] right-[10%]  p-3 shadow-glow">
-          <NewPost />
-        </Button>
-      </NavLink>
+      <Button
+        onClick={() => navigate(routes.newPost)}
+        disabled={!publicKey}
+        className="rounded-full xl:hidden fixed bottom-[150px] lg:right-[20%] right-[10%]  p-3 shadow-glow"
+      >
+        <NewPost />
+      </Button>
     </Tabs>
   );
 };
