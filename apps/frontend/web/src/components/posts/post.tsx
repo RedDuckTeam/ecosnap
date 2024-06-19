@@ -11,7 +11,7 @@ import type { IGcsBody } from '@/api/get/gcs.ts';
 import { CastVoteDirection } from '@/api/post/vote';
 import { useDaoVote } from '@/hooks/mutations/use-dao-vote';
 import { generateBlockies } from '@/lib/blockies';
-import { getMediaType, shortenAddress } from '@/lib/utils';
+import { formatDate, formatTime, getMediaType, shortenAddress } from '@/lib/utils';
 
 export const Post = ({ gcs, isMy }: { gcs: IGcsBody; isMy: boolean }) => {
   const { mutateAsync: vote } = useDaoVote();
@@ -35,14 +35,15 @@ export const Post = ({ gcs, isMy }: { gcs: IGcsBody; isMy: boolean }) => {
         });
       }
     },
-    [gcs.id, toast, vote],
+    [gcs.id, toast, vote]
   );
 
   const userVote = useMemo(() => {
     if (!publicKey) return null;
+    console.log(gcs);
+
     return gcs.votes.find((vote) => new PublicKey(vote.user).toString() === publicKey.toString()) ?? null;
   }, [gcs.votes, publicKey]);
-
   return (
     <div className="flex flex-col gap-4">
       <div className="flex justify-between items-center">
@@ -51,7 +52,9 @@ export const Post = ({ gcs, isMy }: { gcs: IGcsBody; isMy: boolean }) => {
           <p>{shortenAddress(gcs.user)}</p>
         </div>
         <div className="flex items-center gap-3">
-          <p className="text-[12px] font-medium text-gray">15 min</p>
+          <p className="text-[12px] font-medium text-gray">
+            {formatDate(gcs.createdAt)} {formatTime(gcs.createdAt.toString())}
+          </p>
           {isMy && <Button className="p-2 h-4">...</Button>}
         </div>
       </div>

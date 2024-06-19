@@ -6,6 +6,7 @@ export type GgcResponse = {
 };
 
 export interface IGcsBody {
+  createdAt: Date;
   daoVotes: {
     for: number;
     against: number;
