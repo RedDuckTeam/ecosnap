@@ -26,6 +26,19 @@ export class AuthService {
 
     await this.dataSource.manager.transaction(async (manager) => {
       const noncesRepo = manager.getRepository(AuthNonce);
+      const userRepo = manager.getRepository(User);
+
+      let user = await userRepo.findOneBy({
+        pubKey,
+      });
+
+      if (!user) {
+        user = await userRepo.save(
+          userRepo.create({
+            pubKey,
+          })
+        );
+      }
 
       let unusedNonce = await noncesRepo.findOneBy({
         id: nonce,
@@ -36,6 +49,7 @@ export class AuthService {
       unusedNonce ??= await noncesRepo.save(
         noncesRepo.create({
           id: nonce,
+          user,
         })
       );
 
