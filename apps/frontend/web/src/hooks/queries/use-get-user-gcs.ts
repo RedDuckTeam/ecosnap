@@ -5,12 +5,11 @@ import { getUserGcs } from '@/api/get/user-gcs';
 
 export const useGetUserGcs = () => {
   const { publicKey } = useWallet();
-
   return useQuery({
     queryKey: ['gcs', publicKey],
     queryFn: async () => {
       const gcs = await getUserGcs(publicKey!.toBase58());
-      return gcs;
+      return gcs.data;
     },
     enabled: !!publicKey,
   });

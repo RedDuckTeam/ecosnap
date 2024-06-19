@@ -20,10 +20,6 @@ export const router = createBrowserRouter([
         Component: lazy(() => import('@/pages/home')),
       },
       {
-        path: routes.photo,
-        Component: lazy(() => import('@/pages/photo')),
-      },
-      {
         path: routes.posts,
         Component: lazy(() => import('@/pages/posts')),
       },

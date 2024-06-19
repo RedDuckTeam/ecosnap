@@ -15,3 +15,7 @@ export function formatDate(dateString: string | Date): string {
   const options: Intl.DateTimeFormatOptions = { weekday: 'short', day: 'numeric', month: 'short' };
   return date.toLocaleDateString('en-US', options);
 }
+
+export function getMediaType(extension: string) {
+  return extension.match(/(avi|mp4|webm)/) ? 'video' : 'image';
+}
