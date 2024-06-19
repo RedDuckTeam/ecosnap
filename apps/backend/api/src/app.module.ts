@@ -13,7 +13,7 @@ import { GcModule } from './gc/gc.module';
 import { StorageModule } from '@gc/storage';
 import { CleanupEventModule } from './cleanup-event/cleanup-event.module';
 import { AchievementsModule } from './achievements/achievements.module';
-import { PointsModule } from './points/points.module';
+import { UserModule } from './user/user.module';
 import { MerkleController } from './merkle/merkle.controller';
 import { MerkleModule } from './merkle/merkle.module';
 
@@ -71,7 +71,7 @@ class GlobalProviders {
     GcModule,
     CleanupEventModule,
     AchievementsModule,
-    PointsModule,
+    UserModule,
     MerkleModule,
   ],
   providers: [],
