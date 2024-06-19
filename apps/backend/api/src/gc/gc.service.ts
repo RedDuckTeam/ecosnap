@@ -43,6 +43,7 @@ export class GcService {
       relations: {
         files: true,
         daoVotes: true,
+        user: true,
       },
     });
 
@@ -61,6 +62,7 @@ export class GcService {
       description: v.description,
       id: v.id,
       files: v.files,
+      user: v.user.pubKey.toBase58(),
     }));
   }
 
