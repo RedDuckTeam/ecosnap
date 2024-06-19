@@ -10,7 +10,7 @@ export const useGetUser = () => {
     queryFn: async () => {
       const jwt = await auth();
       const user = await getUser({ jwt });
-      return user;
+      return user.data?.user;
     },
   });
 };

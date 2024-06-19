@@ -18,6 +18,7 @@ export const useAuth = () => {
       let accessToken = localStorage.getItem('accessToken');
 
       if (!accessToken) {
+        console.log('no access token');
         const { signature, nonce } = await mutateAsync();
         accessToken =
           (await getAuthToken({ signature, nonce, pubkey: publicKey?.toBase58() })).data?.accessToken ?? null;

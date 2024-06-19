@@ -1,6 +1,6 @@
 import { httpClient } from '../client';
 
-const POST = '/auth/access-token';
+const POST = 'api/auth/access-token/';
 
 type GetAuthTokenResponse = {
   accessToken: string;
@@ -15,9 +15,11 @@ export const getAuthToken = async ({
   nonce: string;
   pubkey: string;
 }) => {
-  const res = await httpClient.get<GetAuthTokenResponse>(
-    `${POST}?signature=${encodeURIComponent(signature)}&nonce=${encodeURIComponent(nonce)}&pubkey=${encodeURIComponent(pubkey)}`,
-  );
+  const url = `${POST}?signature=${encodeURIComponent(signature)}&nonce=${encodeURIComponent(nonce)}&pubKey=${encodeURIComponent(pubkey)}`;
+  console.log('url', { url });
+
+  const res = await httpClient.get<GetAuthTokenResponse>(url);
+  console.log('res', { res });
 
   return res;
 };
