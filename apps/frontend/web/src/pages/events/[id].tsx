@@ -1,6 +1,6 @@
 import { PublicKey } from '@solana/web3.js';
 import { Loader2 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { NavLink, useParams } from 'react-router-dom';
 
 import { ArrowCircleLeft } from '@/components/icons/arrow-circle-left';
@@ -16,8 +16,10 @@ import { useGetCities } from '@/hooks/queries/use-get-cities';
 import { useGetEventById } from '@/hooks/queries/use-get-event-by-id';
 import { useGetParticipants } from '@/hooks/queries/use-get-participants';
 import { generateBlockies } from '@/lib/blockies';
-import { formatDate } from '@/lib/utils';
+import { formatDate, formatTime } from '@/lib/utils';
 import { routes } from '@/router';
+import { useParticipate } from '@/hooks/mutations/use-participate';
+import { useToast } from '@/components/ui/use-toast';
 
 export default function Event() {
   const { id } = useParams() as { id: string | undefined };
@@ -27,12 +29,27 @@ export default function Event() {
   const [participateOpen, setParticipateOpen] = useState(false);
   const [code, setCode] = useState('');
   const { data: participants } = useGetParticipants(id);
+  const { mutateAsync } = useParticipate();
 
   const location = useMemo(() => {
     if (!city) return null;
 
     return cities?.find((c) => c.id === city.city)?.name ?? null;
   }, [cities, city]);
+
+  const { toast } = useToast();
+
+  const handleParticipate = useCallback(async () => {
+    try {
+      await mutateAsync({ entryCode: code, eventId: id! });
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: 'Failed to participate',
+        description: (error as Error).message,
+      });
+    }
+  }, [code, id, mutateAsync, toast]);
 
   if (isLoading) {
     return (
@@ -60,7 +77,9 @@ export default function Event() {
         <DialogContent>
           <h1 className="text-[18px] font-bold">Enter code</h1>
           <Input value={code} onChange={(e) => setCode(e.target.value)} className="" placeholder="Code..." />
-          <Button disabled={!code}>Enter</Button>
+          <Button onClick={handleParticipate} disabled={!code || !id}>
+            Enter
+          </Button>
         </DialogContent>
       </Dialog>
       <div className="flex flex-col xl:ml-[268px]">
@@ -73,7 +92,11 @@ export default function Event() {
           <h1 className="text-[18px] font-semibold">{city.name}</h1>
           <div className="w-5"></div>
         </div>
-        <img src={city.pictureUrl || '/images/default-city.png'} alt={city.name} className="rounded-[20px] mb-4" />
+        <img
+          src={city.pictureUrl || '/images/default-city.png'}
+          alt={city.name}
+          className="rounded-[20px] object-cover max-h-[500px] mb-4"
+        />
         <div className="rounded-[16px] bg-gray-blue p-4 flex gap-2 items-center flex-wrap mb-6">
           <div className="flex gap-1.5 items-center">
             <Calendar />
@@ -81,8 +104,9 @@ export default function Event() {
           </div>
           <div className="flex gap-1.5 items-center">
             <Clock />
-            {formatDate(new Date(city.eventStartsAt))}
+            {formatTime(city.eventStartsAt.toString())}
           </div>
+
           {location && (
             <div className="flex gap-1.5 items-center">
               <Events className="[&_path]:fill-primary w-6 h-4 " />
@@ -95,17 +119,21 @@ export default function Event() {
               {city.participants}/{city.maximumParticipants}
             </p>
           </div>
+          <div className="flex gap-1.5 items-center">
+            <img src="/images/star.png" alt="star" />
+            {city.rewards}
+          </div>
         </div>
-        <p className="text-gray font-medium text-[14px] mb-6">{city.description}</p>
         <div className="flex justify-center mb-4">
           <Button
             onClick={() => setParticipateOpen(true)}
             disabled={city.participants === city.maximumParticipants}
-            className="py-2"
+            className="py-3"
           >
             {city.participants === city.maximumParticipants ? 'Full team' : 'Participate'}
           </Button>
         </div>
+        <p className="text-gray font-medium text-[14px] mb-6">{city.description}</p>
         {participants && participants.length > 0 && (
           <div className="flex flex-col gap-4">
             <h6 className="text-[16px] font-semibold">Participants</h6>

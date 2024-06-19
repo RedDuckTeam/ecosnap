@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { PointsItem } from './points-item';
 
@@ -8,8 +9,10 @@ import { Help } from '@/components/icons/help';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Progress } from '@/components/ui/progress';
+import { routes } from '@/router';
 
 export const Points = () => {
+  const navigate = useNavigate();
   const [isDesctiptionOpen, setDescriptionOpen] = useState(false);
   return (
     <>
@@ -56,7 +59,9 @@ export const Points = () => {
         </div>
       </div>
       <div className="flex justify-center">
-        <Button className="px-6 py-4">Earn points</Button>
+        <Button onClick={() => navigate(routes.events)} className="px-6 py-4">
+          Earn points
+        </Button>
       </div>
     </>
   );
