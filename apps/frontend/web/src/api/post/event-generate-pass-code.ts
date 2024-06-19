@@ -1,6 +1,5 @@
 import { httpClient } from '../client';
-
-const POST = '/cleanup-event/admin/pass-code';
+const POST = 'api/cleanup-event/admin/pass-code';
 
 type PassCodeResponse = {
   code: string;
@@ -14,7 +13,7 @@ export const postGeneratePassCode = async ({ jwt, eventId }: { jwt: string; even
     },
     {
       Authorization: 'Bearer ' + jwt,
-    },
+    }
   );
 
   return res;

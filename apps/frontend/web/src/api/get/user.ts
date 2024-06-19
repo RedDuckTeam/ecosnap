@@ -1,13 +1,15 @@
 import { httpClient } from '../client';
 
-const POST = '/auth/access-token';
+const POST = 'api/user';
 
 type GetUserResponse = {
-  registrationDate: Date;
-  points: number;
-  pubKey: string;
-  canVote: boolean;
-  garbageCollects: number;
+  user: {
+    registrationDate: Date;
+    points: number;
+    pubKey: string;
+    canVote: boolean;
+    garbageCollects: number;
+  };
 };
 
 export const getUser = async ({ jwt }: { jwt: string }) => {
@@ -19,6 +21,6 @@ export const getUser = async ({ jwt }: { jwt: string }) => {
 
   return {
     ...res,
-    registrationDate: new Date(res.data!.registrationDate),
+    registrationDate: new Date(res.data!.user.registrationDate),
   };
 };

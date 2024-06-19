@@ -1,6 +1,6 @@
 import { httpClient } from '../client';
 
-const POST_VOTE = '/dao/vote';
+const POST_VOTE = 'api/dao/vote';
 
 export enum CastVoteDirection {
   FOR,
@@ -27,6 +27,6 @@ export const postVote = async ({
     },
     {
       Authorization: 'Bearer ' + jwt,
-    },
+    }
   );
 };
