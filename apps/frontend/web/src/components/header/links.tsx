@@ -1,3 +1,4 @@
+import { useWallet } from '@solana/wallet-adapter-react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 
 import { Events } from '../icons/events';
@@ -7,7 +8,6 @@ import { Message } from '../icons/message';
 import { Button } from '../ui/button';
 
 import { routes } from '@/router';
-import { useWallet } from '@solana/wallet-adapter-react';
 
 export const config = [
   { label: 'Home', link: routes.root, icon: <Home /> },

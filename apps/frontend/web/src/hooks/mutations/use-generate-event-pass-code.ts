@@ -28,7 +28,6 @@ export const useGeneratePassCode = () => {
       return res.data.code;
     },
     onSuccess: async () => {
-      // Invalidate the query for the specific eventId
       await queryClient.invalidateQueries({ queryKey: ['events'] });
     },
   });

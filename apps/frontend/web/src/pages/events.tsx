@@ -1,4 +1,5 @@
 import { useAutoAnimate } from '@formkit/auto-animate/react';
+import { useWallet } from '@solana/wallet-adapter-react';
 import { Check, ChevronsUpDown, Loader2 } from 'lucide-react';
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -8,11 +9,10 @@ import { Button } from '@/components/ui/button';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useGetCities } from '@/hooks/queries/use-get-cities';
 import { useGetEvents } from '@/hooks/queries/use-get-events';
 import { cn } from '@/lib/utils';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useWallet } from '@solana/wallet-adapter-react';
 
 export default function Events() {
   const { publicKey } = useWallet();
@@ -29,7 +29,7 @@ export default function Events() {
     (event: Exclude<typeof events, undefined>[number]) => {
       navigate(`/events/${event.id}`);
     },
-    [navigate]
+    [navigate],
   );
 
   return (

@@ -13,8 +13,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogClose, DialogContent } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { KeepOpenOnActivation } from '@/components/ui/tooltip';
 import { useToast } from '@/components/ui/use-toast';
+import { useAcceptParticipation } from '@/hooks/mutations/use-accept-participation';
 import { useGeneratePassCode } from '@/hooks/mutations/use-generate-event-pass-code';
 import { useParticipate } from '@/hooks/mutations/use-participate';
 import { useGetCities } from '@/hooks/queries/use-get-cities';
@@ -23,7 +23,6 @@ import { useGetParticipants } from '@/hooks/queries/use-get-participants';
 import { generateBlockies } from '@/lib/blockies';
 import { formatDate, formatTime, shortenAddress } from '@/lib/utils';
 import { routes } from '@/router';
-import { useAcceptParticipation } from '@/hooks/mutations/use-accept-participation';
 
 export default function Event() {
   const { id } = useParams() as { id: string | undefined };
@@ -71,7 +70,7 @@ export default function Event() {
   const handleAcceptParticipant = useCallback(
     async (participationId: string) => {
       try {
-        await acceptParticipation({ eventId: id!, participationId: 'df76f3b8-6be2-4f75-a257-8dfcc9f9ded4' });
+        await acceptParticipation({ eventId: id!, participationId });
         toast({
           variant: 'success',
           title: 'Successfully accepted user',
@@ -84,7 +83,7 @@ export default function Event() {
         });
       }
     },
-    [acceptParticipation, id, toast]
+    [acceptParticipation, id, toast],
   );
 
   const handleGenerateCode = useCallback(async () => {
