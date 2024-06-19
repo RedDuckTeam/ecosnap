@@ -1,5 +1,7 @@
 import { PublicKey } from '@solana/web3.js';
 
+import { PostAsset } from './post-asset';
+
 import { Button } from '../ui/button';
 
 import { generateBlockies } from '@/lib/blockies';
@@ -28,7 +30,10 @@ export const Post = ({ isMy, address }: Props) => {
           Lorem ipsum dolor sit amet consectetur. Nulla tempus aliquam viverra in nam posuere. Magna accumsan hendrerit
           ornare orci velit diam sed.
         </p>
-        <div className="flex gap-2"></div>
+        <div className="grid md:grid-cols-3 grid-cols-2 gap-2">
+          <PostAsset src="/images/default-city.png" type="image" />
+          <PostAsset src="https://media.w3.org/2010/05/sintel/trailer.mp4	" type="video" />
+        </div>
       </div>
       <div className="flex gap-1 items-center">
         <Button variant="dark" className="text-primary">

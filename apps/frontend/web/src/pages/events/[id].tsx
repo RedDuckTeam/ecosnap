@@ -1,13 +1,16 @@
 import { PublicKey } from '@solana/web3.js';
 import { Loader2 } from 'lucide-react';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { NavLink, useParams } from 'react-router-dom';
 
 import { ArrowCircleLeft } from '@/components/icons/arrow-circle-left';
 import { Calendar } from '@/components/icons/calendar';
 import { Clock } from '@/components/icons/clock';
 import { Events } from '@/components/icons/events';
+import { User } from '@/components/icons/user';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 import { KeepOpenOnActivation } from '@/components/ui/tooltip';
 import { useGetCities } from '@/hooks/queries/use-get-cities';
 import { useGetEventById } from '@/hooks/queries/use-get-event-by-id';
@@ -21,6 +24,8 @@ export default function Event() {
   const { data: city, isLoading } = useGetEventById(id);
   const { data: cities } = useGetCities();
 
+  const [participateOpen, setParticipateOpen] = useState(false);
+  const [code, setCode] = useState('');
   const { data: participants } = useGetParticipants(id);
 
   const location = useMemo(() => {
@@ -51,6 +56,13 @@ export default function Event() {
 
   return (
     <main className="container ">
+      <Dialog onOpenChange={setParticipateOpen} open={participateOpen}>
+        <DialogContent>
+          <h1 className="text-[18px] font-bold">Enter code</h1>
+          <Input value={code} onChange={(e) => setCode(e.target.value)} className="" placeholder="Code..." />
+          <Button disabled={!code}>Enter</Button>
+        </DialogContent>
+      </Dialog>
       <div className="flex flex-col xl:ml-[268px]">
         <div className="flex mb-8 items-center justify-between">
           <div className="w-5">
@@ -61,11 +73,7 @@ export default function Event() {
           <h1 className="text-[18px] font-semibold">{city.name}</h1>
           <div className="w-5"></div>
         </div>
-        <img
-          src="https://media.istockphoto.com/id/585779866/photo/blue-pearl-capital-city-austin-texas.jpg?s=612x612&w=0&k=20&c=rwtyB3br8j659kTbQyHdCJUO2O1UnzwMyXaZ-HcNV4c="
-          alt={city.name}
-          className="rounded-[20px] mb-4"
-        />
+        <img src={city.pictureUrl || '/images/default-city.png'} alt={city.name} className="rounded-[20px] mb-4" />
         <div className="rounded-[16px] bg-gray-blue p-4 flex gap-2 items-center flex-wrap mb-6">
           <div className="flex gap-1.5 items-center">
             <Calendar />
@@ -81,10 +89,22 @@ export default function Event() {
               {location}
             </div>
           )}
+          <div className="flex gap-1.5 items-center">
+            <User />
+            <p>
+              {city.participants}/{city.maximumParticipants}
+            </p>
+          </div>
         </div>
         <p className="text-gray font-medium text-[14px] mb-6">{city.description}</p>
         <div className="flex justify-center mb-4">
-          <Button className="py-2">Participate</Button>
+          <Button
+            onClick={() => setParticipateOpen(true)}
+            disabled={city.participants === city.maximumParticipants}
+            className="py-2"
+          >
+            {city.participants === city.maximumParticipants ? 'Full team' : 'Participate'}
+          </Button>
         </div>
         {participants && participants.length > 0 && (
           <div className="flex flex-col gap-4">
