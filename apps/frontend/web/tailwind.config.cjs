@@ -14,6 +14,7 @@ module.exports = {
     extend: {
       boxShadow: {
         glow: '0 0 6px 1px #28CCAF',
+        'glow-xl': '0 0 25px 7px #28CCAF',
       },
       colors: {
         danger: '#FE4756',

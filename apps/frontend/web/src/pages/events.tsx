@@ -20,6 +20,7 @@ export default function Events() {
   const [name, setName] = useState('');
   const { data: cities, isLoading: isCitiesLoading } = useGetCities();
   const { data: events, isLoading: isEventsLoading } = useGetEvents(cityId, name);
+  console.log(events);
 
   const redirectToEvent = useCallback(
     (event: Exclude<typeof events, undefined>[number]) => {
@@ -69,7 +70,12 @@ export default function Events() {
               )}
             </PopoverContent>
           </Popover>
-          <Input placeholder="Search name..." value={name} onChange={(e) => setName(e.target.value)} />
+          <Input
+            className="rounded-[16px] border-primary"
+            placeholder="Search name..."
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
         </div>
         <div ref={parent} className="flex flex-col gap-4">
           {isEventsLoading ? (

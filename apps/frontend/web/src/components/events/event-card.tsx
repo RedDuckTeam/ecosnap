@@ -1,3 +1,4 @@
+import { User } from '../icons/user';
 import { Button } from '../ui/button';
 
 import type { Events } from '@/api/get/events';
@@ -19,7 +20,7 @@ export const EventCard = ({ event, onClick }: Props) => {
       onClick={() => onClick(event)}
     >
       <img
-        src="https://media.istockphoto.com/id/585779866/photo/blue-pearl-capital-city-austin-texas.jpg?s=612x612&w=0&k=20&c=rwtyB3br8j659kTbQyHdCJUO2O1UnzwMyXaZ-HcNV4c="
+        src={event.pictureUrl || '/images/default-city.png'}
         alt={event.name}
         className="rounded-[20px] object-cover overflow-hidden xl:h-[180px] xl:w-[250px] w-[120px] h-[170px]"
       />
@@ -27,9 +28,17 @@ export const EventCard = ({ event, onClick }: Props) => {
         <h2 className="text-lg font-semibold">{event.name}</h2>
         <div className="text-[14px] font-semibold">{formatDate(new Date(event.eventEndsAt))}</div>
         <p className="text-sm text-gray">{cities?.find((c) => c.id === event.city)?.name}</p>
-        <p className="text-sm">{event.description}</p>
+        {/* <p className="text-sm">{event.description}</p> */}
+        <div className="flex items-center gap-2">
+          <User className="[&_path]:fill-gray" />
+          <p className="text-gray font-medium">
+            {event.participants}/{event.maximumParticipants} person
+          </p>
+        </div>
         <div className="flex-1 flex items-end">
-          <Button>Participate</Button>
+          <Button disabled={event.participants === event.maximumParticipants}>
+            {event.participants === event.maximumParticipants ? 'Full team' : 'Participate'}
+          </Button>
         </div>
       </div>
     </div>

@@ -1,13 +1,14 @@
 import { useWallet } from '@solana/wallet-adapter-react';
 import type { ChangeEvent } from 'react';
 import { useCallback, useEffect, useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 import { AddPhoto } from '@/components/icons/add-photo';
 import { ArrowCircleLeft } from '@/components/icons/arrow-circle-left';
 import { Close } from '@/components/icons/close';
 import { TakePhoto } from '@/components/icons/take-photo';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogClose, DialogContent } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
@@ -18,6 +19,8 @@ import usePhotoStore from '@/store/photo';
 
 export default function NewPost() {
   const { publicKey } = useWallet();
+
+  const [isSuccessOpen, setSuccessOpen] = useState(false);
 
   const { files: currentFiles, setFiles, comment, setComment } = usePhotoStore();
 
@@ -73,8 +76,30 @@ export default function NewPost() {
     [currentFiles, setFiles],
   );
 
+  const navigate = useNavigate();
+
+  const handleSuccessClose = useCallback(() => {
+    setSuccessOpen(false);
+    setComment('');
+    setFiles([]);
+    navigate(routes.posts);
+  }, [navigate, setComment, setFiles]);
+
   return (
     <div className="flex flex-col max-w-[560px] mx-auto px-4">
+      <Dialog open={isSuccessOpen} onOpenChange={(val) => (val ? setSuccessOpen(val) : handleSuccessClose())}>
+        <DialogContent className="text-center gap-2">
+          <h1 className="font-semibold text-[16px]">Post created</h1>
+          <p className="text-[14px] font-medium text-gray">
+            Once your post gets more 👍 Likes than 👎 Dislikes you will receive Points (if it’s a single post) or NFT
+            (if you participated in the event).
+          </p>
+          <p className="text-[14px] font-medium text-gray">Thank you for keeping the Earth clean 🥰</p>
+          <DialogClose asChild>
+            <Button className="py-3">Ok</Button>
+          </DialogClose>
+        </DialogContent>
+      </Dialog>
       <div className="flex mb-8 items-center justify-between">
         <div className="w-[60px]">
           <NavLink to={routes.posts}>
@@ -82,7 +107,9 @@ export default function NewPost() {
           </NavLink>
         </div>
         <h1 className="text-[18px] font-semibold">New Post</h1>
-        <Button disabled={!comment || currentFiles.length === 0}>Post</Button>
+        <Button onClick={() => setSuccessOpen(true)} disabled={!comment || currentFiles.length === 0}>
+          Post
+        </Button>
       </div>
       <div className="flex items-center mb-4 gap-2">
         {generateBlockies(publicKey)}
