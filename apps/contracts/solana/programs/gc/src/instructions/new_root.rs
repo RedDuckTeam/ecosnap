@@ -3,7 +3,7 @@ use crate::state::GlobalState;
 use anchor_lang::prelude::*;
 
 #[derive(Accounts)]
-#[instruction(external_id: [u8; 16])]
+#[instruction(merkle_uuid: [u8; 16])]
 pub struct NewRoot<'info> {
     #[account(mut)]
     pub authority: Signer<'info>,
@@ -12,7 +12,7 @@ pub struct NewRoot<'info> {
         init,
         payer = authority,
         space = RootState::MEM_LENGTH,
-        seeds = [RootState::SEED, global_state.key().as_ref(), &external_id], 
+        seeds = [RootState::SEED, global_state.key().as_ref(), &merkle_uuid], 
         bump
     )]
     pub root_state: Account<'info, RootState>,
@@ -23,7 +23,7 @@ pub struct NewRoot<'info> {
     pub system_program: Program<'info, System>,
 }
 
-pub fn handle(ctx: Context<NewRoot>, external_id: [u8; 16], root: [u8; 32]) -> Result<()> {
+pub fn handle(ctx: Context<NewRoot>, merkle_uuid: [u8; 16], root: [u8; 32]) -> Result<()> {
     let state = &mut ctx.accounts.root_state;
     state.root = root;
 

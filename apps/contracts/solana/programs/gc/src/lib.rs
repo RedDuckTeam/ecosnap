@@ -22,7 +22,7 @@ pub mod gc {
         initialize_global_state::handle(ctx, authority)
     }
 
-    pub fn new_root(ctx: Context<NewRoot>, external_id: [u8; 16], root: [u8; 32]) -> Result<()> {
-        new_root::handle(ctx, external_id, root)
+    pub fn new_root(ctx: Context<NewRoot>, merkle_uuid: [u8; 16], root: [u8; 32]) -> Result<()> {
+        new_root::handle(ctx, merkle_uuid, root)
     }
 }

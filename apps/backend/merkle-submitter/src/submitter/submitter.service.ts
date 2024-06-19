@@ -1,5 +1,11 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
-import { ComputeBudgetProgram, PublicKey, sendAndConfirmTransaction, Transaction } from '@solana/web3.js';
+import {
+  ComputeBudgetProgram,
+  PublicKey,
+  sendAndConfirmTransaction,
+  SystemProgram,
+  Transaction,
+} from '@solana/web3.js';
 import { DataSource, Equal, IsNull, Not, Or } from 'typeorm';
 import { StorageService } from '@gc/storage';
 import {
@@ -153,6 +159,7 @@ export class SubmitterService {
             authority: keypair.publicKey,
             globalState: globalState,
             rootState: rootPDA,
+            systemProgram: SystemProgram.programId,
           })
           .signers([keypair])
           .instruction()
@@ -405,9 +412,12 @@ export class SubmitterService {
     }) => {
       return Buffer.concat([
         new PublicKey(user).toBuffer(),
-        borsh.serialize('u128', id),
-        borsh.serialize('u128', achievementId),
-        borsh.serialize('u128', amount),
+        borsh.serialize('u16', amount),
+        borsh.serialize('string', 'name'),
+        borsh.serialize('string', 'symb'),
+        borsh.serialize('string', 'uri'),
+        borsh.serialize({ array: { type: 'u8', len: 16 } }, this.toBinaryUUID(achievementId)),
+        borsh.serialize({ array: { type: 'u8', len: 16 } }, this.toBinaryUUID(treeId)),
       ]);
     };
 

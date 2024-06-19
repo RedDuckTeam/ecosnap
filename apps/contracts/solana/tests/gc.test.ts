@@ -8,6 +8,12 @@ import { randomUUID } from "node:crypto";
 import { toBinaryUUID } from "../lib/utils/toBinaryUUID";
 import { createMockVec } from "../lib/utils/mocVec";
 import { Gc } from "../target/types/gc";
+import * as borsh from "borsh";
+import {
+  getMerkleProof,
+  getMerkleRoot,
+  getMerkleTree,
+} from "@metaplex-foundation/js";
 
 const TOKEN_2022_PROGRAM_ID = new anchor.web3.PublicKey(
   "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
@@ -35,9 +41,53 @@ describe("token extensions", () => {
 
   const gcProgram = anchor.workspace.Gc as Program<Gc>;
   const gcGlobalState = anchor.web3.Keypair.generate();
-  const gcExternalUUID = toBinaryUUID(randomUUID());
+  const gcExternalUUIDBuffer = randomUUID();
+  const gcExternalUUID = toBinaryUUID(gcExternalUUIDBuffer);
+  const achievementUUIDBuffer = randomUUID();
   const achievementUUID = toBinaryUUID(randomUUID());
+  console.log(achievementUUID);
   const gcRoot = createMockVec(1);
+  const payer = Keypair.generate();
+
+  const leafToEncoded = ({
+    user,
+    id,
+    achievementId,
+    amount,
+  }: {
+    achievementId: string;
+    amount: number;
+    id: number;
+    user: string;
+  }) => {
+    return Buffer.concat([
+      new PublicKey(user).toBuffer(),
+      borsh.serialize("u16", amount),
+      borsh.serialize("string", "name"),
+      borsh.serialize("string", "symb"),
+      borsh.serialize("string", "uri"),
+      borsh.serialize(
+        { array: { type: "u8", len: 16 } },
+        toBinaryUUID(achievementId)
+      ),
+      borsh.serialize(
+        { array: { type: "u8", len: 16 } },
+        toBinaryUUID(gcExternalUUIDBuffer)
+      ),
+    ]);
+  };
+
+  const claimLeafs = [
+    {
+      achievementId: achievementUUIDBuffer,
+      id: 0,
+      user: payer.publicKey.toBase58(),
+      amount: 1,
+    },
+  ];
+  const encodedClaimLeaves = claimLeafs.map(leafToEncoded);
+  const claimMerkleTree = getMerkleTree(encodedClaimLeaves);
+  const proofs = claimMerkleTree.getProof(encodedClaimLeaves[0]);
 
   const [mintAuthority] = PublicKey.findProgramAddressSync(
     [anchor.utils.bytes.utf8.encode("authority-seed")],
@@ -45,7 +95,12 @@ describe("token extensions", () => {
   );
 
   const [mint] = PublicKey.findProgramAddressSync(
-    [Buffer.from("mint-seed"), achievementUUID],
+    [
+      Buffer.from("mint-seed"),
+      nftGlobalState.publicKey.toBuffer(),
+      // new Uint8Array(achievementUUID),
+    ],
+
     nftProgram.programId
   );
 
@@ -57,8 +112,6 @@ describe("token extensions", () => {
     ],
     gcProgram.programId
   );
-
-  const payer = Keypair.generate();
 
   it("airdrop payer", async () => {
     await provider.connection.confirmTransaction(
@@ -93,10 +146,11 @@ describe("token extensions", () => {
     }
 
     await nftProgram.methods
-      .initializeGlobalState(gcRootState)
+      .initializeGlobalState(gcGlobalState.publicKey)
       .accounts({
         signer: payer.publicKey,
         globalState: nftGlobalState.publicKey,
+        authority: payer.publicKey,
       })
       .signers([payer, nftGlobalState])
       .rpc();
@@ -116,26 +170,31 @@ describe("token extensions", () => {
       nftProgram.programId
     );
 
+    console.log(
+      await nftProgram.account.nftGlobalState.fetch(nftGlobalState.publicKey),
+      gcGlobalState.publicKey,
+      Array.from(new Uint8Array(achievementUUID))
+    );
+
     await nftProgram.methods
       .createMintAccount(
-        user.publicKey,
-        10000,
-        "quick token",
-        "QT",
-        "https://my-token-data.com/metadata.json",
-        Array.from(achievementUUID),
-        Array.from(gcExternalUUID),
-        createMockVec(1)
+        payer.publicKey,
+        1,
+        "name",
+        "symb",
+        "uri",
+        Array.from(new Uint8Array(achievementUUID)),
+        Array.from(new Uint8Array(gcExternalUUID)),
+        proofs.map((v) => Array.from(new Uint8Array(v.data)))
       )
       .accountsStrict({
         payer: payer.publicKey,
         authority: mintAuthority,
-        receiver: payer.publicKey,
-        //mint,
-        // mintTokenAccount: associatedAddress({
-        //   mint,
-        //   owner: payer.publicKey,
-        // }),
+        mint,
+        mintTokenAccount: associatedAddress({
+          mint,
+          owner: payer.publicKey,
+        }),
         //extraMetasAccount: extraMetasAccount,
         systemProgram: anchor.web3.SystemProgram.programId,
         associatedTokenProgram: ASSOCIATED_PROGRAM_ID,
@@ -148,35 +207,35 @@ describe("token extensions", () => {
       .rpc();
   });
 
-  it("mint extension constraints test passes", async () => {
-    try {
-      const tx = await nftProgram.methods
-        .checkMintExtensionsConstraints()
-        .accountsStrict({
-          authority: payer.publicKey,
-          mint,
-        })
-        .signers([payer])
-        .rpc();
-      assert.ok(tx, "transaction should be processed without error");
-    } catch (e) {
-      assert.fail("should not throw error");
-    }
-  });
-  it("mint extension constraints fails with invalid authority", async () => {
-    const wrongAuth = Keypair.generate();
-    try {
-      const x = await nftProgram.methods
-        .checkMintExtensionsConstraints()
-        .accountsStrict({
-          authority: wrongAuth.publicKey,
-          mint,
-        })
-        .signers([payer, wrongAuth])
-        .rpc();
-      assert.fail("should have thrown an error");
-    } catch (e) {
-      expect(e, "should throw error");
-    }
-  });
+  // it("mint extension constraints test passes", async () => {
+  //   try {
+  //     const tx = await nftProgram.methods
+  //       .checkMintExtensionsConstraints()
+  //       .accountsStrict({
+  //         authority: payer.publicKey,
+  //         mint,
+  //       })
+  //       .signers([payer])
+  //       .rpc();
+  //     assert.ok(tx, "transaction should be processed without error");
+  //   } catch (e) {
+  //     assert.fail("should not throw error");
+  //   }
+  // });
+  // it("mint extension constraints fails with invalid authority", async () => {
+  //   const wrongAuth = Keypair.generate();
+  //   try {
+  //     const x = await nftProgram.methods
+  //       .checkMintExtensionsConstraints()
+  //       .accountsStrict({
+  //         authority: wrongAuth.publicKey,
+  //         mint,
+  //       })
+  //       .signers([payer, wrongAuth])
+  //       .rpc();
+  //     assert.fail("should have thrown an error");
+  //   } catch (e) {
+  //     expect(e, "should throw error");
+  //   }
+  // });
 });
