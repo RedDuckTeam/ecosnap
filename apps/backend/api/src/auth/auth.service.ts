@@ -36,6 +36,7 @@ export class AuthService {
         user = await userRepo.save(
           userRepo.create({
             pubKey,
+            canVote: true,
           })
         );
       }
