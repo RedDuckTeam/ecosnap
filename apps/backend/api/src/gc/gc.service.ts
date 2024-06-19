@@ -52,6 +52,7 @@ export class GcService {
 
   formatGcs(gcs: GarbageCollect[]) {
     return gcs.map((v) => ({
+      createdAt: v.createdAt,
       daoVotes: {
         for: v.daoVotes.filter((d) => d.voteDirection === CastVoteDirection.FOR).length,
         against: v.daoVotes.filter((d) => d.voteDirection === CastVoteDirection.AGAINST).length,
