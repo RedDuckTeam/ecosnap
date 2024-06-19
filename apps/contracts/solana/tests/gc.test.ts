@@ -45,13 +45,13 @@ describe("token extensions", () => {
   );
 
   const [mint] = PublicKey.findProgramAddressSync(
-    [anchor.utils.bytes.utf8.encode("mint-seed"), achievementUUID],
+    [Buffer.from("mint-seed"), achievementUUID],
     nftProgram.programId
   );
 
   const [gcRootState] = PublicKey.findProgramAddressSync(
     [
-      anchor.utils.bytes.utf8.encode("root_state"),
+      Buffer.from("root_state"),
       gcGlobalState.publicKey.toBuffer(),
       gcExternalUUID,
     ],
@@ -80,9 +80,11 @@ describe("token extensions", () => {
     try {
       await gcProgram.methods
         .newRoot(Array.from(gcExternalUUID), Array.from(new Uint8Array(32)))
-        .accounts({
+        .accountsStrict({
           authority: payer.publicKey,
           globalState: gcGlobalState.publicKey,
+          rootState: gcRootState,
+          systemProgram: anchor.web3.SystemProgram.programId,
         })
         .signers([payer])
         .rpc();
@@ -98,6 +100,12 @@ describe("token extensions", () => {
       })
       .signers([payer, nftGlobalState])
       .rpc();
+
+    const accountInfo = await provider.connection.getAccountInfo(gcRootState);
+    console.log(gcRootState);
+    if (!accountInfo) {
+      throw new Error(`Account ${gcRootState.toBase58()} is not initialized`);
+    }
   });
 
   it("Create mint account test passes", async () => {
@@ -123,12 +131,12 @@ describe("token extensions", () => {
         payer: payer.publicKey,
         authority: mintAuthority,
         receiver: payer.publicKey,
-        mint,
-        mintTokenAccount: associatedAddress({
-          mint,
-          owner: payer.publicKey,
-        }),
-        extraMetasAccount: extraMetasAccount,
+        //mint,
+        // mintTokenAccount: associatedAddress({
+        //   mint,
+        //   owner: payer.publicKey,
+        // }),
+        //extraMetasAccount: extraMetasAccount,
         systemProgram: anchor.web3.SystemProgram.programId,
         associatedTokenProgram: ASSOCIATED_PROGRAM_ID,
         tokenProgram: TOKEN_2022_PROGRAM_ID,
