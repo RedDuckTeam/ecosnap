@@ -21,7 +21,7 @@ export class ProvidersService {
     return {
       merkleSubmitter: {
         globalState: this.config.sol.programs.merkleSubmitter.globalState,
-        program: new Program<MERKLE_SUBMITTER_IDL_TYPE>(
+        program: new Program<any>(
           MERKLE_SUBMITTER_IDL as any,
           this.config.sol.programs.merkleSubmitter.programId,
           new AnchorProvider(provider, new Wallet(keypair), {

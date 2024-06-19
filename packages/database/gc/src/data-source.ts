@@ -18,6 +18,7 @@ import {
   UserAchievement,
   UserAchievementBoostReward,
   MerkleProof,
+  UserCoupon,
 } from './entities';
 
 export const defaultDataSource = getDataSourceOptions(readEnv, (readEnv) => ({
@@ -37,6 +38,7 @@ export const defaultDataSource = getDataSourceOptions(readEnv, (readEnv) => ({
     UserAchievement,
     UserAchievementBoostReward,
     MerkleProof,
+    UserCoupon,
   ],
   migrations: readEnv('RUN_MIGRATION') ? ['**/migrations/*.{ts,js}'] : undefined,
   migrationsRun: false,

@@ -15,6 +15,12 @@ export class CleanupEvent extends TimeKnownEntity {
   @Column({ type: 'int' })
   rewards: number;
 
+  @Column({ type: 'varchar', nullable: true })
+  description: string;
+
+  @Column({ type: 'varchar', default: '' })
+  name: string;
+
   @Column({ type: 'varchar' })
   city: string;
 
@@ -30,6 +36,9 @@ export class CleanupEvent extends TimeKnownEntity {
 
   @OneToMany(() => CleanupEventPassCode, (v) => v.cleanupEvent, { cascade: true })
   passCodes: CleanupEventPassCode[];
+
+  @Column({ type: 'int', default: 10 })
+  maximumParticipants: number;
 
   @OneToMany(() => CleanupEventParticipation, (v) => v.cleanupEvent, { cascade: true })
   participants: CleanupEventParticipation[];

@@ -13,3 +13,5 @@ export * from './AchievementBoostReward.entity';
 export * from './UserAchievement.entity';
 export * from './UserAchievementBoostReward.entity';
 export * from './MerkleProof.entity';
+export * from './Coupon.entity';
+export * from './UserCoupon.entity';

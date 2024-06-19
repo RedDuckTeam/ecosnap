@@ -26,14 +26,37 @@ export class AuthService {
 
     await this.dataSource.manager.transaction(async (manager) => {
       const noncesRepo = manager.getRepository(AuthNonce);
+      const userRepo = manager.getRepository(User);
 
-      const unusedNonce = await noncesRepo.findOneBy({
-        used: false,
+      let user = await userRepo.findOneBy({
+        pubKey,
+      });
+
+      if (!user) {
+        user = await userRepo.save(
+          userRepo.create({
+            pubKey,
+            canVote: true,
+          })
+        );
+      }
+
+      let unusedNonce = await noncesRepo.findOneBy({
         id: nonce,
       });
 
-      if (!unusedNonce) throw new BadRequestException('Provided nonce is already been used');
+      if (unusedNonce && unusedNonce.used) throw new BadRequestException('Provided nonce is already been used');
+
+      unusedNonce ??= await noncesRepo.save(
+        noncesRepo.create({
+          id: nonce,
+          user,
+          used: true,
+        })
+      );
+
       unusedNonce.used = true;
+
       await noncesRepo.save(unusedNonce);
     });
 
