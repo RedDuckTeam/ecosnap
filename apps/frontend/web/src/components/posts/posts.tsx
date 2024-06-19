@@ -1,6 +1,6 @@
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useMemo } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { Post } from './post';
 
@@ -9,39 +9,25 @@ import { NewPost } from '../icons/new-post';
 import { Button } from '../ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 
+import { useGetGcs } from '@/hooks/queries/use-get-gcs.ts';
+import { useGetUserGcs } from '@/hooks/queries/use-get-user-gcs.ts';
 import { generateBlockies } from '@/lib/blockies';
 import { shortenAddress } from '@/lib/utils';
 import { routes } from '@/router';
 
-const config = [
-  {
-    isMy: true,
-    address: 'F7bVLTpjkhR79R1oooGxhMDenKvuM8SZs9NUCCmmTCF7',
-  },
-  {
-    isMy: false,
-    address: 'F7bVLTpjkhR79R1oooGxhMDenKvuM8SZs9NUCCmmTCF7',
-  },
-  {
-    isMy: false,
-    address: 'F7bVLTpjkhR79R1oooGxhMDenKvuM8SZs9NUCCmmTCF7',
-  },
-  {
-    isMy: false,
-    address: 'F7bVLTpjkhR79R1oooGxhMDenKvuM8SZs9NUCCmmTCF7',
-  },
-];
-
 export const PostsTabs = () => {
   const navigate = useNavigate();
   const { publicKey } = useWallet();
-  const myPosts = useMemo(() => {
-    return config.filter((post) => post.isMy);
-  }, []);
+  const posts = useGetGcs();
+  const userPosts = useGetUserGcs();
+
+  const allPosts = useMemo(() => {
+    return posts?.data?.gcs ?? [];
+  }, [posts]);
 
   const discoverPosts = useMemo(() => {
-    return config.filter((post) => !post.isMy);
-  }, []);
+    return userPosts?.data?.gcs ?? [];
+  }, [userPosts]);
 
   return (
     <Tabs defaultValue="discover" className="w-full  flex items-center flex-col">
@@ -73,18 +59,18 @@ export const PostsTabs = () => {
             </div>
           </div>
         )}
-        {myPosts.map((post, i) => (
+        {discoverPosts.map((post, i) => (
           <div className="flex flex-col ">
-            <Post isMy={post.isMy} address={post.address} />
-            {i < myPosts.length - 1 && <div className="w-full h-[1px] my-4 bg-gray-blue" />}
+            <Post gcs={post} isMy={false} />
+            {i < allPosts.length - 1 && <div className="w-full h-[1px] my-4 bg-gray-blue" />}
           </div>
         ))}
       </TabsContent>
       <TabsContent value="discover">
-        {discoverPosts.map((post, i) => (
+        {allPosts.map((post, i) => (
           <div className="flex flex-col ">
-            <Post isMy={post.isMy} address={post.address} />
-            {i < discoverPosts.length - 1 && <div className="w-full h-[1px] my-4 bg-gray-blue" />}
+            <Post key={i} gcs={post} isMy={false} />
+            {i < allPosts.length - 1 && <div className="w-full h-[1px] my-4 bg-gray-blue" />}
           </div>
         ))}
       </TabsContent>

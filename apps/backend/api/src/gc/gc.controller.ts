@@ -58,6 +58,7 @@ export class GcController {
 
   @Get('/:pubkey')
   async getGcs(@Query('pubkey') pubkey: string) {
+    console.log(pubkey);
     return { gcs: await this.gcService.getGcsByPubkey({ pubkey: new PublicKey(pubkey) }) };
   }
 

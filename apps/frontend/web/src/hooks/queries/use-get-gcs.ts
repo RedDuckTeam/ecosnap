@@ -7,7 +7,7 @@ export const useGetGcs = () => {
     queryKey: ['gcs'],
     queryFn: async () => {
       const gcs = await getGcs();
-      return gcs;
+      return gcs.data || null;
     },
   });
 };

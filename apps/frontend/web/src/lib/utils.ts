@@ -33,3 +33,6 @@ export function formatTime(dateString: string | Date): string {
 
   return `${formattedHours}:${formattedMinutes} ${period}`;
 }
+export function getMediaType(extension: string) {
+  return extension.match(/(avi|mp4|webm)/) ? 'video' : 'image';
+}

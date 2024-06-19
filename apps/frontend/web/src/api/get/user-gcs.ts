@@ -5,7 +5,5 @@ import { httpClient } from '../client';
 const GET_EVENTS = 'api/gc';
 
 export const getUserGcs = async (pubkey: string) => {
-  const events = await httpClient.get<GgcResponse>(`${GET_EVENTS}/${pubkey}`);
-
-  return events;
+  return await httpClient.get<GgcResponse>(`${GET_EVENTS}/?user=${pubkey}`);
 };

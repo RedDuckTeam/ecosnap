@@ -12,6 +12,7 @@ import { Dialog, DialogClose, DialogContent } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
+import { useCreatePost } from '@/hooks/mutations/use-create-post';
 import { generateBlockies } from '@/lib/blockies';
 import { shortenAddress } from '@/lib/utils';
 import { routes } from '@/router';
@@ -21,6 +22,8 @@ export default function NewPost() {
   const { publicKey } = useWallet();
 
   const [isSuccessOpen, setSuccessOpen] = useState(false);
+
+  const { mutateAsync: createPost, isPending } = useCreatePost();
 
   const { files: currentFiles, setFiles, comment, setComment } = usePhotoStore();
 
@@ -85,6 +88,19 @@ export default function NewPost() {
     navigate(routes.posts);
   }, [navigate, setComment, setFiles]);
 
+  const handlePost = useCallback(async () => {
+    if (isPending) return;
+    try {
+      await createPost({ description: comment, files: currentFiles });
+      setSuccessOpen(true);
+    } catch (error) {
+      toast({
+        title: 'Failed to create post',
+        description: error instanceof Error ? error.message : 'An error occurred',
+      });
+    }
+  }, [comment, createPost, currentFiles, toast, isPending]);
+
   return (
     <div className="flex flex-col max-w-[560px] mx-auto px-4">
       <Dialog open={isSuccessOpen} onOpenChange={(val) => (val ? setSuccessOpen(val) : handleSuccessClose())}>
@@ -107,8 +123,8 @@ export default function NewPost() {
           </NavLink>
         </div>
         <h1 className="text-[18px] font-semibold">New Post</h1>
-        <Button onClick={() => setSuccessOpen(true)} disabled={!comment || currentFiles.length === 0}>
-          Post
+        <Button onClick={handlePost} disabled={!comment || currentFiles.length === 0 || isPending}>
+          {isPending ? 'Posting...' : 'Post'}
         </Button>
       </div>
       <div className="flex items-center mb-4 gap-2">
