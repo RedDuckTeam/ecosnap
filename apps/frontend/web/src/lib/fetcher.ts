@@ -22,6 +22,9 @@ export class Fetcher {
   }
 
   public async post<T>(url: string, body?: Record<string, unknown>, headers?: Record<string, string>) {
+    console.log(body);
+    console.log(JSON.stringify(body));
+
     return this._processResponse<T>(
       fetch(new URL(url, this._baseURL), {
         method: 'POST',

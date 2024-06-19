@@ -1,4 +1,4 @@
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 
 import { Events } from '../icons/events';
 import { Home } from '../icons/home';
@@ -7,6 +7,7 @@ import { Message } from '../icons/message';
 import { Button } from '../ui/button';
 
 import { routes } from '@/router';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 export const config = [
   { label: 'Home', link: routes.root, icon: <Home /> },
@@ -16,6 +17,8 @@ export const config = [
 ];
 
 export const Links = () => {
+  const navigate = useNavigate();
+  const { publicKey } = useWallet();
   const pathname = useLocation().pathname;
   return (
     <div className="flex flex-col absolute top-0 left-4  gap-8">
@@ -37,9 +40,9 @@ export const Links = () => {
         ))}
       </nav>
       {pathname === routes.posts && (
-        <NavLink className="max-xl:hidden w-full" to={routes.newPost}>
-          <Button className="w-full py-5">New Post</Button>
-        </NavLink>
+        <Button onClick={() => navigate(routes.newPost)} disabled={!publicKey} className="w-full max-xl:hidden  py-5">
+          New Post
+        </Button>
       )}
     </div>
   );
