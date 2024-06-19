@@ -1,4 +1,7 @@
+import { useWallet } from '@solana/wallet-adapter-react';
 import { NavLink, useLocation } from 'react-router-dom';
+
+import { MarketBar } from './market-bar';
 
 import { Events } from '../icons/events';
 import { Home } from '../icons/home';
@@ -12,11 +15,13 @@ export const config = [
   { label: 'Home', link: routes.root, icon: <Home /> },
   { label: 'Posts', link: routes.posts, icon: <Message /> },
   { label: 'Events', link: routes.events, icon: <Events /> },
-  { label: 'Market', link: '/photo', icon: <Market /> },
+  { label: 'Market', link: routes.market, icon: <Market /> },
 ];
 
 export const Links = () => {
-  const pathname = useLocation().pathname;
+  const { pathname } = useLocation();
+  const { publicKey } = useWallet();
+
   return (
     <div className="flex flex-col absolute top-0 left-4  gap-8">
       <nav className="flex-col hidden max-w-[180px] xl:flex col-span-1 bg-gray-blue rounded-[22px] px-4 py-5 gap-4">
@@ -41,6 +46,7 @@ export const Links = () => {
           <Button className="w-full py-5">New Post</Button>
         </NavLink>
       )}
+      {pathname === routes.market && publicKey && <MarketBar />}
     </div>
   );
 };

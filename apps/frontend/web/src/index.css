@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -88,7 +89,7 @@
 
 @layer base {
   * {
-    @apply border-border text-light;
+    @apply border-border text-light antialiased;
   }
   body {
     @apply bg-background text-foreground;
