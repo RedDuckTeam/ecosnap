@@ -74,15 +74,13 @@ export class CleanupEventService {
         participationId: participation.id,
         participant: participation.participant.pubKey.toBase58(),
         status: participation.participationStatus,
+        resultStatus: participation.resultsStatus,
       };
     });
 
     const participants = event.participants.map((participant) => participant.participant.pubKey.toBase58());
 
-    return {
-      participants,
-      statuses,
-    };
+    return statuses;
   }
 
   async generatePassCode({ eventId, adminPubKey }: { eventId: string; adminPubKey: PublicKey }) {
