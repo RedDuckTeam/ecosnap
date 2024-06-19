@@ -52,12 +52,12 @@ export const defaultDataSource = getDataSourceOptions(readEnv, (readEnv) => ({
       migrationsDir: 'packages/database/gc/migrations',
     },
   },
-  // ssl:
-  //   readEnv('DATABASE_SSL', 'true') === 'true'
-  //     ? undefined
-  //     : {
-  //         rejectUnauthorized: false,
-  //       },
+  ssl:
+    readEnv('DATABASE_SSL', 'true') === 'true'
+      ? undefined
+      : {
+          rejectUnauthorized: false,
+        },
 }));
 
 export const dataSource = new DataSource(defaultDataSource);
