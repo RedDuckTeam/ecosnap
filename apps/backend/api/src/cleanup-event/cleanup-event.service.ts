@@ -57,29 +57,32 @@ export class CleanupEventService {
   }
 
   async getParticipants(eventId: string) {
-    return await this.dataSource.manager.transaction(async (manager) => {
-      const eventRepo = manager.getRepository(CleanupEvent);
-      const event = await eventRepo.findOne({
-        where: { id: eventId },
-        relations: {
-          participants: true,
+    const eventRepo = this.dataSource.getRepository(CleanupEvent);
+    const event = await eventRepo.findOne({
+      where: { id: eventId },
+      relations: {
+        participants: {
+          participant: true,
         },
-      });
+      },
+    });
 
-      if (!event) throw new NotFoundException();
+    if (!event) throw new NotFoundException();
 
-      const participantsStatuses = event.participants.map((participant) => {
-        return {
-          participant: participant.participant,
-          status: participant.participationStatus,
-        };
-      });
-
+    const statuses = event.participants.map((participation) => {
       return {
-        participants: event.participants,
-        statuses: participantsStatuses,
+        participationId: participation.id,
+        participant: participation.participant.pubKey.toBase58(),
+        status: participation.participationStatus,
       };
     });
+
+    const participants = event.participants.map((participant) => participant.participant.pubKey.toBase58());
+
+    return {
+      participants,
+      statuses,
+    };
   }
 
   async generatePassCode({ eventId, adminPubKey }: { eventId: string; adminPubKey: PublicKey }) {

@@ -22,7 +22,7 @@ export const getDataSourceConnectParameters = (envReader: EnvReaderFunc) => {
           username: envReader('DB_USER') ?? 'postgres',
           password: envReader('DB_PASSWORD') ?? 'postgres',
           database: envReader('DB_NAME') ?? 'postgres',
-          ssl: envReader('DB_SSL') ?? false,
+          //ssl: envReader('DB_SSL') ?? false,
         }),
     synchronize:
       envReader('NODE_ENV', 'development') === 'development' || envReader('DB_SYNC', 'false') === 'true' ? true : false,

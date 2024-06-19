@@ -165,8 +165,8 @@ export class CleanupController {
   }
 
   @Get('/participatants')
-  getParticipants(@Query('eventId') eventId: string) {
-    return { message: this.cleanUpEventService.getParticipants(eventId) };
+  async getParticipants(@Query('eventId') eventId: string) {
+    return { participants: await this.cleanUpEventService.getParticipants(eventId) };
   }
 
   @Get('/participate/message')
