@@ -23,6 +23,7 @@ import { useGetParticipants } from '@/hooks/queries/use-get-participants';
 import { generateBlockies } from '@/lib/blockies';
 import { formatDate, formatTime, shortenAddress } from '@/lib/utils';
 import { routes } from '@/router';
+import { ParticipationStatus } from '@/api/get/participants.ts';
 
 export default function Event() {
   const { id } = useParams() as { id: string | undefined };
@@ -34,7 +35,12 @@ export default function Event() {
   const [code, setCode] = useState('');
 
   const [adminCode, setAdminCode] = useState('123456');
-  const { data: participants } = useGetParticipants(id);
+  const { data: fetchedParticipants } = useGetParticipants(id);
+
+  const participants = useMemo(() => {
+    return fetchedParticipants?.participants ?? [];
+  }, [fetchedParticipants]);
+
   const { mutateAsync: participate } = useParticipate();
 
   const { mutateAsync: generateCode } = useGeneratePassCode();
@@ -83,7 +89,7 @@ export default function Event() {
         });
       }
     },
-    [acceptParticipation, id, toast],
+    [acceptParticipation, id, toast]
   );
 
   const handleGenerateCode = useCallback(async () => {
@@ -216,18 +222,22 @@ export default function Event() {
           <div className="flex flex-col gap-4">
             <h6 className="text-[16px] font-semibold">Participants</h6>
             <div className="flex flex-col gap-4">
-              {participants.map((participant) => (
-                <div key={participant.address} className="flex items-center justify-between w-full">
-                  <div className="flex items-center gap-2">
-                    {generateBlockies(new PublicKey(participant.address))}
-                    <p className="xl:hidden">{shortenAddress(participant.address)}</p>
-                    <p className="max-xl:hidden">{participant.address}</p>
-                  </div>
-                  {isAdmin && city.participants !== city.maximumParticipants && (
-                    <Button onClick={() => handleAcceptParticipant(participant.address)}>Accept</Button>
-                  )}
-                </div>
-              ))}
+              {participants.map((participant) => {
+                if (participant.status === ParticipationStatus.ACCEPTED) {
+                  return (
+                    <div key={participant.participant} className="flex items-center justify-between w-full">
+                      <div className="flex items-center gap-2">
+                        {generateBlockies(new PublicKey(participant.participant))}
+                        <p className="xl:hidden">{shortenAddress(participant.participant)}</p>
+                        <p className="max-xl:hidden">{participant.participant}</p>
+                      </div>
+                      {isAdmin && city.participants !== city.maximumParticipants && (
+                        <Button onClick={() => handleAcceptParticipant(participant.participant)}>Accept</Button>
+                      )}
+                    </div>
+                  );
+                }
+              })}
             </div>
           </div>
         )}

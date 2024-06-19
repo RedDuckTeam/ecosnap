@@ -5,10 +5,10 @@ import {
   CleanupEvent,
   CleanupEventParticipation,
   CleanupEventPassCode,
+  File,
   ParticipationResultsStatus,
   ParticipationStatus,
   User,
-  File,
 } from '@gc/database-gc';
 import * as nacl from 'tweetnacl';
 import bs58 from 'bs58';
@@ -17,8 +17,6 @@ import { getFileExtensionFromFile } from '../lib/utils/utils';
 import { StorageService } from '@gc/storage';
 import { AchievementsService } from '../achievements/achievements.service';
 import { DaoService } from '../dao/dao.service';
-import { IsUUID } from 'class-validator';
-import e from 'express';
 
 @Injectable()
 export class CleanupEventService {
@@ -69,7 +67,7 @@ export class CleanupEventService {
 
     if (!event) throw new NotFoundException();
 
-    const statuses = event.participants.map((participation) => {
+    return event.participants.map((participation) => {
       return {
         participationId: participation.id,
         participant: participation.participant.pubKey.toBase58(),
@@ -77,10 +75,6 @@ export class CleanupEventService {
         resultStatus: participation.resultsStatus,
       };
     });
-
-    const participants = event.participants.map((participant) => participant.participant.pubKey.toBase58());
-
-    return statuses;
   }
 
   async generatePassCode({ eventId, adminPubKey }: { eventId: string; adminPubKey: PublicKey }) {
