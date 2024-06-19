@@ -59,6 +59,7 @@ export default function NewPost() {
 
       if (currentFiles.length + files.length > 10) {
         toast({
+          variant: 'destructive',
           title: 'You can only upload up to 10 files.',
         });
         return;
@@ -95,6 +96,7 @@ export default function NewPost() {
       setSuccessOpen(true);
     } catch (error) {
       toast({
+        variant: 'destructive',
         title: 'Failed to create post',
         description: error instanceof Error ? error.message : 'An error occurred',
       });

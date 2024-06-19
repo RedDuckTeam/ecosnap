@@ -17,7 +17,7 @@ export class Fetcher {
     return this._processResponse<T>(
       fetch(new URL(url, this._baseURL), {
         headers: { ...this._headers, ...(headers ?? {}) },
-      })
+      }),
     );
   }
 
@@ -27,7 +27,7 @@ export class Fetcher {
         method: 'POST',
         headers: { ...this._headers, ...(headers ?? {}) },
         body: body ? (body instanceof FormData ? body : JSON.stringify(body)) : undefined,
-      })
+      }),
     );
   }
 
@@ -37,7 +37,7 @@ export class Fetcher {
         method: 'PUT',
         headers: this._headers,
         body: body ? JSON.stringify(body) : undefined,
-      })
+      }),
     );
   }
 
@@ -46,7 +46,7 @@ export class Fetcher {
       fetch(new URL(url, this._baseURL), {
         method: 'DELETE',
         headers: this._headers,
-      })
+      }),
     );
   }
 
@@ -56,7 +56,7 @@ export class Fetcher {
         method: 'PATCH',
         headers: this._headers,
         body: body ? JSON.stringify(body) : undefined,
-      })
+      }),
     );
   }
 
