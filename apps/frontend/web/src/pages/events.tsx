@@ -96,8 +96,12 @@ export default function Events() {
                 <div className="flex items-center justify-between p-8">
                   <Loader2 className="animate-spin h-8 w-8" />
                 </div>
-              ) : (
+              ) : myEventsIds.length > 0 ? (
                 myEvents?.map((event) => <EventCard isMy={true} event={event} onClick={redirectToEvent} />)
+              ) : (
+                <div className="flex justify-center">
+                  <p className="text-[16px] font-semibold">You have not participated in events yet</p>
+                </div>
               )}
             </TabsContent>
             <TabsContent ref={parent} className="flex flex-col w-full gap-4" value="discover">
