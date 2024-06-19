@@ -50,6 +50,7 @@ export class AuthService {
         noncesRepo.create({
           id: nonce,
           user,
+          used: true,
         })
       );
 

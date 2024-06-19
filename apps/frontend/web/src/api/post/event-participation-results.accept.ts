@@ -1,6 +1,6 @@
 import { httpClient } from '../client';
 
-const POST = 'cleanup-event/admin/result/accept';
+const POST = 'api/cleanup-event/admin/result/accept';
 
 export const postParticipationResultAccept = async ({
   jwt,
@@ -22,7 +22,7 @@ export const postParticipationResultAccept = async ({
     },
     {
       Authorization: 'Bearer ' + jwt,
-    },
+    }
   );
 
   return res;

@@ -8,7 +8,7 @@ export class AuthNonce extends TimeKnownEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'boolean' })
+  @Column({ type: 'boolean', default: false })
   used: boolean;
 
   @ManyToOne(() => User, (v) => v.authNonces, { eager: true, onDelete: 'CASCADE' })

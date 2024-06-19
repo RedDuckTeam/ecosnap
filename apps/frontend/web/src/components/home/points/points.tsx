@@ -9,11 +9,15 @@ import { Help } from '@/components/icons/help';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Progress } from '@/components/ui/progress';
+import { useGetUser } from '@/hooks/queries/use-get-user';
 import { routes } from '@/router';
 
 export const Points = () => {
   const navigate = useNavigate();
   const [isDesctiptionOpen, setDescriptionOpen] = useState(false);
+  const user = useGetUser();
+
+  console.log('user', { user });
   return (
     <>
       <Dialog open={isDesctiptionOpen} onOpenChange={setDescriptionOpen}>
@@ -34,11 +38,11 @@ export const Points = () => {
             value={
               <div className="flex items-center gap-1">
                 <img src="/images/star.png" alt="star" />
-                <p>2456</p>
+                <p>{user.data?.points}</p>
               </div>
             }
           />
-          <PointsItem label="Garbage" value="2456" />
+          <PointsItem label="Garbage" value={(user.data?.garbageCollects ?? 0).toString()} />
           <PointsItem label="Level" value="5" />
         </div>
         <div className="flex items-center gap-8">
