@@ -8,6 +8,7 @@ export const routes = {
   newPost: '/new-post',
   events: '/events',
   event: '/events/:id',
+  market: '/market',
 } as const;
 
 export const router = createBrowserRouter([
@@ -34,6 +35,10 @@ export const router = createBrowserRouter([
       {
         path: routes.event,
         Component: lazy(() => import('@/pages/events/[id]')),
+      },
+      {
+        path: routes.market,
+        Component: lazy(() => import('@/pages/market')),
       },
     ],
   },
