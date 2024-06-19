@@ -1,6 +1,4 @@
-use anchor_lang::{
-    prelude::*, solana_program::entrypoint::ProgramResult, solana_program::hash::hashv,
-};
+use anchor_lang::{prelude::*, solana_program::entrypoint::ProgramResult, solana_program::keccak};
 
 use anchor_spl::{
     associated_token::AssociatedToken,
@@ -115,7 +113,7 @@ impl<'info> CreateMintAccount<'info> {
 pub fn handler(
     ctx: Context<CreateMintAccount>,
     user: Pubkey,
-    amount: u16,
+    amount: u64,
     name: String,
     symbol: String,
     uri: String,
@@ -125,14 +123,14 @@ pub fn handler(
 ) -> Result<()> {
     let root_account = &mut ctx.accounts.root_account;
 
-    let node = hashv(&[
+    let node = keccak::hashv(&[
         &user.to_bytes(),
         &amount.to_le_bytes(),
-        &name.clone().into_bytes(),
-        &symbol.clone().into_bytes(),
-        &uri.clone().into_bytes(),
-        &achievement_uuid,
-        &merkle_uuid,
+        // &name.clone().into_bytes(),
+        // &symbol.clone().into_bytes(),
+        // &uri.clone().into_bytes(),
+        // &achievement_uuid,
+        // &merkle_uuid,
     ]);
 
     require!(
@@ -155,7 +153,7 @@ pub fn handler(
 
     mint_to(
         CpiContext::new_with_signer(
-            ctx.accounts.authority.to_account_info(),
+            ctx.accounts.token_program.to_account_info(),
             MintTo {
                 authority: ctx.accounts.authority.to_account_info(),
                 to: ctx.accounts.mint_token_account.to_account_info(),

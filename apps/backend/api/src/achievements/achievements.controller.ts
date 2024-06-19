@@ -1,4 +1,4 @@
-import { Achievement, UserAchievement } from '@gc/database-gc';
+import { Achievement, MerkleProof, MerkleTreeType, SubmissionType, UserAchievement } from '@gc/database-gc';
 import { Controller, Get, Query } from '@nestjs/common';
 import { PublicKey } from '@solana/web3.js';
 import { DataSource } from 'typeorm';
@@ -29,8 +29,31 @@ export class AchievementsController {
       },
     });
 
-    return achievements.map((v) => ({
-      ...v,
-    }));
+    const proofs: (MerkleProof | null)[] = [];
+
+    for (let ach of achievements) {
+      const proofsRepo = this.dataSource.getRepository(MerkleProof);
+      const id = ach.merkleSubmissions?.find((v) => v.treeType === MerkleTreeType.ONLY_PROOFS)?.id;
+
+      if (!id) throw new Error('Id is undefined');
+
+      const proofsEntity = await proofsRepo.findOne({
+        where: {
+          submission: {
+            id,
+          },
+          user: ach.user,
+        },
+      });
+
+      proofs.push(proofsEntity);
+    }
+
+    return {
+      achievements: achievements.map((v, i) => ({
+        ...v,
+        proofs: proofs[i],
+      })),
+    };
   }
 }
