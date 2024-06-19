@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PublicKey } from '@solana/web3.js';
 import { DataSource } from 'typeorm';
 import {
@@ -17,6 +17,8 @@ import { getFileExtensionFromFile } from '../lib/utils/utils';
 import { StorageService } from '@gc/storage';
 import { AchievementsService } from '../achievements/achievements.service';
 import { DaoService } from '../dao/dao.service';
+import { IsUUID } from 'class-validator';
+import e from 'express';
 
 @Injectable()
 export class CleanupEventService {
@@ -51,6 +53,32 @@ export class CleanupEventService {
         admins: v.admins.map((a) => a.pubKey.toBase58()),
         files: v.files,
       }));
+    });
+  }
+
+  async getParticipants(eventId: string) {
+    return await this.dataSource.manager.transaction(async (manager) => {
+      const eventRepo = manager.getRepository(CleanupEvent);
+      const event = await eventRepo.findOne({
+        where: { id: eventId },
+        relations: {
+          participants: true,
+        },
+      });
+
+      if (!event) throw new NotFoundException();
+
+      const participantsStatuses = event.participants.map((participant) => {
+        return {
+          participant: participant.participant,
+          status: participant.participationStatus,
+        };
+      });
+
+      return {
+        participants: event.participants,
+        statuses: participantsStatuses,
+      };
     });
   }
 
