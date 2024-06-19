@@ -995,7 +995,7 @@
   resolved "https://registry.yarnpkg.com/@colors/colors/-/colors-1.5.0.tgz#bb504579c1cae923e6576a4f5da43d25f97bdbd9"
   integrity sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==
 
-"@coral-xyz/anchor@0.30.0":
+"@coral-xyz/anchor@0.30.0", "@coral-xyz/anchor@^0.30.0":
   version "0.30.0"
   resolved "https://registry.yarnpkg.com/@coral-xyz/anchor/-/anchor-0.30.0.tgz#52acdba504b0008f1026d3a4bbbcb2d4feb5c69e"
   integrity sha512-qreDh5ztiRHVnCbJ+RS70NJ6aSTPBYDAgFeQ7Z5QvaT5DcDIhNyt4onOciVz2ieIE1XWePOJDDu9SbNvPGBkvQ==
