@@ -1,13 +1,9 @@
+use anchor_lang::solana_program::keccak;
 use anchor_lang::{
     prelude::Result,
     solana_program::{
-        account_info::AccountInfo,
-        program::invoke,
-        pubkey::Pubkey,
-        rent::Rent,
-        system_instruction::transfer,
-        sysvar::Sysvar,
-        hash::hashv
+        account_info::AccountInfo, hash::hashv, program::invoke, pubkey::Pubkey, rent::Rent,
+        system_instruction::transfer, sysvar::Sysvar,
     },
     Lamports,
 };
@@ -50,7 +46,6 @@ pub fn get_mint_extension_data<T: Extension + Pod>(account: &mut AccountInfo) ->
     Ok(extension_data)
 }
 
-
 pub fn get_meta_list(approve_account: Option<Pubkey>) -> Vec<ExtraAccountMeta> {
     if let Some(approve_account) = approve_account {
         return vec![ExtraAccountMeta {
@@ -78,13 +73,10 @@ pub fn verify(proof: Vec<[u8; 32]>, root: [u8; 32], leaf: [u8; 32]) -> bool {
     let mut computed_hash = leaf;
     for proof_element in proof.into_iter() {
         if computed_hash <= proof_element {
-            // Hash(current computed hash + current element of the proof)
-            computed_hash = hashv(&[&[1u8], &computed_hash, &proof_element]).to_bytes();
+            computed_hash = keccak::hashv(&[&computed_hash, &proof_element]).0;
         } else {
-            // Hash(current element of the proof + current computed hash)
-            computed_hash = hashv(&[&[1u8], &proof_element, &computed_hash]).to_bytes();
+            computed_hash = keccak::hashv(&[&proof_element, &computed_hash]).0;
         }
     }
-    // Check if the computed hash (root) is equal to the provided root
     computed_hash == root
 }

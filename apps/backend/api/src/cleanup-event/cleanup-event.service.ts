@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PublicKey } from '@solana/web3.js';
 import { DataSource } from 'typeorm';
 import {
@@ -17,6 +17,8 @@ import { getFileExtensionFromFile } from '../lib/utils/utils';
 import { StorageService } from '@gc/storage';
 import { AchievementsService } from '../achievements/achievements.service';
 import { DaoService } from '../dao/dao.service';
+import { IsUUID } from 'class-validator';
+import e from 'express';
 
 @Injectable()
 export class CleanupEventService {
@@ -52,6 +54,33 @@ export class CleanupEventService {
         files: v.files,
       }));
     });
+  }
+
+  async getParticipants(eventId: string) {
+    const eventRepo = this.dataSource.getRepository(CleanupEvent);
+    const event = await eventRepo.findOne({
+      where: { id: eventId },
+      relations: {
+        participants: {
+          participant: true,
+        },
+      },
+    });
+
+    if (!event) throw new NotFoundException();
+
+    const statuses = event.participants.map((participation) => {
+      return {
+        participationId: participation.id,
+        participant: participation.participant.pubKey.toBase58(),
+        status: participation.participationStatus,
+        resultStatus: participation.resultsStatus,
+      };
+    });
+
+    const participants = event.participants.map((participant) => participant.participant.pubKey.toBase58());
+
+    return statuses;
   }
 
   async generatePassCode({ eventId, adminPubKey }: { eventId: string; adminPubKey: PublicKey }) {
@@ -342,8 +371,16 @@ export class CleanupEventService {
     });
   }
 
-  private _generateRandomPassKey() {
-    return '';
+  private _generateRandomPassKey(codeLength = 6) {
+    let result = '';
+    const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < codeLength) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      counter += 1;
+    }
+    return result;
   }
 
   getParticipateMessage(id: string) {

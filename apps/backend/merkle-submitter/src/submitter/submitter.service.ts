@@ -23,6 +23,7 @@ import * as borsh from 'borsh';
 import crypto from 'crypto';
 
 import { ProvidersService } from '@gc/providers';
+import { BN } from 'bn.js';
 
 @Injectable()
 export class SubmitterService {
@@ -410,14 +411,17 @@ export class SubmitterService {
       id: number;
       user: string;
     }) => {
-      return Buffer.concat([
-        new PublicKey(user).toBuffer(),
-        borsh.serialize('u16', amount),
-        borsh.serialize('string', 'name'),
-        borsh.serialize('string', 'symb'),
-        borsh.serialize('string', 'uri'),
-        borsh.serialize({ array: { type: 'u8', len: 16 } }, this.toBinaryUUID(achievementId)),
-        borsh.serialize({ array: { type: 'u8', len: 16 } }, this.toBinaryUUID(treeId)),
+      return Buffer.from([
+        ...new PublicKey(user).toBuffer(),
+        ...new BN(amount).toArray('le', 8),
+
+        // new PublicKey(user).toBuffer(),
+        // borsh.serialize('u16', amount),
+        // borsh.serialize('string', 'name'),
+        // borsh.serialize('string', 'symb'),
+        // borsh.serialize('string', 'uri'),
+        // borsh.serialize({ array: { type: 'u8', len: 16 } }, this.toBinaryUUID(achievementId)),
+        // borsh.serialize({ array: { type: 'u8', len: 16 } }, this.toBinaryUUID(treeId)),
       ]);
     };
 

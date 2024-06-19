@@ -1,4 +1,4 @@
-import { httpClient } from '../client';
+import { formDataHttpClient } from '../client';
 
 const POST_CREATE_POST = 'api/gc';
 
@@ -22,7 +22,7 @@ export const postCreatePost = async ({ files, description, jwt }: PostCreatePost
   for (const [key, value] of formData.entries()) {
     console.log(key, value);
   }
-  const response = await httpClient.post(`${POST_CREATE_POST}`, formData, {
+  const response = await formDataHttpClient.post(`${POST_CREATE_POST}`, formData, {
     Authorization: 'Bearer ' + jwt,
   });
 

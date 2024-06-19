@@ -6,6 +6,7 @@ import { AuthNonce } from './AuthNonce.entity';
 import { PublicKey } from '@solana/web3.js';
 import { CleanupEvent } from './CleanupEvent.entity';
 import { UserAchievement } from './UserAchievement.entity';
+import { UserCoupon } from './UserCoupon.entity';
 
 @Entity({ name: 'user' })
 export class User extends TimeKnownEntity {
@@ -29,6 +30,9 @@ export class User extends TimeKnownEntity {
 
   @OneToMany(() => UserAchievement, (v) => v.user, { cascade: true })
   achievements: UserAchievement[];
+
+  @OneToMany(() => UserCoupon, (v) => v.user, { cascade: true })
+  coupons: UserCoupon[];
 
   @OneToMany(() => AuthNonce, (v) => v.user, { cascade: true })
   authNonces: AuthNonce[];

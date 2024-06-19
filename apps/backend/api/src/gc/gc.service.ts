@@ -52,6 +52,7 @@ export class GcService {
 
   formatGcs(gcs: GarbageCollect[]) {
     return gcs.map((v) => ({
+      createdAt: v.createdAt,
       daoVotes: {
         for: v.daoVotes.filter((d) => d.voteDirection === CastVoteDirection.FOR).length,
         against: v.daoVotes.filter((d) => d.voteDirection === CastVoteDirection.AGAINST).length,
@@ -63,6 +64,12 @@ export class GcService {
       id: v.id,
       files: v.files,
       user: v.user.pubKey.toBase58(),
+      votes: v.daoVotes.map((vote) => {
+        return {
+          direction: vote.voteDirection,
+          user: vote.voter.pubKey,
+        };
+      }),
     }));
   }
 

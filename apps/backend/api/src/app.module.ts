@@ -16,6 +16,7 @@ import { AchievementsModule } from './achievements/achievements.module';
 import { UserModule } from './user/user.module';
 import { MerkleController } from './merkle/merkle.controller';
 import { MerkleModule } from './merkle/merkle.module';
+import { CouponsModule } from './coupons/coupons.module';
 
 class GlobalProviders {
   static forRoot(): DynamicModule {
@@ -73,6 +74,7 @@ class GlobalProviders {
     AchievementsModule,
     UserModule,
     MerkleModule,
+    CouponsModule,
   ],
   providers: [],
   exports: [],

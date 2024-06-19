@@ -22,7 +22,7 @@ export const postParticipationAccept = async ({
     },
     {
       Authorization: 'Bearer ' + jwt,
-    }
+    },
   );
 
   return res;
