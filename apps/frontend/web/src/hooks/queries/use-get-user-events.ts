@@ -1,12 +1,14 @@
+import { useWallet } from '@solana/wallet-adapter-react';
 import { useQuery } from '@tanstack/react-query';
 
-import { getEvents } from '@/api/get/events';
+import { getUserEvents } from '@/api/get/user-events';
 
-export const useGetEvents = (cityId: string, search: string) => {
+export const useGetUserEvents = (cityId: string, search: string) => {
+  const { publicKey } = useWallet();
   return useQuery({
-    queryKey: ['events', cityId, search],
+    queryKey: ['events', publicKey, cityId, search],
     queryFn: async () => {
-      const events = await getEvents();
+      const events = await getUserEvents(publicKey!.toBase58());
 
       const filteredEvents = events.data?.events?.filter?.((e) => {
         if (cityId && e.city !== cityId) {
@@ -21,5 +23,6 @@ export const useGetEvents = (cityId: string, search: string) => {
       });
       return filteredEvents;
     },
+    enabled: !!publicKey,
   });
 };
