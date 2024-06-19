@@ -38,7 +38,7 @@ export const Points = () => {
             value={
               <div className="flex items-center gap-1">
                 <img src="/images/star.png" alt="star" />
-                <p>{user.data?.points}</p>
+                <p>{user.data?.points ?? 0}</p>
               </div>
             }
           />
