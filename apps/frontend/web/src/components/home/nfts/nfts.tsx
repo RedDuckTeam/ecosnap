@@ -3,8 +3,8 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { Button } from '@/components/ui/button';
 import { Command, CommandGroup, CommandItem, CommandList } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { useGetUserAchievements } from '@/hooks/queries/use-get-user-achievements';
 import { useMintAchievement } from '@/hooks/mutations/solana/use-mint-achievement';
+import { useGetUserAchievements } from '@/hooks/queries/use-get-user-achievements';
 
 export const NFTs = () => {
   const { publicKey } = useWallet();
@@ -18,19 +18,15 @@ export const NFTs = () => {
       <div className={`${publicKey ? '' : 'grayscale-[95%]'} grid grid-cols-2 gap-y-4`}>
         {data &&
           data.map((nft) =>
-            nft.isMinted ? (
+            true ? (
               <div key={nft.id} className="flex items-end">
-                <img src={nft.achievement.imageUrl} alt="girl" className="w-full odd:-translate-x-[15%]" />
+                <img src={nft.achievement.imageUrl} alt="girl" className="w-full " />
               </div>
             ) : (
               <Popover key={nft.id}>
                 <PopoverTrigger>
                   <div className="flex items-end">
-                    <img
-                      src={nft.achievement.imageUrl}
-                      alt="girl"
-                      className="w-full odd:-translate-x-[15%] grayscale"
-                    />
+                    <img src={nft.achievement.imageUrl} alt="girl" className="w-full  grayscale" />
                   </div>
                 </PopoverTrigger>
                 <PopoverContent>
@@ -41,7 +37,7 @@ export const NFTs = () => {
                           <Button
                             className="w-full"
                             onClick={() => {
-                              mutateAsync({
+                              void mutateAsync({
                                 achievementId: nft.achievement.id,
                                 merkleTreeId: nft.merkleTreeId,
                                 proofs: nft.proofs,
