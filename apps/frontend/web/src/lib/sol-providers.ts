@@ -8,4 +8,7 @@ export const connection = new Connection(endpoint, 'confirmed');
 
 const nftProgramId = new PublicKey('7PkvYFurAyci1hZFhkvfwHvMFZt9ctdpK8pogGNVizjm');
 
+export const gcGlobalState = new PublicKey('');
+export const nftGlobalState = new PublicKey('');
 export const nftProgram = Program.at<NFT_MINTER_IDL_TYPE>(nftProgramId, { connection });
+export const gcProgramId = new PublicKey('5Mew5NxqLr5NGG6VbHtkNNK6LNGa5ucKyuV6stWmfy16');

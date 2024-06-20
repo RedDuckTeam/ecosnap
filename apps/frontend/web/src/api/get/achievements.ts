@@ -2,13 +2,16 @@ import { httpClient } from '../client';
 
 const POST = 'api/achievements';
 
-type GetUserAchievementsResponse = {
+export type GetUserAchievementsResponse = {
   achievements: {
     proofs: {
       proof: Buffer[];
-      leaf: Object;
-    }[];
-
+      leaf: {
+        user: string;
+        amount: number;
+      };
+    };
+    isMinted: boolean;
     received: boolean;
     currentPoints: number;
     merkleSubmitted: boolean;
@@ -18,7 +21,7 @@ type GetUserAchievementsResponse = {
       canHaveMany: boolean;
       imageUrl: string;
     };
-  };
+  }[];
 };
 
 export const getUserAchievements = async ({ user }: { user: string }) => {
