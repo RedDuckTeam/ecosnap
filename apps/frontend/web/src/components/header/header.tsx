@@ -10,8 +10,11 @@ import { generateBlockies } from '@/lib/blockies';
 export const Header = () => {
   const { publicKey } = useWallet();
   useMemo(() => {
-    localStorage.setItem('accessToken', '');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const prevAddress = localStorage.getItem('currentAddress');
+    if (publicKey !== null && prevAddress !== publicKey.toBase58()) {
+      localStorage.setItem('currentAddress', publicKey.toBase58());
+      localStorage.setItem('accessToken', '');
+    }
   }, [publicKey]);
   return (
     <div className="flex justify-between items-center p-4">

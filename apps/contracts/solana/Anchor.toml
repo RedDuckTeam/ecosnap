@@ -9,6 +9,7 @@ skip-lint = false
 gc = "5Mew5NxqLr5NGG6VbHtkNNK6LNGa5ucKyuV6stWmfy16"
 [programs.devnet]
 gc = "5Mew5NxqLr5NGG6VbHtkNNK6LNGa5ucKyuV6stWmfy16"
+nft = "7PkvYFurAyci1hZFhkvfwHvMFZt9ctdpK8pogGNVizjm"
 [programs.mainnet]
 gc = "5Mew5NxqLr5NGG6VbHtkNNK6LNGa5ucKyuV6stWmfy16"
 
@@ -16,7 +17,7 @@ gc = "5Mew5NxqLr5NGG6VbHtkNNK6LNGa5ucKyuV6stWmfy16"
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "localnet"
+cluster = "devnet"
 wallet = "~/.config/solana/id.json"
 
 [test.validator]
