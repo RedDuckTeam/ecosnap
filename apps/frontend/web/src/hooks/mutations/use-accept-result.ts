@@ -1,5 +1,5 @@
 import { useWallet } from '@solana/wallet-adapter-react';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { useSignEventResultAccept } from './signatures/use-sign-event-result-accept';
 import { useAuth } from './use-auth';
@@ -10,6 +10,8 @@ export const useAcceptResult = () => {
   const { publicKey } = useWallet();
   const { mutateAsync: auth } = useAuth();
   const { mutateAsync: signAccept } = useSignEventResultAccept();
+
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async ({ eventId, participationId }: { participationId: string; eventId: string }) => {
@@ -27,6 +29,11 @@ export const useAcceptResult = () => {
         participationId,
         jwt: accessToken,
       });
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['events'] });
+      await queryClient.invalidateQueries({ queryKey: ['event'] });
+      await queryClient.invalidateQueries({ queryKey: ['participants'] });
     },
   });
 };

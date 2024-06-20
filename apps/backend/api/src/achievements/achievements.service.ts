@@ -17,7 +17,7 @@ export class AchievementsService {
     const userAchievementBoostRepo = manager.getRepository(UserAchievementBoostReward);
 
     for (let eventBoost of boost) {
-      const event = eventBoost.cleanupEvent;
+      const events = eventBoost.cleanupEvent;
       const achievement = eventBoost.achievement;
 
       let userAchievements = await userAchievementRepo.findBy({

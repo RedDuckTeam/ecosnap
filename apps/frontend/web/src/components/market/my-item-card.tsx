@@ -21,12 +21,6 @@ export const MyItemCard = ({ myItem, setMyItem, setOpen }: MyItemCardProps) => {
       <div className="flex flex-col justify-between h-full">
         <div className="flex flex-col gap-[8px]">
           <div className="text-[20px] leading-[25px] font-semibold tracking-[-0.5px]">{myItem.description}</div>
-          <div className="flex items-center gap-[8px]">
-            <img src="/images/star.png" alt="star" />
-            <div className="text-[16px] leading-[20px] tracking-[-0.5px] font-medium text-gray">
-              <span className="text-foreground">20</span>/{myItem.pointsPrice}
-            </div>
-          </div>
         </div>
         {myItem.isRedeemed ? (
           <Button

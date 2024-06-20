@@ -51,7 +51,7 @@ export class CleanupEventService {
         rewards: v.rewards,
         eventStartsAt: v.eventStartsAt,
         eventEndsAt: v.eventEndsAt,
-        participants: v.participants.length,
+        participants: v.participants.filter((participant) => participant.participationStatus !== null).length,
         maximumParticipants: v.maximumParticipants,
         description: v.description,
         admins: v.admins.map((a) => a.pubKey.toBase58()),
@@ -78,7 +78,7 @@ export class CleanupEventService {
         rewards: v.rewards,
         eventStartsAt: v.eventStartsAt,
         eventEndsAt: v.eventEndsAt,
-        participants: v.participants.length,
+        participants: v.participants.filter((participant) => participant.participationStatus !== null).length,
         maximumParticipants: v.maximumParticipants,
         description: v.description,
         admins: v.admins.map((a) => a.pubKey.toBase58()),
@@ -89,6 +89,7 @@ export class CleanupEventService {
 
   async getParticipants(eventId: string) {
     const eventRepo = this.dataSource.getRepository(CleanupEvent);
+
     const event = await eventRepo.findOne({
       where: { id: eventId },
       relations: {
@@ -324,6 +325,8 @@ export class CleanupEventService {
         },
         manager
       );
+
+      await userRepo.save(participation.participant);
 
       await this.daoService.updateCanVote(participation.participant, manager);
       await manager.save(participation);

@@ -4,6 +4,7 @@ import { Loader2 } from 'lucide-react';
 import { useCallback, useMemo, useState } from 'react';
 import { NavLink, useParams } from 'react-router-dom';
 
+import { ParticipationStatus } from '@/api/get/participants.ts';
 import { ArrowCircleLeft } from '@/components/icons/arrow-circle-left';
 import { Calendar } from '@/components/icons/calendar';
 import { Clock } from '@/components/icons/clock';
@@ -15,6 +16,7 @@ import { Dialog, DialogClose, DialogContent } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 import { useAcceptParticipation } from '@/hooks/mutations/use-accept-participation';
+import { useAcceptResult } from '@/hooks/mutations/use-accept-result';
 import { useGeneratePassCode } from '@/hooks/mutations/use-generate-event-pass-code';
 import { useParticipate } from '@/hooks/mutations/use-participate';
 import { useGetCities } from '@/hooks/queries/use-get-cities';
@@ -23,7 +25,6 @@ import { useGetParticipants } from '@/hooks/queries/use-get-participants';
 import { generateBlockies } from '@/lib/blockies';
 import { formatDate, formatTime, shortenAddress } from '@/lib/utils';
 import { routes } from '@/router';
-import { ParticipationStatus } from '@/api/get/participants.ts';
 
 export default function Event() {
   const { id } = useParams() as { id: string | undefined };
@@ -34,14 +35,22 @@ export default function Event() {
   const [participateSuccessOpen, setParticipateSuccessOpen] = useState(false);
   const [code, setCode] = useState('');
 
-  const [adminCode, setAdminCode] = useState('123456');
+  const [adminCode, setAdminCode] = useState('');
   const { data: fetchedParticipants } = useGetParticipants(id);
 
   const participants = useMemo(() => {
     return fetchedParticipants?.participants ?? [];
   }, [fetchedParticipants]);
 
+  const isUserParticipant = useMemo(() => {
+    if (!publicKey) return false;
+    return Boolean(
+      participants.find((participant) => new PublicKey(participant.participant).toString() === publicKey.toString()),
+    );
+  }, [participants, publicKey]);
+
   const { mutateAsync: participate } = useParticipate();
+  const { mutateAsync: acceptResult } = useAcceptResult();
 
   const { mutateAsync: generateCode } = useGeneratePassCode();
   const { mutateAsync: acceptParticipation } = useAcceptParticipation();
@@ -89,7 +98,26 @@ export default function Event() {
         });
       }
     },
-    [acceptParticipation, id, toast]
+    [acceptParticipation, id, toast],
+  );
+
+  const handleAcceptResult = useCallback(
+    async (participationId: string) => {
+      try {
+        await acceptResult({ eventId: id!, participationId });
+        toast({
+          variant: 'success',
+          title: 'Successfully accepted participant result',
+        });
+      } catch (error) {
+        toast({
+          variant: 'destructive',
+          title: 'Failed accept participant result',
+          description: (error as Error).message,
+        });
+      }
+    },
+    [acceptResult, id, toast],
   );
 
   const handleGenerateCode = useCallback(async () => {
@@ -194,10 +222,14 @@ export default function Event() {
         <div className="flex max-xl:w-full xl:justify-center mb-4">
           <Button
             onClick={() => setParticipateOpen(true)}
-            disabled={city.participants === city.maximumParticipants || !publicKey || isAdmin}
+            disabled={city.participants === city.maximumParticipants || !publicKey || isAdmin || isUserParticipant}
             className="py-3  max-xl:w-full"
           >
-            {city.participants === city.maximumParticipants ? 'Full team' : 'Participate'}
+            {isUserParticipant
+              ? "You're in"
+              : city.participants === city.maximumParticipants
+                ? 'Full team'
+                : 'Participate'}
           </Button>
         </div>
         {isAdmin && (
@@ -223,7 +255,7 @@ export default function Event() {
             <h6 className="text-[16px] font-semibold">Participants</h6>
             <div className="flex flex-col gap-4">
               {participants.map((participant) => {
-                if (participant.status === ParticipationStatus.ACCEPTED) {
+                if (participant.status === ParticipationStatus.ACCEPTED || isAdmin) {
                   return (
                     <div key={participant.participant} className="flex items-center justify-between w-full">
                       <div className="flex items-center gap-2">
@@ -231,8 +263,17 @@ export default function Event() {
                         <p className="xl:hidden">{shortenAddress(participant.participant)}</p>
                         <p className="max-xl:hidden">{participant.participant}</p>
                       </div>
-                      {isAdmin && city.participants !== city.maximumParticipants && (
-                        <Button onClick={() => handleAcceptParticipant(participant.participant)}>Accept</Button>
+                      {isAdmin && city.participants !== city.maximumParticipants && participant.status === null && (
+                        <Button onClick={() => handleAcceptParticipant(participant.participationId)}>Accept</Button>
+                      )}
+                      {isAdmin &&
+                        participant.status === ParticipationStatus.ACCEPTED &&
+                        participant.resultStatus === null && (
+                          <Button onClick={() => handleAcceptResult(participant.participationId)}>Accept result</Button>
+                        )}
+
+                      {isAdmin && participant.resultStatus === ParticipationStatus.ACCEPTED && (
+                        <p className="font-semibold">Rewarded</p>
                       )}
                     </div>
                   );

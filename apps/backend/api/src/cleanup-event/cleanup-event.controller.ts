@@ -84,7 +84,7 @@ const mediaOptions: MulterOptions = {
 export class CleanupController {
   constructor(private readonly cleanUpEventService: CleanupEventService) {}
 
-  @Get('/:pubkey')
+  @Get('/user')
   async getUserGcs(@Query('pubkey') pubkey: string) {
     return { events: await this.cleanUpEventService.getUserEvents({ pubkey: new PublicKey(pubkey) }) };
   }
