@@ -3,13 +3,13 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { Button } from '@/components/ui/button';
 import { Command, CommandGroup, CommandItem, CommandList } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { useMintAchievement } from '@/hooks/mutations/solana/use-mint-achievement';
+// import { useMintAchievement } from '@/hooks/mutations/solana/use-mint-achievement';
 import { useGetUserAchievements } from '@/hooks/queries/use-get-user-achievements';
 
 export const NFTs = () => {
   const { publicKey } = useWallet();
   const { data } = useGetUserAchievements();
-  const { mutateAsync } = useMintAchievement();
+  // const { mutateAsync } = useMintAchievement();
 
   console.log('nftData', { data });
   return (
@@ -18,6 +18,7 @@ export const NFTs = () => {
       <div className={`${publicKey ? '' : 'grayscale-[95%]'} grid grid-cols-2 gap-y-4`}>
         {data &&
           data.map((nft) =>
+            // eslint-disable-next-line no-constant-condition
             true ? (
               <div key={nft.id} className="flex items-end">
                 <img src={nft.achievement.imageUrl} alt="girl" className="w-full " />
@@ -34,18 +35,7 @@ export const NFTs = () => {
                     <CommandList>
                       <CommandGroup>
                         <CommandItem value={nft.id.toString()} className="!bg-transparent">
-                          <Button
-                            className="w-full"
-                            onClick={() => {
-                              void mutateAsync({
-                                achievementId: nft.achievement.id,
-                                merkleTreeId: nft.merkleTreeId,
-                                proofs: nft.proofs,
-                              });
-                            }}
-                          >
-                            Mint
-                          </Button>
+                          <Button className="w-full">Mint</Button>
                         </CommandItem>
                       </CommandGroup>
                     </CommandList>
