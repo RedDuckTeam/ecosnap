@@ -13,9 +13,10 @@ export const RewardSystem = () => {
       </h2>
       <div className="flex flex-col gap-2">
         <div className="grid grid-cols-2 gap-4">
-          <PointsItem label="First 10 garbage/day" value={'25'} />
-          <PointsItem label="Every next garbage" value={'10'} />
-          <PointsItem label="Team participation" value={'200'} />
+          <PointsItem label="First 10 litter/day" value={'1'} />
+          <PointsItem label="Every next litter" value={'0.5'} />
+          <PointsItem label="Foul-smelling litter" value={'5'} />
+          <PointsItem label="Team participation" value={'1000'} />
         </div>
         <p className="text-gray text-[12px]">
           <sup className="text-danger relative top-0 font-bold text-[14px]">*</sup> In case if your post gets more 👍
