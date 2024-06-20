@@ -45,7 +45,7 @@ export default function Event() {
   const isUserParticipant = useMemo(() => {
     if (!publicKey) return false;
     return Boolean(
-      participants.find((participant) => new PublicKey(participant.participant).toString() === publicKey.toString())
+      participants.find((participant) => new PublicKey(participant.participant).toString() === publicKey.toString()),
     );
   }, [participants, publicKey]);
 
@@ -98,7 +98,7 @@ export default function Event() {
         });
       }
     },
-    [acceptParticipation, id, toast]
+    [acceptParticipation, id, toast],
   );
 
   const handleAcceptResult = useCallback(
@@ -117,7 +117,7 @@ export default function Event() {
         });
       }
     },
-    [acceptResult, id, toast]
+    [acceptResult, id, toast],
   );
 
   const handleGenerateCode = useCallback(async () => {

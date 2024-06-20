@@ -29,7 +29,7 @@ export default function Events() {
     (event: Exclude<typeof events, undefined>[number]) => {
       navigate(`/events/${event.id}`);
     },
-    [navigate]
+    [navigate],
   );
   const myEventsIds = useMemo(() => {
     return myEvents?.map((event) => event.id) ?? [];

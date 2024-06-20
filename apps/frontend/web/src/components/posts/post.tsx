@@ -35,7 +35,7 @@ export const Post = memo(({ gcs, isMy }: { gcs: IGcsBody; isMy: boolean }) => {
         });
       }
     },
-    [gcs.id, toast, vote]
+    [gcs.id, toast, vote],
   );
 
   const userVote = useMemo(() => {
