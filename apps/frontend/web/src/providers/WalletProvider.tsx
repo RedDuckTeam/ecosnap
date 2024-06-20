@@ -3,10 +3,12 @@ import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
 import { PhantomWalletAdapter, SolflareWalletAdapter, TorusWalletAdapter } from '@solana/wallet-adapter-wallets';
 import type { FC, PropsWithChildren } from 'react';
 import { useMemo } from 'react';
+
 import '@solana/wallet-adapter-react-ui/styles.css';
+import { env } from '@/env';
 
 const WalletProvider: FC<PropsWithChildren> = ({ children }) => {
-  const endpoint = process.env.VITE_PUBLIC_SOLANA_RPC_ENDPOINT || 'https://solana-rpc.publicnode.com';
+  const endpoint = env.VITE_SOLANA_RPC_ENDPOINT || 'https://solana-rpc.publicnode.com';
 
   const wallets = useMemo(
     () => [
@@ -26,7 +28,7 @@ const WalletProvider: FC<PropsWithChildren> = ({ children }) => {
       new PhantomWalletAdapter(),
       new SolflareWalletAdapter(),
     ],
-    [],
+    []
   );
 
   return (
