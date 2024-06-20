@@ -43,22 +43,22 @@ export const Points = () => {
             }
           />
           <PointsItem label="Garbage" value={(user.data?.garbageCollects ?? 0).toString()} />
-          <PointsItem label="Level" value="5" />
+          <PointsItem label="Level" value={Math.floor((user?.data?.points ?? 0) / 100).toString()} />
         </div>
         <div className="flex items-center gap-8">
           <div className="flex gap-2 flex-col w-full">
             <div className="flex items-center justify-between gap-3.5  text-[16px] font-medium">
               <p className="text-gray">Today removed</p>
-              <p>1/10</p>
+              <p>0/10</p>
             </div>
-            <Progress value={10} />
+            <Progress value={0} />
           </div>
           <div className="flex gap-2 flex-col w-full">
             <div className="flex items-center justify-between gap-3.5  text-[16px] font-medium">
               <p className="text-gray">Lvl up</p>
-              <p>25/50</p>
+              <p>{(user?.data?.points ?? 0) - Math.floor((user?.data?.points ?? 0) / 100) * 100}/100</p>
             </div>
-            <Progress value={50} />
+            <Progress value={(user?.data?.points ?? 0) - Math.floor((user?.data?.points ?? 0) / 100) * 100} />
           </div>
         </div>
       </div>
