@@ -6,11 +6,12 @@ import { useGetCities } from '@/hooks/queries/use-get-cities';
 import { formatDate, formatTime } from '@/lib/utils';
 
 type Props = {
+  isMy: boolean;
   event: Events['events'][number];
   onClick: (event: Events['events'][number]) => void;
 };
 
-export const EventCard = ({ event, onClick }: Props) => {
+export const EventCard = ({ event, onClick, isMy }: Props) => {
   const { data: cities } = useGetCities();
 
   return (
@@ -29,7 +30,7 @@ export const EventCard = ({ event, onClick }: Props) => {
         <div className="text-[14px] font-semibold">
           {formatDate(new Date(event.eventStartsAt))} {formatTime(event.eventStartsAt.toString())}
         </div>
-        <p className="text-sm text-gray">{cities?.find((c) => c.id === event.city)?.name}</p>
+        <p className="text-sm text-gray">{cities?.find((c) => c === event.city)}</p>
         {/* <p className="text-sm">{event.description}</p> */}
         <div className="flex items-center gap-2">
           <User className="[&_path]:fill-gray" />
@@ -38,8 +39,8 @@ export const EventCard = ({ event, onClick }: Props) => {
           </p>
         </div>
         <div className="flex-1 flex items-end">
-          <Button disabled={event.participants === event.maximumParticipants}>
-            {event.participants === event.maximumParticipants ? 'Full team' : 'Participate'}
+          <Button disabled={event.participants === event.maximumParticipants || isMy}>
+            {isMy ? "You're in" : event.participants === event.maximumParticipants ? 'Full team' : 'Participate'}
           </Button>
         </div>
       </div>

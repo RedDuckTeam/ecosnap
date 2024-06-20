@@ -1,6 +1,6 @@
+import { useWallet } from '@solana/wallet-adapter-react';
 import { useQuery } from '@tanstack/react-query';
 
-import { useWallet } from '@solana/wallet-adapter-react';
 import { getUserAchievements } from '@/api/get/achievements';
 import { ASSOCIATED_TOKEN_PROGRAM_ID, getAccount, TOKEN_2022_PROGRAM_ID } from '@solana/spl-token';
 import { connection, nftGlobalState, nftProgram } from '@/lib/sol-providers';

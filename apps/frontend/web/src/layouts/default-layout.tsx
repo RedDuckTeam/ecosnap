@@ -13,12 +13,12 @@ const DefaultLayout = memo(() => {
     <Providers>
       <div className="min-h-screen flex pb-[136px] xl:pb-4 flex-1 max-w-[1375px] mx-auto flex-col">
         <Header />
-        <Suspense fallback={<PageLoader />}>
-          <div className="relative">
-            <Links />
+        <div className="relative font-quicksand">
+          <Links />
+          <Suspense fallback={<PageLoader />}>
             <Outlet />
-          </div>
-        </Suspense>
+          </Suspense>
+        </div>
         <Footer />
       </div>
       <Toaster />

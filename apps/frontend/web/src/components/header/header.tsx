@@ -1,5 +1,6 @@
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import { useMemo } from 'react';
 import { NavLink } from 'react-router-dom';
 
 import { TextLogo } from '../icons/text-logo';
@@ -8,6 +9,9 @@ import { generateBlockies } from '@/lib/blockies';
 
 export const Header = () => {
   const { publicKey } = useWallet();
+  useMemo(() => {
+    localStorage.setItem('accessToken', '');
+  }, [publicKey]);
   return (
     <div className="flex justify-between items-center p-4">
       <div className="flex items-center gap-4">

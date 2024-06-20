@@ -5,10 +5,10 @@ import {
   CleanupEvent,
   CleanupEventParticipation,
   CleanupEventPassCode,
+  File,
   ParticipationResultsStatus,
   ParticipationStatus,
   User,
-  File,
 } from '@gc/database-gc';
 import * as nacl from 'tweetnacl';
 import bs58 from 'bs58';
@@ -17,8 +17,6 @@ import { getFileExtensionFromFile } from '../lib/utils/utils';
 import { StorageService } from '@gc/storage';
 import { AchievementsService } from '../achievements/achievements.service';
 import { DaoService } from '../dao/dao.service';
-import { IsUUID } from 'class-validator';
-import e from 'express';
 
 @Injectable()
 export class CleanupEventService {
@@ -28,6 +26,39 @@ export class CleanupEventService {
     private readonly storageService: StorageService,
     private readonly daoService: DaoService
   ) {}
+
+  async getUserEvents({ pubkey }: { pubkey: PublicKey }) {
+    return await this.dataSource.manager.transaction(async (manager) => {
+      const eventRepo = manager.getRepository(CleanupEvent);
+
+      const events = await eventRepo
+        .createQueryBuilder('event')
+        .leftJoinAndSelect('event.participants', 'participant')
+        .leftJoinAndSelect('participant.participant', 'participantDetails')
+        .leftJoinAndSelect('event.admins', 'admin')
+        .leftJoinAndSelect('event.files', 'file')
+        .where(
+          '(participant.participationStatus IS NOT NULL AND (participantDetails.pubKey = :pubkey OR admin.pubKey = :pubkey))',
+          { pubkey: pubkey.toString() }
+        )
+        .getMany();
+
+      return events.map((v) => ({
+        id: v.id,
+        city: v.city,
+        name: v.name,
+        pictureUrl: v.pictureUrl,
+        rewards: v.rewards,
+        eventStartsAt: v.eventStartsAt,
+        eventEndsAt: v.eventEndsAt,
+        participants: v.participants.length,
+        maximumParticipants: v.maximumParticipants,
+        description: v.description,
+        admins: v.admins.map((a) => a.pubKey.toBase58()),
+        files: v.files,
+      }));
+    });
+  }
 
   async getAllEvents() {
     return await this.dataSource.manager.transaction(async (manager) => {
@@ -69,7 +100,7 @@ export class CleanupEventService {
 
     if (!event) throw new NotFoundException();
 
-    const statuses = event.participants.map((participation) => {
+    return event.participants.map((participation) => {
       return {
         participationId: participation.id,
         participant: participation.participant.pubKey.toBase58(),
@@ -77,10 +108,6 @@ export class CleanupEventService {
         resultStatus: participation.resultsStatus,
       };
     });
-
-    const participants = event.participants.map((participant) => participant.participant.pubKey.toBase58());
-
-    return statuses;
   }
 
   async generatePassCode({ eventId, adminPubKey }: { eventId: string; adminPubKey: PublicKey }) {

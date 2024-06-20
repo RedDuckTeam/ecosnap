@@ -19,6 +19,9 @@ export class UserCoupon extends TimeKnownEntity {
   @Column({ type: 'boolean', default: false })
   merkleSubmitted: boolean;
 
+  @Column({ type: 'boolean', default: false })
+  isRedeemed: boolean;
+
   @Column({ type: String })
   buySignature: string;
 
