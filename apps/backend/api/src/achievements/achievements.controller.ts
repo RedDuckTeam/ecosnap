@@ -1,5 +1,5 @@
 import { Achievement, MerkleProof, MerkleTreeType, SubmissionType, UserAchievement } from '@gc/database-gc';
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { PublicKey } from '@solana/web3.js';
 import { DataSource } from 'typeorm';
 
@@ -17,7 +17,8 @@ export class AchievementsController {
   }
 
   @Get('/user/:pubkey')
-  async getUserAchievements(@Query('pubkey') pubkey: string) {
+  async getUserAchievements(@Param('pubkey') pubkey: string) {
+    console.log('KEY', pubkey);
     const achievements = await this.dataSource.getRepository(UserAchievement).find({
       where: {
         user: {
@@ -26,6 +27,7 @@ export class AchievementsController {
       },
       relations: {
         achievement: true,
+        merkleSubmissions: true,
       },
     });
 
@@ -33,9 +35,12 @@ export class AchievementsController {
 
     for (let ach of achievements) {
       const proofsRepo = this.dataSource.getRepository(MerkleProof);
-      const id = ach.merkleSubmissions?.find((v) => v.treeType === MerkleTreeType.ONLY_PROOFS)?.id;
+      const id = ach.merkleSubmissions?.find?.((v) => v.treeType === MerkleTreeType.ONLY_PROOFS)?.id;
 
-      if (!id) throw new Error('Id is undefined');
+      if (!id) {
+        proofs.push(null);
+        continue;
+      }
 
       const proofsEntity = await proofsRepo.findOne({
         where: {
@@ -50,8 +55,9 @@ export class AchievementsController {
     }
 
     return {
-      achievements: achievements.map((v, i) => ({
-        ...v,
+      achievements: achievements.map((ach, i) => ({
+        ...ach,
+        merkleTreeId: ach.merkleSubmissions?.find?.((v) => v.treeType === MerkleTreeType.ONLY_PROOFS)?.id,
         proofs: proofs[i],
       })),
     };

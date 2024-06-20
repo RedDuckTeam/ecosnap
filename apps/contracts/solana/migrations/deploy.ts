@@ -1,56 +1,49 @@
-import { findPDA } from "../tests/common/utils";
-import { GLOBAL_STATE_PARAMS, program, SEEDS } from "../tests/common/constants";
 import {
   Keypair,
+  PublicKey,
   sendAndConfirmTransaction,
   Transaction,
 } from "@solana/web3.js";
-import { AnchorProvider } from "@coral-xyz/anchor";
+import { AnchorProvider, Program } from "@coral-xyz/anchor";
 
-import anchor from "@coral-xyz/anchor";
+import * as anchor from "@coral-xyz/anchor";
+import { Nft } from "../target/types/nft";
 
 module.exports = async function (provider: AnchorProvider) {
+  console.log("test");
   anchor.setProvider(provider);
+  console.log("test1");
+  const program = anchor.workspace.Nft as Program<Nft>;
+
   const authority = new Keypair((provider.wallet as any).payer._keypair);
 
-  const globalStatePda = anchor.web3.Keypair.generate();
-
-  const [vaultPda] = findPDA(
-    [SEEDS.VAULT_SEED, globalStatePda.publicKey],
-    program,
+  const gcGlobalStatePda = new PublicKey(
+    "9b6WPU1sD4XwiYFx3rHUf6WGRVTVEE9kF4Gfs9FmZDQL"
   );
-
-  // FIXME to a real reserve wallet address before deploy!
-  const reserveWallet = anchor.web3.Keypair.generate();
+  const globalStatePda = anchor.web3.Keypair.generate();
 
   const initProtocolTx = new Transaction().add(
     await program.methods
-      .initialize(
-        provider.wallet.publicKey,
-        reserveWallet.publicKey,
-        GLOBAL_STATE_PARAMS.MIN_USD_THRESHOLD,
-        GLOBAL_STATE_PARAMS.MAX_TOKENS_TO_SELL,
-      )
+      .initializeGlobalState(gcGlobalStatePda)
       .accounts({
         authority: provider.wallet.publicKey,
         globalState: globalStatePda.publicKey,
-        vault: vaultPda,
+        signer: authority.publicKey,
       })
       .signers([authority, globalStatePda])
-      .instruction(),
+      .instruction()
   );
 
   try {
     const sendedTx = await sendAndConfirmTransaction(
       provider.connection,
       initProtocolTx,
-      [authority, globalStatePda],
+      [authority, globalStatePda]
     );
     console.log("Initialized, tx id:  ", sendedTx);
 
     console.log("Authority: ", authority.publicKey);
     console.log("Global state PDA ", globalStatePda.publicKey);
-    console.log("Vault: ", vaultPda);
   } catch (e) {
     console.error("ERROR! 🔴");
     console.error(e);
