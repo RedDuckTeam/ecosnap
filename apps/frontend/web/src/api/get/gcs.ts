@@ -1,10 +1,12 @@
 import { httpClient } from '../client';
+import type { CastVoteDirection } from '../post/vote';
 
 export type GgcResponse = {
   gcs: IGcsBody[];
 };
 
 export interface IGcsBody {
+  createdAt: Date;
   daoVotes: {
     for: number;
     against: number;
@@ -16,6 +18,10 @@ export interface IGcsBody {
   id: string;
   files: { uri: string; id: string; fileExtension: string }[];
   user: string;
+  votes: {
+    direction: CastVoteDirection;
+    user: string;
+  }[];
 }
 
 const GET_EVENTS = 'api/gc';

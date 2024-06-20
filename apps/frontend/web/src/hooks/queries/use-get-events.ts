@@ -7,6 +7,7 @@ export const useGetEvents = (cityId: string, search: string) => {
     queryKey: ['events', cityId, search],
     queryFn: async () => {
       const events = await getEvents();
+
       const filteredEvents = events.data?.events?.filter?.((e) => {
         if (cityId && e.city !== cityId) {
           return false;

@@ -13,6 +13,9 @@ export class Achievement extends TimeKnownEntity {
   @Column({ type: 'varchar' })
   description: string;
 
+  @Column({ type: 'varchar', nullable: true })
+  imageUrl?: string;
+
   @Column({ type: 'int', default: 0 })
   pointsRequired: number;
 

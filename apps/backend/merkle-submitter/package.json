@@ -33,6 +33,7 @@
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/swagger": "^7.3.0",
     "@solana/web3.js": "^1.93.0",
+    "bn.js": "^5.2.1",
     "borsh": "^2.0.0",
     "bs58": "^5.0.0",
     "class-transformer": "^0.5.1",

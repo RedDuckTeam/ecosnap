@@ -12,6 +12,9 @@ module.exports = {
       },
     },
     extend: {
+      fontFamily: {
+        quicksand: ['Quicksand', 'sans-serif'],
+      },
       boxShadow: {
         glow: '0 0 6px 1px #28CCAF',
         'glow-xl': '0 0 25px 7px #28CCAF',
@@ -25,7 +28,7 @@ module.exports = {
         gray: '#9D9FC5',
         light: '#F9F9F9',
         'gray-blue': '#252945',
-        foreground: 'hsl(var(--foreground))',
+        foreground: '#F9F9F9',
         primary: {
           DEFAULT: '#28CCAF',
           foreground: 'hsl(var(--primary-foreground))',

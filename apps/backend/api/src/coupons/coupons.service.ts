@@ -50,11 +50,13 @@ export class CouponsService {
             pubKey: user,
           },
         },
+        relations: ['coupon'],
       });
 
       return coupons.map((v) => ({
         id: v.id,
-        couponId: v.coupon.id,
+        coupon: v.coupon,
+        isRedeemed: v.isRedeemed,
         createdAt: v.createdAt,
       }));
     });

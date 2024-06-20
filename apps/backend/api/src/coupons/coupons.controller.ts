@@ -43,7 +43,7 @@ export class CouponsController {
   async getAllCoupons() {
     return { coupons: await this.couponsService.getAllCoupons() };
   }
-  @Get('/')
+  @Get('/user')
   async getUserCoupons(@Query('pubKey') pubKey: string) {
     return { coupons: await this.couponsService.getUserCoupons(new PublicKey(pubKey)) };
   }

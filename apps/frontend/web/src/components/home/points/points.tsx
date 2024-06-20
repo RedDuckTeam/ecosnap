@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { PointsItem } from './points-item';
 
@@ -9,8 +10,10 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Progress } from '@/components/ui/progress';
 import { useGetUser } from '@/hooks/queries/use-get-user';
+import { routes } from '@/router';
 
 export const Points = () => {
+  const navigate = useNavigate();
   const [isDesctiptionOpen, setDescriptionOpen] = useState(false);
   const user = useGetUser();
 
@@ -35,7 +38,7 @@ export const Points = () => {
             value={
               <div className="flex items-center gap-1">
                 <img src="/images/star.png" alt="star" />
-                <p>{user.data?.points}</p>
+                <p>{user.data?.points ?? 0}</p>
               </div>
             }
           />
@@ -60,7 +63,9 @@ export const Points = () => {
         </div>
       </div>
       <div className="flex justify-center">
-        <Button className="px-6 py-4">Earn points</Button>
+        <Button onClick={() => navigate(routes.events)} className="px-6 py-4">
+          Earn points
+        </Button>
       </div>
     </>
   );

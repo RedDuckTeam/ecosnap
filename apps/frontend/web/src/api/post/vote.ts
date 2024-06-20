@@ -27,6 +27,6 @@ export const postVote = async ({
     },
     {
       Authorization: 'Bearer ' + jwt,
-    }
+    },
   );
 };
