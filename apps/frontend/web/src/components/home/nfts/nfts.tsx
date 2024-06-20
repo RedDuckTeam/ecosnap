@@ -7,23 +7,8 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 const nfts = [
   {
     id: 1,
-    imageUrl: '/images/girl_01.png',
-    isMinted: false,
-  },
-  {
-    id: 2,
-    imageUrl: '/images/girl_02.png',
+    imageUrl: '/images/achievement.jpg',
     isMinted: true,
-  },
-  {
-    id: 3,
-    imageUrl: '/images/girl_03.png',
-    isMinted: true,
-  },
-  {
-    id: 4,
-    imageUrl: '/images/girl_04.png',
-    isMinted: false,
   },
 ];
 
@@ -36,13 +21,13 @@ export const NFTs = () => {
         {nfts.map((nft) =>
           nft.isMinted ? (
             <div key={nft.id} className="flex items-end">
-              <img src={nft.imageUrl} alt="girl" className="w-full odd:-translate-x-[15%]" />
+              <img src={nft.imageUrl} alt="girl" className="w-full " />
             </div>
           ) : (
             <Popover key={nft.id}>
               <PopoverTrigger>
                 <div className="flex items-end">
-                  <img src={nft.imageUrl} alt="girl" className="w-full odd:-translate-x-[15%] grayscale" />
+                  <img src={nft.imageUrl} alt="girl" className="w-full grayscale" />
                 </div>
               </PopoverTrigger>
               <PopoverContent>
@@ -64,7 +49,7 @@ export const NFTs = () => {
                 </Command>
               </PopoverContent>
             </Popover>
-          ),
+          )
         )}
       </div>
     </div>
