@@ -1,6 +1,6 @@
+import { useWallet } from '@solana/wallet-adapter-react';
 import { useQuery } from '@tanstack/react-query';
 
-import { useWallet } from '@solana/wallet-adapter-react';
 import { getUserAchievements } from '@/api/get/achievements';
 
 export const useGetUserAchievements = () => {
