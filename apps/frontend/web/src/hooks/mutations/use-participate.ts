@@ -34,6 +34,8 @@ export const useParticipate = () => {
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['events'] });
+      await queryClient.invalidateQueries({ queryKey: ['event'] });
+      await queryClient.invalidateQueries({ queryKey: ['participants'] });
     },
   });
 };

@@ -11,6 +11,7 @@ export const Header = () => {
   const { publicKey } = useWallet();
   useMemo(() => {
     localStorage.setItem('accessToken', '');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [publicKey]);
   return (
     <div className="flex justify-between items-center p-4">

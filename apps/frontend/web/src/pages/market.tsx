@@ -1,4 +1,5 @@
 import { useAutoAnimate } from '@formkit/auto-animate/react';
+import { useWallet } from '@solana/wallet-adapter-react';
 import { Loader2 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -20,6 +21,7 @@ export default function Market() {
   const [item, setItem] = useState<Coupon | null>(null);
   const [myItem, setMyItem] = useState<MyCoupon | null>(null);
   const [open, setOpen] = useState(false);
+  const { publicKey } = useWallet();
   const [myOpen, setMyOpen] = useState(false);
   const { data: items, isLoading: isLoadingItems } = useGetItems();
   const { data: myItems, isLoading: isLoadingMyItems } = useGetMyItems();
@@ -34,14 +36,16 @@ export default function Market() {
         <Tabs defaultValue="discover" className="w-full flex items-center flex-col">
           <TabsList className="mx-auto mb-[24px]">
             <TabsTrigger value="discover">Discover</TabsTrigger>
-            <TabsTrigger value="my-items">My items</TabsTrigger>
+            <TabsTrigger disabled={!publicKey} value="my-items">
+              My items
+            </TabsTrigger>
           </TabsList>
           <TabsContent
             value="discover"
             className="w-full grid grid-cols-1 lg:grid-cols-2 gap-[8px] lg:gap-[16px]"
             ref={parent}
           >
-            {isLoadingItems || !items || !points ? (
+            {isLoadingItems || !items || points === undefined ? (
               <Loader2 className="mx-auto w-8 h-8 animate-spin" />
             ) : (
               items.map((item) => (

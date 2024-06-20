@@ -1,6 +1,6 @@
 import { useWallet } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
-import { useCallback, useMemo } from 'react';
+import { memo, useCallback, useMemo } from 'react';
 
 import { PostAsset } from './post-asset';
 
@@ -13,7 +13,7 @@ import { useDaoVote } from '@/hooks/mutations/use-dao-vote';
 import { generateBlockies } from '@/lib/blockies';
 import { formatDate, formatTime, getMediaType, shortenAddress } from '@/lib/utils';
 
-export const Post = ({ gcs, isMy }: { gcs: IGcsBody; isMy: boolean }) => {
+export const Post = memo(({ gcs, isMy }: { gcs: IGcsBody; isMy: boolean }) => {
   const { mutateAsync: vote } = useDaoVote();
   const { publicKey } = useWallet();
 
@@ -40,10 +40,9 @@ export const Post = ({ gcs, isMy }: { gcs: IGcsBody; isMy: boolean }) => {
 
   const userVote = useMemo(() => {
     if (!publicKey) return null;
-    console.log(gcs);
 
     return gcs.votes.find((vote) => new PublicKey(vote.user).toString() === publicKey.toString()) ?? null;
-  }, [gcs.votes, publicKey]);
+  }, [gcs, publicKey]);
   return (
     <div className="flex flex-col gap-4">
       <div className="flex justify-between items-center">
@@ -86,4 +85,5 @@ export const Post = ({ gcs, isMy }: { gcs: IGcsBody; isMy: boolean }) => {
       </div>
     </div>
   );
-};
+});
+Post.displayName = 'Post';

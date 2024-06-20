@@ -17,7 +17,7 @@ export const postBuyCoupon = async ({ couponId, jwt, signature }: BuyCouponReque
     },
     {
       Authorization: `Bearer ${jwt}`,
-    }
+    },
   );
 
   if (response.data) {

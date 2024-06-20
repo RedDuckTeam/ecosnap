@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+
 import { getEventParticipants } from '@/api/get/events-participants';
 
 export const useGetEventsParticipants = (eventId: string) => {
