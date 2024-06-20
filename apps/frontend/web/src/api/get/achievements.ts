@@ -1,14 +1,19 @@
 import { httpClient } from '../client';
 
-const POST = 'api/achievements';
+const POST = 'api/achievements/user';
 
-type GetUserAchievementsResponse = {
+export type GetUserAchievementsResponse = {
   achievements: {
     proofs: {
       proof: Buffer[];
-      leaf: Object;
-    }[];
-
+      leaf: {
+        user: string;
+        amount: number;
+      };
+    };
+    id: string;
+    isMinted: boolean;
+    merkleTreeId: string;
     received: boolean;
     currentPoints: number;
     merkleSubmitted: boolean;
@@ -18,15 +23,16 @@ type GetUserAchievementsResponse = {
       canHaveMany: boolean;
       imageUrl: string;
     };
-  };
+  }[];
 };
 
 export const getUserAchievements = async ({ user }: { user: string }) => {
   const res = await httpClient.get<GetUserAchievementsResponse>(`${POST}/${encodeURIComponent(user)}`);
 
-  if (res.status !== 200) throw new Error('Request failed');
+  console.log('res', res);
+  // if (res.status !== 200) throw new Error('Request failed');
 
   return {
-    ...res,
+    ...res.data,
   };
 };
