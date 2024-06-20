@@ -24,6 +24,7 @@ export class AchievementsController {
         user: {
           pubKey: new PublicKey(pubkey),
         },
+        received: true,
       },
       relations: {
         achievement: true,
