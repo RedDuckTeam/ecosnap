@@ -15,6 +15,9 @@
     "run:submitter": "yarn build:submitter && yarn dev --filter=@apps/merkle-submitter"
   },
   "packageManager": "yarn@1.22.22",
+  "resolutions": {
+    "es-iterator-helpers": "^1.2.1"
+  },
   "devDependencies": {
     "prettier": "^3.2.5",
     "turbo": "latest",

@@ -13,19 +13,23 @@
   <b>Pick up litter, snap a photo, earn points — verified by a community vote and settled on Solana.</b>
 </p>
 
-<p align="center">
-  <a href="https://www.youtube.com/watch?v=nXz-NZ4Rjtc"><img alt="Demo" src="https://img.shields.io/badge/Demo-YouTube-FF0000?logo=youtube&logoColor=white"></a>
-  <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-blue.svg"></a>
-  <a href="https://solana.com/"><img alt="Solana" src="https://img.shields.io/badge/Solana-Anchor-9945FF?logo=solana&logoColor=white"></a>
-  <a href="https://nestjs.com/"><img alt="NestJS" src="https://img.shields.io/badge/NestJS-10-E0234E?logo=nestjs&logoColor=white"></a>
-  <a href="https://turbo.build/repo"><img alt="Turborepo" src="https://img.shields.io/badge/Turborepo-monorepo-EF4444?logo=turborepo&logoColor=white"></a>
-</p>
 
 ---
 
 EcoSnap turns cleaning up your neighbourhood into an on-chain activity. You photograph the litter you collected, publish it as a post, and other users vote on whether it's genuine. Once a post passes the vote it earns points; points unlock achievement NFTs and can be spent on coupons in the in-app market. Group cleanups get their own events, with organizers, pass codes and boosted rewards.
 
 The interesting part is how those rewards reach the chain. Writing every approved cleanup to Solana individually would be slow and expensive, so the backend batches them: it periodically builds a Merkle tree of everything earned since the last run, uploads the tree to permanent storage, and submits **only the root** on-chain. Users then claim their NFTs by presenting a Merkle proof, which the on-chain program verifies against that root.
+
+## Built with
+| Area | Technology |
+| --- | --- |
+| Monorepo | Turborepo, Yarn 1 workspaces |
+| Web | React 18, Vite, TypeScript, Tailwind CSS, Radix UI, TanStack Query, React Hook Form + Zod |
+| Wallets | Solana Wallet Adapter, `@solana/web3.js`, `@coral-xyz/anchor` |
+| Backend | NestJS 10, TypeORM, PostgreSQL, JWT, Swagger, `class-validator` |
+| Contracts | Rust, Anchor 0.30, SPL Token-2022 |
+| Storage | Akord (Arweave) for photos and Merkle tree files |
+| Mobile | Expo, expo-router, React Native |
 
 ## How it works
 
@@ -100,17 +104,6 @@ Splitting them this way keeps the trusted write path (roots, submitted by the ba
 | `Coupon` / `UserCoupon` | Market items bought with points |
 | `MerkleSubmission` / `MerkleProof` | A published batch (root + tree file) and the per-user proofs into it |
 
-## Tech stack
-
-| Area | Technology |
-| --- | --- |
-| Monorepo | Turborepo, Yarn 1 workspaces |
-| Web | React 18, Vite, TypeScript, Tailwind CSS, Radix UI, TanStack Query, React Hook Form + Zod |
-| Wallets | Solana Wallet Adapter, `@solana/web3.js`, `@coral-xyz/anchor` |
-| Backend | NestJS 10, TypeORM, PostgreSQL, JWT, Swagger, `class-validator` |
-| Contracts | Rust, Anchor 0.30, SPL Token-2022 |
-| Storage | Akord (Arweave) for photos and Merkle tree files |
-| Mobile | Expo, expo-router, React Native |
 
 ## Getting started
 
