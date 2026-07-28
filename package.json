@@ -17,7 +17,8 @@
   "packageManager": "yarn@1.22.22",
   "devDependencies": {
     "prettier": "^3.2.5",
-    "turbo": "latest"
+    "turbo": "latest",
+    "eslint-plugin-unused-imports": "^3.2.0"
   },
   "engines": {
     "node": ">=18"

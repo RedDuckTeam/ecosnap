@@ -19,5 +19,5 @@ export class MerkleProof extends TimeKnownEntity {
   proof: Buffer[];
 
   @Column({ type: 'jsonb' })
-  leaf: Object;
+  leaf: object;
 }

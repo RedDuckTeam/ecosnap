@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import {
   ComputeBudgetProgram,
   PublicKey,
@@ -18,7 +18,7 @@ import {
   User,
   UserAchievement,
 } from '@gc/database-gc';
-import { getMerkleProof, getMerkleRoot, getMerkleTree } from '@metaplex-foundation/js';
+import { getMerkleProof, getMerkleTree } from '@metaplex-foundation/js';
 import * as borsh from 'borsh';
 import crypto from 'crypto';
 
@@ -63,7 +63,7 @@ export class SubmitterService {
     const sumbitTx = await this.submitMerkleProofsOnchain(merkleRootsToSubmit);
 
     await this.dataSource.manager.transaction(async (manager) => {
-      for (let res of allResults) {
+      for (const res of allResults) {
         if (!res.submissions.length || !res.toSave.length) continue;
 
         const submissions = await manager.save(
@@ -86,11 +86,11 @@ export class SubmitterService {
 
         await manager.save(res.toSave);
 
-        for (let submission of res.submissions) {
+        for (const submission of res.submissions) {
           if (!submission.proofs) continue;
 
-          for (let [userPubKey, proofs] of Object.entries(submission.proofs)) {
-            for (let { id, proofs: proof } of proofs) {
+          for (const [userPubKey, proofs] of Object.entries(submission.proofs)) {
+            for (const { id, proofs: proof } of proofs) {
               const user = await userRepo.findOneBy({
                 pubKey: new PublicKey(userPubKey),
               });
@@ -117,7 +117,7 @@ export class SubmitterService {
 
     const uploadedFiles: File[] = [];
 
-    for (let file of files) {
+    for (const file of files) {
       const contentHash = crypto.createHash('sha256').update(file.fileContent).digest('hex');
       const entity = await fileRepo.save(
         fileRepo.create({
@@ -145,7 +145,7 @@ export class SubmitterService {
 
     const tx = new Transaction();
 
-    for (let { id, rootHash } of proofs) {
+    for (const { id, rootHash } of proofs) {
       const idBytes = this.toBinaryUUID(id);
 
       const [rootPDA] = PublicKey.findProgramAddressSync(

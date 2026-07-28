@@ -1,7 +1,6 @@
 import { CleanupEvent, User, UserAchievement, UserAchievementBoostReward } from '@gc/database-gc';
 import { Injectable } from '@nestjs/common';
 import { DataSource, EntityManager } from 'typeorm';
-import { DaoService } from '../dao/dao.service';
 
 @Injectable()
 export class AchievementsService {
@@ -16,7 +15,7 @@ export class AchievementsService {
     const userAchievementRepo = manager.getRepository(UserAchievement);
     const userAchievementBoostRepo = manager.getRepository(UserAchievementBoostReward);
 
-    for (let eventBoost of boost) {
+    for (const eventBoost of boost) {
       const events = eventBoost.cleanupEvent;
       const achievement = eventBoost.achievement;
 
@@ -38,7 +37,7 @@ export class AchievementsService {
         ),
       ];
 
-      for (let userAchievement of userAchievements) {
+      for (const userAchievement of userAchievements) {
         await userAchievementBoostRepo.save(
           userAchievementBoostRepo.create({
             achievementBoost: eventBoost,

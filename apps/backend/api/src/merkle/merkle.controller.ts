@@ -1,16 +1,6 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpStatus,
-  ParseFilePipeBuilder,
-  Post,
-  Query,
-  UploadedFiles,
-  UseInterceptors,
-} from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 
-import { ApiProperty, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import 'multer';
 import { DataSource } from 'typeorm';
 import { MerkleService } from './merkle.service';

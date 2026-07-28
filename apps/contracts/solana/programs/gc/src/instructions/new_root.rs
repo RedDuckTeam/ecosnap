@@ -1,5 +1,5 @@
-use crate::state::RootState;
 use crate::state::GlobalState;
+use crate::state::RootState;
 use anchor_lang::prelude::*;
 
 #[derive(Accounts)]
@@ -12,7 +12,7 @@ pub struct NewRoot<'info> {
         init,
         payer = authority,
         space = RootState::MEM_LENGTH,
-        seeds = [RootState::SEED, global_state.key().as_ref(), &merkle_uuid], 
+        seeds = [RootState::SEED, global_state.key().as_ref(), &merkle_uuid],
         bump
     )]
     pub root_state: Account<'info, RootState>,

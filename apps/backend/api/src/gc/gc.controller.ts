@@ -1,23 +1,9 @@
-import {
-  Body,
-  Controller,
-  FileTypeValidator,
-  Get,
-  HttpException,
-  HttpStatus,
-  MaxFileSizeValidator,
-  ParseFilePipe,
-  ParseFilePipeBuilder,
-  Post,
-  Query,
-  UploadedFiles,
-  UseInterceptors,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UploadedFiles, UseInterceptors } from '@nestjs/common';
 
-import { ApiConsumes, ApiProperty, ApiTags } from '@nestjs/swagger';
+import { ApiProperty, ApiTags } from '@nestjs/swagger';
 import { GcService } from './gc.service';
 import { UseUserAuthGuard } from '../guards/user-auth.guard';
-import { FileFieldsInterceptor, FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import 'multer';
 import { RequestUser, UserClaims } from '../decorators/request-user.decorator';
 import { IsOptional, IsString, MaxLength } from 'class-validator';

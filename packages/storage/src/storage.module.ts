@@ -1,4 +1,4 @@
-import { DynamicModule, Injectable, Module } from '@nestjs/common';
+import { DynamicModule, Module } from '@nestjs/common';
 import { ASYNC_OPTIONS_TYPE, ConfigurableModuleClass, StorageModuleConfig } from './storage.module-definition';
 
 import { ConfigService } from '@nestjs/config';

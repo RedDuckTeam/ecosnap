@@ -1,15 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpStatus,
-  NotImplementedException,
-  ParseFilePipeBuilder,
-  Post,
-  Query,
-  UploadedFiles,
-  UseInterceptors,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UploadedFiles, UseInterceptors } from '@nestjs/common';
 
 import { ApiProperty, ApiTags } from '@nestjs/swagger';
 import { CleanupEventService } from './cleanup-event.service';
@@ -17,7 +6,7 @@ import { UseUserAuthGuard } from '../guards/user-auth.guard';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import 'multer';
 import { RequestUser, UserClaims } from '../decorators/request-user.decorator';
-import { IsOptional, IsString, IsUUID, MaxLength } from 'class-validator';
+import { IsString, IsUUID } from 'class-validator';
 import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
 import { mediaFilter } from '../lib/media-filter/mediaFilter';
 import { PublicKey } from '@solana/web3.js';

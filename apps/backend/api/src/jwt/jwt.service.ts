@@ -14,7 +14,7 @@ export class JwtService {
     private readonly jwtService: NestJwtService
   ) {}
 
-  async verifyAsync<T extends object = any>(token: string) {
+  async verifyAsync<T extends object = object>(token: string) {
     return this.jwtService.verifyAsync<T>(token, {
       secret: this.jwtAuthSecret,
     });

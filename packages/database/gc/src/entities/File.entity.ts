@@ -1,9 +1,6 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { SolanaPubKeyColumn, TimeKnownEntity } from '@gc/database-common';
-import { DaoVote } from './DaoVote.entity';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { TimeKnownEntity } from '@gc/database-common';
 import { GarbageCollect } from './GarbageCollect.entity';
-import { AuthNonce } from './AuthNonce.entity';
-import { PublicKey } from '@solana/web3.js';
 import { CleanupEvent } from './CleanupEvent.entity';
 
 @Entity({ name: 'file' })

@@ -1,8 +1,5 @@
-import { BadRequestException, Controller, Get, Injectable, Query } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { PublicKey } from '@solana/web3.js';
-import { DataSource, EntityManager } from 'typeorm';
-import { AuthNonce, User } from '@gc/database-gc';
-import { JwtService } from '../jwt/jwt.service';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 

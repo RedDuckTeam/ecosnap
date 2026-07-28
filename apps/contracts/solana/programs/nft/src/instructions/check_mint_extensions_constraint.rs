@@ -4,8 +4,7 @@ use anchor_spl::{
     associated_token::AssociatedToken,
     token_2022::spl_token_2022::extension::{
         group_member_pointer::GroupMemberPointer, metadata_pointer::MetadataPointer,
-        permanent_delegate::PermanentDelegate,
-        transfer_hook::TransferHook,
+        permanent_delegate::PermanentDelegate, transfer_hook::TransferHook,
     },
     token_interface::{
         spl_token_metadata_interface::state::TokenMetadata, token_metadata_initialize, Mint,

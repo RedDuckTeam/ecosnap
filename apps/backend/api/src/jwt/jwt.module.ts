@@ -3,7 +3,7 @@ import { JwtModule as NestJwtModule } from '@nestjs/jwt';
 
 import { assert } from 'console';
 
-import { ASYNC_OPTIONS_TYPE, ConfigurableModuleClass, OPTIONS_TYPE } from './jwt.module-declaration';
+import { ASYNC_OPTIONS_TYPE, ConfigurableModuleClass } from './jwt.module-declaration';
 import { JwtService } from './jwt.service';
 import { JWT_AUTH_SECRET_INJECT_KEY, JWT_EXPIRES_IN_S_INJECT_KEY } from './jwt.service';
 
@@ -21,7 +21,7 @@ export class JwtModule extends ConfigurableModuleClass {
         {
           provide: JWT_AUTH_SECRET_INJECT_KEY,
           inject: asyncOptions.inject,
-          useFactory: async (...args: any[]) => {
+          useFactory: async (...args: unknown[]) => {
             const options = await asyncOptions.useFactory?.(...args);
 
             if (!options) throw new Error('options is undefined');
@@ -32,7 +32,7 @@ export class JwtModule extends ConfigurableModuleClass {
         {
           provide: JWT_EXPIRES_IN_S_INJECT_KEY,
           inject: asyncOptions.inject,
-          useFactory: async (...args: any[]) => {
+          useFactory: async (...args: unknown[]) => {
             const options = await asyncOptions.useFactory?.(...args);
 
             if (!options) throw new Error('options is undefined');

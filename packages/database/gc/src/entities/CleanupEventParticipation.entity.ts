@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { TimeKnownEntity } from '@gc/database-common';
 import { User } from './User.entity';
 import { CleanupEvent } from './CleanupEvent.entity';

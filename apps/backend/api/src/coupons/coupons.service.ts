@@ -1,26 +1,12 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PublicKey } from '@solana/web3.js';
 import { DataSource } from 'typeorm';
-import {
-  CleanupEvent,
-  CleanupEventParticipation,
-  CleanupEventPassCode,
-  ParticipationResultsStatus,
-  ParticipationStatus,
-  User,
-  File,
-  Coupon,
-  UserCoupon,
-} from '@gc/database-gc';
+import { User, Coupon, UserCoupon } from '@gc/database-gc';
 import * as nacl from 'tweetnacl';
 import bs58 from 'bs58';
-import crypto from 'crypto';
-import { getFileExtensionFromFile } from '../lib/utils/utils';
 import { StorageService } from '@gc/storage';
 import { AchievementsService } from '../achievements/achievements.service';
 import { DaoService } from '../dao/dao.service';
-import { IsUUID } from 'class-validator';
-import e from 'express';
 
 @Injectable()
 export class CouponsService {

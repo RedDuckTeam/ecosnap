@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { StorageModuleConfig } from './storage.module-definition';
 import { Akord, Auth } from '@akord/akord-js';
 

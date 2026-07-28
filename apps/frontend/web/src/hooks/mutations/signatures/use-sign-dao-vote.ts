@@ -14,7 +14,7 @@ export const useSignDaoVote = () => {
       }
 
       const encodedMessage = new TextEncoder().encode(
-        `Confirming vote cast for: ${gcId}, cast direction: ${voteDirection}`,
+        `Confirming vote cast for: ${gcId}, cast direction: ${voteDirection}`
       );
       const signature = encode(await signMessage(encodedMessage));
 

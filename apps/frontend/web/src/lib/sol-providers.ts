@@ -1,6 +1,7 @@
-import { Connection, PublicKey } from '@solana/web3.js';
 import { Program } from '@coral-xyz/anchor';
-import { NFT_MINTER_IDL_TYPE } from './idl/NftMinter.idl';
+import { Connection, PublicKey } from '@solana/web3.js';
+
+import type { NFT_MINTER_IDL_TYPE } from './idl/NftMinter.idl';
 
 const endpoint = process.env.VITE_PUBLIC_SOLANA_RPC_ENDPOINT || 'https://api.devnet.solana.com';
 

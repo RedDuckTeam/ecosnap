@@ -13,10 +13,11 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**"]
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
     "lint": {
-      "dependsOn": ["^lint"]
+      // Type-checking a package needs its workspace dependencies built first.
+      "dependsOn": ["^build"]
     },
     "format": {
       "dependsOn": ["^format"]

@@ -1,5 +1,5 @@
-import { Achievement, MerkleProof, MerkleTreeType, SubmissionType, UserAchievement } from '@gc/database-gc';
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Achievement, MerkleProof, MerkleTreeType, UserAchievement } from '@gc/database-gc';
+import { Controller, Get, Param } from '@nestjs/common';
 import { PublicKey } from '@solana/web3.js';
 import { DataSource } from 'typeorm';
 
@@ -34,7 +34,7 @@ export class AchievementsController {
 
     const proofs: (MerkleProof | null)[] = [];
 
-    for (let ach of achievements) {
+    for (const ach of achievements) {
       const proofsRepo = this.dataSource.getRepository(MerkleProof);
       const id = ach.merkleSubmissions?.find?.((v) => v.treeType === MerkleTreeType.ONLY_PROOFS)?.id;
 

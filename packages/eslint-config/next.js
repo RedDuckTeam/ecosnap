@@ -58,15 +58,9 @@ module.exports = {
             "newlines-between": "always",
           },
         ],
-        "prettier/prettier": [
-          "error",
-          {
-            endOfLine: "auto",
-            semi: true,
-            singleQuote: true,
-            trailingComma: "all",
-          },
-        ],
+        // Options come from the project's own prettier config, so that
+        // `prettier --check` and `eslint` can never disagree.
+        "prettier/prettier": "error",
         "@typescript-eslint/consistent-type-imports": "error",
         "@typescript-eslint/no-misused-promises": "off",
         "@typescript-eslint/no-unsafe-call": "off",

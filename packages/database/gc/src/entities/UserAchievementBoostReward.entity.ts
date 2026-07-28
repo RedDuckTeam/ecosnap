@@ -1,17 +1,5 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  JoinTable,
-  ManyToMany,
-  ManyToOne,
-  OneToMany,
-  OneToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { TimeKnownEntity } from '@gc/database-common';
-import { MerkleSubmission } from './MerkleSubmission.entity';
-import { Achievement } from './Achievement.entity';
 import { AchievementBoostReward } from './AchievementBoostReward.entity';
 import { UserAchievement } from './UserAchievement.entity';
 

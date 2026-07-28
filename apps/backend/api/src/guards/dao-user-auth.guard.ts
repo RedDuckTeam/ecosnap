@@ -1,7 +1,6 @@
-import { CanActivate, ExecutionContext, Inject, Injectable, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { ExecutionContext, Injectable, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth } from '@nestjs/swagger';
-import { Request } from 'express';
-import { DataSource, EntityManager } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 import { BaseAuthGuard } from './base-auth.guard';
 import { UserClaims } from '../decorators/request-user.decorator';

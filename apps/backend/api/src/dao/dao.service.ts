@@ -1,7 +1,7 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { PublicKey } from '@solana/web3.js';
 import { DataSource, EntityManager } from 'typeorm';
-import { AuthNonce, CastVoteDirection, DaoVote, GarbageCollect, User } from '@gc/database-gc';
+import { CastVoteDirection, DaoVote, GarbageCollect, User } from '@gc/database-gc';
 import * as nacl from 'tweetnacl';
 import bs58 from 'bs58';
 
@@ -80,7 +80,7 @@ export class DaoService {
         })
       );
 
-      let votes = [...gc.daoVotes, newVote];
+      const votes = [...gc.daoVotes, newVote];
 
       const votesFor = votes.filter((v) => v.voteDirection === CastVoteDirection.FOR).length;
 

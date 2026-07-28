@@ -92,7 +92,7 @@ export const ExchangeDialog = ({ item, open, setOpen }: ExchangeDialogProps) => 
         </div>
       ),
     }),
-    [item, closeDialog, exchange, isPending],
+    [item, closeDialog, exchange, isPending]
   );
 
   return (

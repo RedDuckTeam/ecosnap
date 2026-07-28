@@ -21,8 +21,8 @@ export class ProvidersService {
     return {
       merkleSubmitter: {
         globalState: this.config.sol.programs.merkleSubmitter.globalState,
-        program: new Program<any>(
-          MERKLE_SUBMITTER_IDL as any,
+        program: new Program<MERKLE_SUBMITTER_IDL_TYPE>(
+          MERKLE_SUBMITTER_IDL as MERKLE_SUBMITTER_IDL_TYPE,
           this.config.sol.programs.merkleSubmitter.programId,
           new AnchorProvider(provider, new Wallet(keypair), {
             commitment: 'confirmed',
